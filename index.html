@@ -224,6 +224,27 @@ backdrop-filter: blur(18px);
       font-size: 12px;
       margin-top: 22px;
     }
+    .password-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.password-wrapper input {
+  padding-right: 50px !important;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 5px;
+}
   </style>
 </head>
 
@@ -747,6 +768,39 @@ backdrop-filter: blur(18px);
       );
 
     }
+    document.addEventListener("DOMContentLoaded", function () {
+  const passwordInputs = document.querySelectorAll(
+    'input[type="password"]'
+  );
+
+  passwordInputs.forEach(function (input) {
+    const wrapper = document.createElement("div");
+    wrapper.className = "password-wrapper";
+
+    input.parentNode.insertBefore(wrapper, input);
+    wrapper.appendChild(input);
+
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "toggle-password";
+    button.textContent = "👁️";
+    button.setAttribute("aria-label", "Show password");
+
+    wrapper.appendChild(button);
+
+    button.addEventListener("click", function () {
+      if (input.type === "password") {
+        input.type = "text";
+        button.textContent = "🙈";
+        button.setAttribute("aria-label", "Hide password");
+      } else {
+        input.type = "password";
+        button.textContent = "👁️";
+        button.setAttribute("aria-label", "Show password");
+      }
+    });
+  });
+});
 
   </script>
 
