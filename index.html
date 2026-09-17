@@ -8,36 +8,39 @@
 
   <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <style>
     * {
       box-sizing: border-box;
     }
 
     body {
-  margin: 0;
-  min-height: 100vh;
-  font-family: 'Hind Siliguri', sans-serif;
+      margin: 0;
+      min-height: 100vh;
+      font-family: 'Hind Siliguri', sans-serif;
 
-  background:
-    linear-gradient(
-      rgba(3, 7, 18, 0.45),
-      rgba(3, 31, 23, 0.65)
-    ),
-    url("./football-bg.png") center 30%/ cover no-repeat fixed;
-  min-height: 100vh;
+      background:
+        linear-gradient(
+          rgba(3, 7, 18, 0.45),
+          rgba(3, 31, 23, 0.65)
+        ),
+        url("./football-bg.png") center 30% / cover no-repeat fixed;
+
       display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-}
+      justify-content: center;
+      align-items: center;
+    }
 
     .container {
-  width: 100%;
-  max-width: 420px;
-  margin: 0 auto;
-  position: relative;
-  z-index: 2;
-}
+      width: 100%;
+      max-width: 420px;
+      margin: 0 auto;
+      padding: 18px;
+      position: relative;
+      z-index: 2;
+    }
+
     .brand {
       text-align: center;
       margin-bottom: 25px;
@@ -50,19 +53,27 @@
     .brand h1 {
       margin: 5px 0;
       font-size: 29px;
+      color: #ffffff !important;
+      font-weight: 700;
     }
 
     .brand h1 span {
-      color: #34d399;
+      color: #16a34a !important;
+      font-weight: 800;
     }
 
-    .brand h1 span {
-  color: #ffffff !important;
-}
+    .brand p {
+      color: #ffffff !important;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+      margin-top: 10px;
+    }
 
     .card {
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
       backdrop-filter: blur(18px);
       border-radius: 24px;
       padding: 28px 24px;
@@ -72,6 +83,8 @@
     h2 {
       margin: 0 0 6px;
       font-size: 25px;
+      color: #ffffff !important;
+      font-weight: 700;
     }
 
     .subtitle {
@@ -114,7 +127,7 @@
       margin-top: 10px;
       border: none;
       border-radius: 11px;
-      background: linear-gradient(135deg, #059669, #34d399);
+      background: linear-gradient(135deg,#059669,#34d399);
       color: #022c22;
       font-family: inherit;
       font-size: 16px;
@@ -138,34 +151,81 @@
     }
 
     .hidden {
-      display: none;
+      display: none !important;
     }
 
     .footer {
-  text-align: center;
-  color: #8da49a;
-  font-size: 12px;
-  margin-top: 22px;
-}
+      text-align: center;
+      color: #8da49a;
+      font-size: 12px;
+      margin-top: 22px;
+    }
 
-/* All headings */
-.brand h1,
-.card h2 {
-  color: #ffffff !important;
-  font-weight: 700 !important;
-}
-    .brand p {
-  color: #ffffff !important;
-  font-size: 15px;
-  font-weight: 700;
-  letter-spacing: 0.3px;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
-  margin-top: 10px;
-}
-    .brand h1 span {
-  color: #16a34a !important;
-  font-weight: 800;
-}
+    /* ADMIN PANEL */
+
+    .admin-panel {
+      position: fixed;
+      top: 0;
+      right: -100%;
+
+      width: min(390px,90%);
+      height: 100vh;
+
+      padding: 75px 25px 25px;
+
+      background: linear-gradient(
+        145deg,
+        #03130d,
+        #092d20
+      );
+
+      border-left: 1px solid #34d39966;
+      box-shadow: -10px 0 40px #0009;
+
+      z-index: 9999;
+      text-align: center;
+      overflow-y: auto;
+
+      transition: right 0.4s ease;
+    }
+
+    .admin-panel.active {
+      right: 0;
+    }
+
+    .close-admin {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+
+      width: auto;
+      margin: 0;
+      padding: 5px 10px;
+
+      background: transparent;
+      color: white;
+      font-size: 24px;
+    }
+
+    .admin-icon {
+      font-size: 45px;
+      margin-bottom: 15px;
+    }
+
+    .admin-subtitle {
+      color: #9ca3af;
+      margin-bottom: 25px;
+    }
+
+    .admin-panel input {
+      width: 100%;
+      margin: 8px 0;
+    }
+
+    .admin-note {
+      color: #8da49a;
+      font-size: 12px;
+      margin-top: 22px;
     }
   </style>
 </head>
@@ -176,13 +236,18 @@
 
     <div class="brand">
       <div class="brand-icon">⚽🏏</div>
-      <h1>Play_Ground <span>PRO</span></h1>
+
+      <h1>
+        Play_Ground <span>PRO</span>
+      </h1>
+
       <p>Premium Football & Cricket Turf</p>
     </div>
 
     <div class="card">
 
       <!-- LOGIN -->
+
       <div id="loginSection">
 
         <h2>Welcome Back</h2>
@@ -191,6 +256,7 @@
         <form onsubmit="loginUser(event)">
 
           <label>Phone Number</label>
+
           <input
             type="tel"
             placeholder="আপনার ফোন নম্বর"
@@ -198,13 +264,16 @@
           >
 
           <label>Password</label>
+
           <input
             type="password"
             placeholder="আপনার পাসওয়ার্ড"
             required
           >
 
-          <button type="submit">LOGIN →</button>
+          <button type="submit">
+            LOGIN →
+          </button>
 
         </form>
 
@@ -220,6 +289,7 @@
 
 
       <!-- REGISTER -->
+
       <div id="registerSection" class="hidden">
 
         <h2>Create Account</h2>
@@ -228,6 +298,7 @@
         <form onsubmit="registerUser(event)">
 
           <label>Full Name</label>
+
           <input
             type="text"
             placeholder="আপনার পূর্ণ নাম"
@@ -235,6 +306,7 @@
           >
 
           <label>Phone Number</label>
+
           <input
             type="tel"
             placeholder="আপনার ফোন নম্বর"
@@ -242,6 +314,7 @@
           >
 
           <label>Password</label>
+
           <input
             type="password"
             placeholder="পাসওয়ার্ড তৈরি করুন"
@@ -249,13 +322,16 @@
           >
 
           <label>Confirm Password</label>
+
           <input
             type="password"
             placeholder="পাসওয়ার্ড আবার লিখুন"
             required
           >
 
-          <button type="submit">CREATE ACCOUNT</button>
+          <button type="submit">
+            CREATE ACCOUNT
+          </button>
 
         </form>
 
@@ -267,6 +343,7 @@
 
 
       <!-- GUEST -->
+
       <div id="guestSection" class="hidden">
 
         <h2>Guest Booking</h2>
@@ -275,6 +352,7 @@
         <form onsubmit="guestBooking(event)">
 
           <label>Full Name</label>
+
           <input
             type="text"
             placeholder="আপনার নাম"
@@ -282,13 +360,16 @@
           >
 
           <label>Phone Number</label>
+
           <input
             type="tel"
             placeholder="আপনার ফোন নম্বর"
             required
           >
 
-          <button type="submit">CONTINUE BOOKING →</button>
+          <button type="submit">
+            CONTINUE BOOKING →
+          </button>
 
         </form>
 
@@ -307,42 +388,284 @@
   </div>
 
 
+  <!-- HIDDEN ADMIN PANEL -->
+
+  <div id="adminPanel" class="admin-panel">
+
+    <button
+      class="close-admin"
+      onclick="closeAdminPanel()"
+    >
+      ✕
+    </button>
+
+    <div class="admin-icon">
+      🔐
+    </div>
+
+    <h2>
+      Admin Control Center
+    </h2>
+
+    <p class="admin-subtitle">
+      Authorized access only
+    </p>
+
+    <form onsubmit="adminLogin(event)">
+
+      <input
+        type="email"
+        id="adminEmail"
+        placeholder="Admin Email"
+        required
+      >
+
+      <input
+        type="password"
+        id="adminPassword"
+        placeholder="Password"
+        required
+      >
+
+      <button type="submit">
+        ADMIN LOGIN →
+      </button>
+
+    </form>
+
+    <div class="admin-note">
+      Admin role verification পরবর্তী ধাপে যুক্ত হবে।
+    </div>
+
+  </div>
+
+
   <script>
 
+    /* SUPABASE CONFIGURATION */
+
+    const SUPABASE_URL =
+      "https://hnmciqupyakugesclfnw.supabase.co";
+
+    const SUPABASE_PUBLISHABLE_KEY =
+      "PASTE_YOUR_PUBLISHABLE_KEY_HERE";
+
+    const supabaseClient =
+      supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_PUBLISHABLE_KEY
+      );
+
+
+    /* CUSTOMER SECTION CONTROL */
+
     function hideAll() {
-      document.getElementById("loginSection").classList.add("hidden");
-      document.getElementById("registerSection").classList.add("hidden");
-      document.getElementById("guestSection").classList.add("hidden");
+
+      document
+        .getElementById("loginSection")
+        .classList
+        .add("hidden");
+
+      document
+        .getElementById("registerSection")
+        .classList
+        .add("hidden");
+
+      document
+        .getElementById("guestSection")
+        .classList
+        .add("hidden");
+
     }
+
 
     function showLogin() {
+
       hideAll();
-      document.getElementById("loginSection").classList.remove("hidden");
+
+      document
+        .getElementById("loginSection")
+        .classList
+        .remove("hidden");
+
     }
+
 
     function showRegister() {
+
       hideAll();
-      document.getElementById("registerSection").classList.remove("hidden");
+
+      document
+        .getElementById("registerSection")
+        .classList
+        .remove("hidden");
+
     }
+
 
     function showGuest() {
+
       hideAll();
-      document.getElementById("guestSection").classList.remove("hidden");
+
+      document
+        .getElementById("guestSection")
+        .classList
+        .remove("hidden");
+
     }
+
 
     function loginUser(event) {
+
       event.preventDefault();
-      alert("Login system পরবর্তী ধাপে সংযুক্ত করা হবে।");
+
+      alert(
+        "Customer login system পরবর্তী ধাপে সংযুক্ত করা হবে।"
+      );
+
     }
+
 
     function registerUser(event) {
+
       event.preventDefault();
-      alert("Registration system পরবর্তী ধাপে সংযুক্ত করা হবে।");
+
+      alert(
+        "Customer registration system পরবর্তী ধাপে সংযুক্ত করা হবে।"
+      );
+
     }
 
+
     function guestBooking(event) {
+
       event.preventDefault();
-      alert("Guest booking system পরবর্তী ধাপে সংযুক্ত করা হবে।");
+
+      alert(
+        "Guest booking system পরবর্তী ধাপে সংযুক্ত করা হবে।"
+      );
+
+    }
+
+
+    /* HIDDEN SWIPE ADMIN ACCESS */
+
+    let startX = 0;
+    let startY = 0;
+
+    document.addEventListener(
+      "pointerdown",
+      function(event) {
+
+        startX = event.clientX;
+        startY = event.clientY;
+
+      }
+    );
+
+
+    document.addEventListener(
+      "pointerup",
+      function(event) {
+
+        const deltaX =
+          event.clientX - startX;
+
+        const deltaY =
+          event.clientY - startY;
+
+        const fromBottomRight =
+          startX > window.innerWidth * 0.65 &&
+          startY > window.innerHeight * 0.65;
+
+        const validSwipe =
+          deltaX < -100 &&
+          deltaY < -100;
+
+        if (
+          fromBottomRight &&
+          validSwipe
+        ) {
+
+          document
+            .getElementById("adminPanel")
+            .classList
+            .add("active");
+
+        }
+
+      }
+    );
+
+
+    /* ADMIN PANEL */
+
+    function closeAdminPanel() {
+
+      document
+        .getElementById("adminPanel")
+        .classList
+        .remove("active");
+
+    }
+
+
+    /* ADMIN LOGIN */
+
+    async function adminLogin(event) {
+
+      event.preventDefault();
+
+      const email =
+        document
+          .getElementById("adminEmail")
+          .value
+          .trim();
+
+      const password =
+        document
+          .getElementById("adminPassword")
+          .value;
+
+
+      if (
+        SUPABASE_PUBLISHABLE_KEY ===
+        "PASTE_YOUR_PUBLISHABLE_KEY_HERE"
+      ) {
+
+        alert(
+          "প্রথমে Supabase Publishable Key বসান।"
+        );
+
+        return;
+
+      }
+
+
+      const {
+        error
+      } =
+        await supabaseClient.auth.signInWithPassword({
+
+          email: email,
+          password: password
+
+        });
+
+
+      if (error) {
+
+        alert(error.message);
+
+        return;
+
+      }
+
+
+      alert(
+        "Login সফল হয়েছে। Admin Role Verification পরবর্তী ধাপে যুক্ত হবে।"
+      );
+
     }
 
   </script>
