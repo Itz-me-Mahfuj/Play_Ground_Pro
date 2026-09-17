@@ -1,58 +1,68 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Play_Ground Pro</title>
+<title>Play_Ground Pro</title>
 
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      background: #f2f5f9;
-    }
+<style>
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  background: #f2f5f9;
+}
 
-    header {
-      background: #0b5d3b;
-      color: white;
-      padding: 20px;
-      text-align: center;
-    }
+header {
+  background: #0b5d3b;
+  color: white;
+  padding: 20px;
+  text-align: center;
+}
 
-    .container {
-      padding: 20px;
-    }
+.container {
+  padding: 20px;
+}
 
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 15px;
-    }
+.cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+}
 
-    .card {
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
-      text-align: center;
-      box-shadow: 0 2px 8px #ddd;
-    }
+.card {
+  background: white;
+  padding: 15px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 2px 8px #ddd;
+}
 
-    .card h3 {
-      margin: 5px;
-    }
+button {
+  width: 100%;
+  padding: 15px;
+  margin-top: 15px;
+  border: none;
+  border-radius: 8px;
+  background: #0b5d3b;
+  color: white;
+  font-size: 16px;
+}
 
-    button {
-      width: 100%;
-      padding: 15px;
-      margin-top: 15px;
-      border: none;
-      border-radius: 8px;
-      background: #0b5d3b;
-      color: white;
-      font-size: 16px;
-    }
-  </style>
+form {
+  background: white;
+  padding: 20px;
+  margin-top: 20px;
+  border-radius: 12px;
+}
+
+input, select {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0 15px;
+  box-sizing: border-box;
+}
+</style>
 </head>
 
 <body>
@@ -65,7 +75,6 @@
 <div class="container">
 
   <div class="cards">
-
     <div class="card">
       <h3>⚽ Football</h3>
       <p>Booking Management</p>
@@ -85,15 +94,54 @@
       <h3>📅 মোট বুকিং</h3>
       <p>0</p>
     </div>
+  </div>
+
+  <button onclick="showBookingForm()">➕ New Booking</button>
+
+  <div id="bookingForm" style="display:none;">
+
+    <form>
+      <h2>New Booking</h2>
+
+      <label>Customer Name</label>
+      <input type="text" placeholder="গ্রাহকের নাম" required>
+
+      <label>Mobile Number</label>
+      <input type="tel" placeholder="মোবাইল নম্বর" required>
+
+      <label>Sport Type</label>
+      <select required>
+        <option value="">নির্বাচন করুন</option>
+        <option>Football</option>
+        <option>Cricket</option>
+      </select>
+
+      <label>Booking Date</label>
+      <input type="date" required>
+
+      <label>Start Time</label>
+      <input type="time" required>
+
+      <label>End Time</label>
+      <input type="time" required>
+
+      <label>Advance Payment</label>
+      <input type="number" placeholder="অগ্রিম টাকা">
+
+      <button type="button" onclick="alert('Booking form প্রস্তুত হয়েছে')">
+        Save Booking
+      </button>
+    </form>
 
   </div>
 
-  <button>➕ New Booking</button>
-  <button>💳 Payments</button>
-  <button>🎫 Vouchers</button>
-  <button>📊 Expenses</button>
-
 </div>
+
+<script>
+function showBookingForm() {
+  document.getElementById("bookingForm").style.display = "block";
+}
+</script>
 
 </body>
 </html>
