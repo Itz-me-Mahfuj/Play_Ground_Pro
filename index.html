@@ -128,7 +128,7 @@ input, select {
       <label>Advance Payment</label>
       <input type="number" placeholder="অগ্রিম টাকা">
 
-      <button type="button" onclick="alert('Booking form প্রস্তুত হয়েছে')">
+      <button type="button" onclick="saveBooking()">
         Save Booking
       </button>
     </form>
@@ -154,6 +154,40 @@ const supabaseClient = supabase.createClient(
 );
 
 console.log("Supabase Connected");
+</script>
+<script>
+async function saveBooking() {
+  const form = document.querySelector("form");
+  const inputs = form.querySelectorAll("input");
+  const select = form.querySelector("select");
+
+  const customerName = inputs[0].value;
+  const mobile = inputs[1].value;
+  const sportType = select.value;
+  const bookingDate = inputs[2].value;
+  const startTime = inputs[3].value;
+  const endTime = inputs[4].value;
+  const advance = inputs[5].value || 0;
+
+  const { data, error } = await supabaseClient
+    .from("bookings")
+    .insert([{
+      customer_name: customerName,
+      mobile: mobile,
+      sport_type: sportType,
+      booking_date: bookingDate,
+      start_time: startTime,
+      end_time: endTime,
+      advance: advance
+    }]);
+
+  if (error) {
+    alert("Booking Error: " + error.message);
+  } else {
+    alert("Booking সফলভাবে সংরক্ষণ হয়েছে!");
+    form.reset();
+  }
+}
 </script>
 </body>
 </html>
