@@ -228,6 +228,7 @@
       margin-top: 22px;
     }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
 <body>
@@ -388,56 +389,54 @@
   </div>
 
 
-  <!-- HIDDEN ADMIN PANEL -->
+  <!-- ADMIN REGISTRATION -->
 
-  <div id="adminPanel" class="admin-panel">
+<div id="adminRegisterSection" style="display:none;">
 
-    <button
-      class="close-admin"
-      onclick="closeAdminPanel()"
-    >
-      ✕
-    </button>
+  <h2>Admin Registration</h2>
 
-    <div class="admin-icon">
-      🔐
-    </div>
+  <input
+    type="text"
+    id="adminName"
+    placeholder="Full Name"
+  >
 
-    <h2>
-      Admin Control Center
-    </h2>
+  <input
+    type="email"
+    id="adminEmail"
+    placeholder="Email Address"
+  >
 
-    <p class="admin-subtitle">
-      Authorized access only
-    </p>
+  <input
+    type="tel"
+    id="adminPhone"
+    placeholder="Mobile Number"
+  >
 
-    <form onsubmit="adminLogin(event)">
+  <input
+    type="password"
+    id="adminPassword"
+    placeholder="Password"
+  >
 
-      <input
-        type="email"
-        id="adminEmail"
-        placeholder="Admin Email"
-        required
-      >
+  <input
+    type="password"
+    id="adminConfirmPassword"
+    placeholder="Confirm Password"
+  >
 
-      <input
-        type="password"
-        id="adminPassword"
-        placeholder="Password"
-        required
-      >
+  <button onclick="adminRegister()">
+    Register
+  </button>
 
-      <button type="submit">
-        ADMIN LOGIN →
-      </button>
+  <p>
+    Already registered?
+    <button onclick="showAdminRegister()">
+  Create Admin Account
+</button>
+  </p>
 
-    </form>
-
-    <div class="admin-note">
-      Admin role verification পরবর্তী ধাপে যুক্ত হবে।
-    </div>
-
-  </div>
+</div>
 
 
   <script>
@@ -448,7 +447,7 @@
       "https://hnmciqupyakugesclfnw.supabase.co";
 
     const SUPABASE_PUBLISHABLE_KEY =
-      "PASTE_YOUR_PUBLISHABLE_KEY_HERE";
+      "sb_publishable_ory8XocB_s-ltfnLh9NWFw_QPMd0_D1";
 
     const supabaseClient =
       supabase.createClient(
@@ -667,6 +666,50 @@
       );
 
     }
+    async function adminRegister() {
+
+  const name = document.getElementById("adminName").value.trim();
+  const email = document.getElementById("adminEmail").value.trim();
+  const phone = document.getElementById("adminPhone").value.trim();
+
+  const password = document.getElementById("adminPassword").value;
+  const confirmPassword = document.getElementById("adminConfirmPassword").value;
+
+  if (!name || !email || !password) {
+    alert("সব তথ্য পূরণ করো");
+    return;
+  }
+
+  if (password !== confirmPassword) {
+    alert("Password মিলছে না");
+    return;
+  }
+
+  const { error } = await supabaseClient.auth.signUp({
+
+    email: email,
+    password: password,
+
+    options: {
+      data: {
+        full_name: name,
+        phone: phone,
+        requested_role: "admin"
+      }
+    }
+
+  });
+
+  if (error) {
+    alert(error.message);
+    return;
+  }
+
+  alert("Registration সফল হয়েছে। Email যাচাই করো।");
+
+  showAdminLogin();
+
+}
 
   </script>
 
