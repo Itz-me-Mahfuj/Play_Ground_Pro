@@ -53,20 +53,19 @@
     .brand h1 {
       margin: 5px 0;
       font-size: 29px;
-      color: #ffffff !important;
+      color: #fff;
       font-weight: 700;
     }
 
     .brand h1 span {
-      color: #16a34a !important;
+      color: #16a34a;
       font-weight: 800;
     }
 
     .brand p {
-      color: #ffffff !important;
+      color: #fff;
       font-size: 15px;
       font-weight: 700;
-      letter-spacing: 0.3px;
       text-shadow: 0 2px 8px rgba(0,0,0,0.6);
       margin-top: 10px;
     }
@@ -83,7 +82,7 @@
     h2 {
       margin: 0 0 6px;
       font-size: 25px;
-      color: #ffffff !important;
+      color: #fff;
       font-weight: 700;
     }
 
@@ -168,18 +167,15 @@
       top: 0;
       right: -100%;
 
-      width: min(390px,90%);
+      width: min(390px, 90%);
       height: 100vh;
 
       padding: 75px 25px 25px;
 
-      background: linear-gradient(
-        145deg,
-        #03130d,
-        #092d20
-      );
+      background: rgba(3, 19, 13, 0.82);
+      backdrop-filter: blur(18px);
 
-      border-left: 1px solid #34d39966;
+      border-left: 1px solid rgba(52,211,153,0.4);
       box-shadow: -10px 0 40px #0009;
 
       z-index: 9999;
@@ -228,7 +224,6 @@
       margin-top: 22px;
     }
   </style>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
 <body>
@@ -247,7 +242,7 @@
 
     <div class="card">
 
-      <!-- LOGIN -->
+      <!-- CUSTOMER LOGIN -->
 
       <div id="loginSection">
 
@@ -257,20 +252,10 @@
         <form onsubmit="loginUser(event)">
 
           <label>Phone Number</label>
-
-          <input
-            type="tel"
-            placeholder="আপনার ফোন নম্বর"
-            required
-          >
+          <input type="tel" placeholder="আপনার ফোন নম্বর" required>
 
           <label>Password</label>
-
-          <input
-            type="password"
-            placeholder="আপনার পাসওয়ার্ড"
-            required
-          >
+          <input type="password" placeholder="আপনার পাসওয়ার্ড" required>
 
           <button type="submit">
             LOGIN →
@@ -289,7 +274,7 @@
       </div>
 
 
-      <!-- REGISTER -->
+      <!-- CUSTOMER REGISTER -->
 
       <div id="registerSection" class="hidden">
 
@@ -299,36 +284,16 @@
         <form onsubmit="registerUser(event)">
 
           <label>Full Name</label>
-
-          <input
-            type="text"
-            placeholder="আপনার পূর্ণ নাম"
-            required
-          >
+          <input type="text" placeholder="আপনার পূর্ণ নাম" required>
 
           <label>Phone Number</label>
-
-          <input
-            type="tel"
-            placeholder="আপনার ফোন নম্বর"
-            required
-          >
+          <input type="tel" placeholder="আপনার ফোন নম্বর" required>
 
           <label>Password</label>
-
-          <input
-            type="password"
-            placeholder="পাসওয়ার্ড তৈরি করুন"
-            required
-          >
+          <input type="password" placeholder="পাসওয়ার্ড তৈরি করুন" required>
 
           <label>Confirm Password</label>
-
-          <input
-            type="password"
-            placeholder="পাসওয়ার্ড আবার লিখুন"
-            required
-          >
+          <input type="password" placeholder="পাসওয়ার্ড আবার লিখুন" required>
 
           <button type="submit">
             CREATE ACCOUNT
@@ -353,20 +318,10 @@
         <form onsubmit="guestBooking(event)">
 
           <label>Full Name</label>
-
-          <input
-            type="text"
-            placeholder="আপনার নাম"
-            required
-          >
+          <input type="text" placeholder="আপনার নাম" required>
 
           <label>Phone Number</label>
-
-          <input
-            type="tel"
-            placeholder="আপনার ফোন নম্বর"
-            required
-          >
+          <input type="tel" placeholder="আপনার ফোন নম্বর" required>
 
           <button type="submit">
             CONTINUE BOOKING →
@@ -389,54 +344,121 @@
   </div>
 
 
-  <!-- ADMIN REGISTRATION -->
+  <!-- ADMIN PANEL -->
 
-<div id="adminRegisterSection" style="display:none;">
+  <div id="adminPanel" class="admin-panel">
 
-  <h2>Admin Registration</h2>
+    <button class="close-admin" onclick="closeAdminPanel()">
+      ✕
+    </button>
 
-  <input
-    type="text"
-    id="adminName"
-    placeholder="Full Name"
-  >
+    <div class="admin-icon">
+      🔐
+    </div>
 
-  <input
-    type="email"
-    id="adminEmail"
-    placeholder="Email Address"
-  >
+    <!-- ADMIN LOGIN -->
 
-  <input
-    type="tel"
-    id="adminPhone"
-    placeholder="Mobile Number"
-  >
+    <div id="adminLoginSection">
 
-  <input
-    type="password"
-    id="adminPassword"
-    placeholder="Password"
-  >
+      <h2>Admin Login</h2>
 
-  <input
-    type="password"
-    id="adminConfirmPassword"
-    placeholder="Confirm Password"
-  >
+      <p class="admin-subtitle">
+        Authorized access only
+      </p>
 
-  <button onclick="adminRegister()">
-    Register
-  </button>
+      <form onsubmit="adminLogin(event)">
 
-  <p>
-    Already registered?
-    <button onclick="showAdminRegister()">
-  Create Admin Account
-</button>
-  </p>
+        <input
+          type="email"
+          id="adminLoginEmail"
+          placeholder="Admin Email"
+          required
+        >
 
-</div>
+        <input
+          type="password"
+          id="adminLoginPassword"
+          placeholder="Password"
+          required
+        >
+
+        <button type="submit">
+          ADMIN LOGIN →
+        </button>
+
+      </form>
+
+      <span class="link" onclick="showAdminRegister()">
+        Create Admin Account
+      </span>
+
+    </div>
+
+
+    <!-- ADMIN REGISTER -->
+
+    <div id="adminRegisterSection" class="hidden">
+
+      <h2>Admin Registration</h2>
+
+      <p class="admin-subtitle">
+        Create your admin account
+      </p>
+
+      <form onsubmit="adminRegister(event)">
+
+        <input
+          type="text"
+          id="adminRegName"
+          placeholder="Full Name"
+          required
+        >
+
+        <input
+          type="email"
+          id="adminRegEmail"
+          placeholder="Email Address"
+          required
+        >
+
+        <input
+          type="tel"
+          id="adminRegPhone"
+          placeholder="Mobile Number"
+          required
+        >
+
+        <input
+          type="password"
+          id="adminRegPassword"
+          placeholder="Password"
+          required
+        >
+
+        <input
+          type="password"
+          id="adminRegConfirmPassword"
+          placeholder="Confirm Password"
+          required
+        >
+
+        <button type="submit">
+          REGISTER ADMIN
+        </button>
+
+      </form>
+
+      <span class="link" onclick="showAdminLogin()">
+        Already registered? Login
+      </span>
+
+    </div>
+
+    <div class="admin-note">
+      Admin approval ও role verification পরবর্তী ধাপে যুক্ত হবে।
+    </div>
+
+  </div>
 
 
   <script>
@@ -456,24 +478,18 @@
       );
 
 
-    /* CUSTOMER SECTION CONTROL */
+    /* CUSTOMER SECTION */
 
     function hideAll() {
 
-      document
-        .getElementById("loginSection")
-        .classList
-        .add("hidden");
+      document.getElementById("loginSection")
+        .classList.add("hidden");
 
-      document
-        .getElementById("registerSection")
-        .classList
-        .add("hidden");
+      document.getElementById("registerSection")
+        .classList.add("hidden");
 
-      document
-        .getElementById("guestSection")
-        .classList
-        .add("hidden");
+      document.getElementById("guestSection")
+        .classList.add("hidden");
 
     }
 
@@ -482,10 +498,8 @@
 
       hideAll();
 
-      document
-        .getElementById("loginSection")
-        .classList
-        .remove("hidden");
+      document.getElementById("loginSection")
+        .classList.remove("hidden");
 
     }
 
@@ -494,10 +508,8 @@
 
       hideAll();
 
-      document
-        .getElementById("registerSection")
-        .classList
-        .remove("hidden");
+      document.getElementById("registerSection")
+        .classList.remove("hidden");
 
     }
 
@@ -506,10 +518,8 @@
 
       hideAll();
 
-      document
-        .getElementById("guestSection")
-        .classList
-        .remove("hidden");
+      document.getElementById("guestSection")
+        .classList.remove("hidden");
 
     }
 
@@ -518,9 +528,7 @@
 
       event.preventDefault();
 
-      alert(
-        "Customer login system পরবর্তী ধাপে সংযুক্ত করা হবে।"
-      );
+      alert("Customer login পরবর্তী ধাপে যুক্ত হবে।");
 
     }
 
@@ -529,9 +537,7 @@
 
       event.preventDefault();
 
-      alert(
-        "Customer registration system পরবর্তী ধাপে সংযুক্ত করা হবে।"
-      );
+      alert("Customer registration পরবর্তী ধাপে যুক্ত হবে।");
 
     }
 
@@ -540,71 +546,154 @@
 
       event.preventDefault();
 
-      alert(
-        "Guest booking system পরবর্তী ধাপে সংযুক্ত করা হবে।"
-      );
+      alert("Guest booking পরবর্তী ধাপে যুক্ত হবে।");
 
     }
 
 
-    /* HIDDEN SWIPE ADMIN ACCESS */
+    /* ADMIN SWIPE ACCESS */
 
     let startX = 0;
     let startY = 0;
 
-    document.addEventListener(
-      "pointerdown",
-      function(event) {
+    document.addEventListener("pointerdown", function(event) {
 
-        startX = event.clientX;
-        startY = event.clientY;
+      startX = event.clientX;
+      startY = event.clientY;
 
-      }
-    );
+    });
 
 
-    document.addEventListener(
-      "pointerup",
-      function(event) {
+    document.addEventListener("pointerup", function(event) {
 
-        const deltaX =
-          event.clientX - startX;
+      const deltaX = event.clientX - startX;
+      const deltaY = event.clientY - startY;
 
-        const deltaY =
-          event.clientY - startY;
+      const fromBottomRight =
+        startX > window.innerWidth * 0.65 &&
+        startY > window.innerHeight * 0.65;
 
-        const fromBottomRight =
-          startX > window.innerWidth * 0.65 &&
-          startY > window.innerHeight * 0.65;
+      const validSwipe =
+        deltaX < -100 &&
+        deltaY < -100;
 
-        const validSwipe =
-          deltaX < -100 &&
-          deltaY < -100;
+      if (fromBottomRight && validSwipe) {
 
-        if (
-          fromBottomRight &&
-          validSwipe
-        ) {
-
-          document
-            .getElementById("adminPanel")
-            .classList
-            .add("active");
-
-        }
+        document.getElementById("adminPanel")
+          .classList.add("active");
 
       }
-    );
+
+    });
 
 
-    /* ADMIN PANEL */
+    /* ADMIN PANEL CONTROL */
 
     function closeAdminPanel() {
 
-      document
-        .getElementById("adminPanel")
-        .classList
-        .remove("active");
+      document.getElementById("adminPanel")
+        .classList.remove("active");
+
+    }
+
+
+    function showAdminLogin() {
+
+      document.getElementById("adminRegisterSection")
+        .classList.add("hidden");
+
+      document.getElementById("adminLoginSection")
+        .classList.remove("hidden");
+
+    }
+
+
+    function showAdminRegister() {
+
+      document.getElementById("adminLoginSection")
+        .classList.add("hidden");
+
+      document.getElementById("adminRegisterSection")
+        .classList.remove("hidden");
+
+    }
+
+
+    /* ADMIN REGISTRATION */
+
+    async function adminRegister(event) {
+
+      event.preventDefault();
+
+      const name =
+        document.getElementById("adminRegName").value.trim();
+
+      const email =
+        document.getElementById("adminRegEmail").value.trim();
+
+      const phone =
+        document.getElementById("adminRegPhone").value.trim();
+
+      const password =
+        document.getElementById("adminRegPassword").value;
+
+      const confirmPassword =
+        document.getElementById("adminRegConfirmPassword").value;
+
+
+      if (password !== confirmPassword) {
+
+        alert("Password মিলছে না।");
+        return;
+
+      }
+
+
+      if (
+        SUPABASE_PUBLISHABLE_KEY ===
+        "PASTE_YOUR_PUBLISHABLE_KEY_HERE"
+      ) {
+
+        alert("প্রথমে Supabase Publishable Key বসাও।");
+        return;
+
+      }
+
+
+      const { error } =
+        await supabaseClient.auth.signUp({
+
+          email: email,
+          password: password,
+
+          options: {
+
+            data: {
+
+              full_name: name,
+              phone: phone,
+              requested_role: "admin"
+
+            }
+
+          }
+
+        });
+
+
+      if (error) {
+
+        alert(error.message);
+        return;
+
+      }
+
+
+      alert(
+        "Registration সফল হয়েছে। Email যাচাই করো।"
+      );
+
+      showAdminLogin();
 
     }
 
@@ -616,14 +705,11 @@
       event.preventDefault();
 
       const email =
-        document
-          .getElementById("adminEmail")
-          .value
-          .trim();
+        document.getElementById("adminLoginEmail")
+          .value.trim();
 
       const password =
-        document
-          .getElementById("adminPassword")
+        document.getElementById("adminLoginPassword")
           .value;
 
 
@@ -632,18 +718,13 @@
         "PASTE_YOUR_PUBLISHABLE_KEY_HERE"
       ) {
 
-        alert(
-          "প্রথমে Supabase Publishable Key বসান।"
-        );
-
+        alert("প্রথমে Supabase Publishable Key বসাও।");
         return;
 
       }
 
 
-      const {
-        error
-      } =
+      const { error } =
         await supabaseClient.auth.signInWithPassword({
 
           email: email,
@@ -655,61 +736,16 @@
       if (error) {
 
         alert(error.message);
-
         return;
 
       }
 
 
       alert(
-        "Login সফল হয়েছে। Admin Role Verification পরবর্তী ধাপে যুক্ত হবে।"
+        "Login সফল হয়েছে। Admin approval ও role verification পরবর্তী ধাপে যুক্ত হবে।"
       );
 
     }
-    async function adminRegister() {
-
-  const name = document.getElementById("adminName").value.trim();
-  const email = document.getElementById("adminEmail").value.trim();
-  const phone = document.getElementById("adminPhone").value.trim();
-
-  const password = document.getElementById("adminPassword").value;
-  const confirmPassword = document.getElementById("adminConfirmPassword").value;
-
-  if (!name || !email || !password) {
-    alert("সব তথ্য পূরণ করো");
-    return;
-  }
-
-  if (password !== confirmPassword) {
-    alert("Password মিলছে না");
-    return;
-  }
-
-  const { error } = await supabaseClient.auth.signUp({
-
-    email: email,
-    password: password,
-
-    options: {
-      data: {
-        full_name: name,
-        phone: phone,
-        requested_role: "admin"
-      }
-    }
-
-  });
-
-  if (error) {
-    alert(error.message);
-    return;
-  }
-
-  alert("Registration সফল হয়েছে। Email যাচাই করো।");
-
-  showAdminLogin();
-
-}
 
   </script>
 
