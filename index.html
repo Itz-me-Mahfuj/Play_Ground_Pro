@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="bn">
-<head>
+<head><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -143,5 +143,17 @@ function showBookingForm() {
 }
 </script>
 
+<script>
+const SUPABASE_URL = "https://hnmciqupyakugesclfnw.supabase.co";
+
+const SUPABASE_KEY = "আপনার_Publishable_Key_এখানে_দিন";
+
+const supabaseClient = supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+console.log("Supabase Connected");
+</script>
 </body>
 </html>
