@@ -1,181 +1,326 @@
 <!DOCTYPE html>
 <html lang="bn">
-<head><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Play_Ground Pro</title>
+  <title>Play_Ground Pro | Login</title>
 
-<style>
-body {
-  font-family: 'Noto Sans Bengali', sans-serif;
-  margin: 0;
-  background: #f4f7f6;
-  color: #1f2937;
-}
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-header {
-  background: linear-gradient(135deg, #064e3b, #10b981);
-  color: white;
-  padding: 28px 20px;
-  text-align: center;
-  border-radius: 0 0 25px 25px;
-}
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-.card {
-  background: white;
-  padding: 20px;
-  border-radius: 18px;
-  text-align: center;
-  box-shadow: 0 5px 18px rgba(0,0,0,0.08);
-}
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: 'Hind Siliguri', sans-serif;
+      background:
+        radial-gradient(circle at top right, #14532d, transparent 40%),
+        linear-gradient(135deg, #030712, #071f17);
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
 
-button {
-  background: #047857;
-  border-radius: 12px;
-  font-family: inherit;
-  font-weight: 600;
-}
+    .container {
+      width: 100%;
+      max-width: 420px;
+    }
 
-form {
-  background: white;
-  padding: 20px;
-  margin-top: 20px;
-  border-radius: 12px;
-}
+    .brand {
+      text-align: center;
+      margin-bottom: 25px;
+    }
 
-input, select {
-  width: 100%;
-  padding: 12px;
-  margin: 8px 0 15px;
-  box-sizing: border-box;
-}
-</style>
+    .brand-icon {
+      font-size: 45px;
+    }
+
+    .brand h1 {
+      margin: 5px 0;
+      font-size: 29px;
+    }
+
+    .brand h1 span {
+      color: #34d399;
+    }
+
+    .brand p {
+      color: #a7b8b0;
+      font-size: 14px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(18px);
+      border-radius: 24px;
+      padding: 28px 24px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    }
+
+    h2 {
+      margin: 0 0 6px;
+      font-size: 25px;
+    }
+
+    .subtitle {
+      color: #b7c8c0;
+      font-size: 14px;
+      margin-bottom: 25px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 7px;
+      color: #d1fae5;
+      font-size: 14px;
+    }
+
+    input {
+      width: 100%;
+      padding: 13px;
+      margin-bottom: 16px;
+      border-radius: 11px;
+      border: 1px solid #36534a;
+      background: rgba(0,0,0,0.25);
+      color: white;
+      font-family: inherit;
+      font-size: 15px;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: #34d399;
+    }
+
+    input::placeholder {
+      color: #91a39b;
+    }
+
+    button {
+      width: 100%;
+      padding: 13px;
+      margin-top: 10px;
+      border: none;
+      border-radius: 11px;
+      background: linear-gradient(135deg, #059669, #34d399);
+      color: #022c22;
+      font-family: inherit;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .secondary {
+      background: transparent;
+      color: #6ee7b7;
+      border: 1px solid #276749;
+    }
+
+    .link {
+      display: block;
+      text-align: center;
+      margin-top: 18px;
+      color: #6ee7b7;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .footer {
+      text-align: center;
+      color: #8da49a;
+      font-size: 12px;
+      margin-top: 22px;
+    }
+  </style>
 </head>
 
 <body>
 
-<header>
-  <h1>Play_Ground Pro</h1>
-  <p>Football & Cricket Turf Management</p>
-</header>
+  <div class="container">
 
-<div class="container">
-
-  <div class="cards">
-    <div class="card">
-      <h3>⚽ Football</h3>
-      <p>Booking Management</p>
+    <div class="brand">
+      <div class="brand-icon">⚽🏏</div>
+      <h1>Play_Ground <span>PRO</span></h1>
+      <p>Premium Football & Cricket Turf</p>
     </div>
 
     <div class="card">
-      <h3>🏏 Cricket</h3>
-      <p>Booking Management</p>
+
+      <!-- LOGIN -->
+      <div id="loginSection">
+
+        <h2>Welcome Back</h2>
+        <p class="subtitle">আপনার অ্যাকাউন্টে লগইন করুন</p>
+
+        <form onsubmit="loginUser(event)">
+
+          <label>Phone Number</label>
+          <input
+            type="tel"
+            placeholder="আপনার ফোন নম্বর"
+            required
+          >
+
+          <label>Password</label>
+          <input
+            type="password"
+            placeholder="আপনার পাসওয়ার্ড"
+            required
+          >
+
+          <button type="submit">LOGIN →</button>
+
+        </form>
+
+        <span class="link" onclick="showRegister()">
+          নতুন অ্যাকাউন্ট তৈরি করুন
+        </span>
+
+        <button class="secondary" onclick="showGuest()">
+          CONTINUE AS GUEST
+        </button>
+
+      </div>
+
+
+      <!-- REGISTER -->
+      <div id="registerSection" class="hidden">
+
+        <h2>Create Account</h2>
+        <p class="subtitle">নতুন অ্যাকাউন্ট তৈরি করুন</p>
+
+        <form onsubmit="registerUser(event)">
+
+          <label>Full Name</label>
+          <input
+            type="text"
+            placeholder="আপনার পূর্ণ নাম"
+            required
+          >
+
+          <label>Phone Number</label>
+          <input
+            type="tel"
+            placeholder="আপনার ফোন নম্বর"
+            required
+          >
+
+          <label>Password</label>
+          <input
+            type="password"
+            placeholder="পাসওয়ার্ড তৈরি করুন"
+            required
+          >
+
+          <label>Confirm Password</label>
+          <input
+            type="password"
+            placeholder="পাসওয়ার্ড আবার লিখুন"
+            required
+          >
+
+          <button type="submit">CREATE ACCOUNT</button>
+
+        </form>
+
+        <span class="link" onclick="showLogin()">
+          আগে থেকেই অ্যাকাউন্ট আছে? Login
+        </span>
+
+      </div>
+
+
+      <!-- GUEST -->
+      <div id="guestSection" class="hidden">
+
+        <h2>Guest Booking</h2>
+        <p class="subtitle">অ্যাকাউন্ট ছাড়াই বুকিং করুন</p>
+
+        <form onsubmit="guestBooking(event)">
+
+          <label>Full Name</label>
+          <input
+            type="text"
+            placeholder="আপনার নাম"
+            required
+          >
+
+          <label>Phone Number</label>
+          <input
+            type="tel"
+            placeholder="আপনার ফোন নম্বর"
+            required
+          >
+
+          <button type="submit">CONTINUE BOOKING →</button>
+
+        </form>
+
+        <span class="link" onclick="showLogin()">
+          Login পেজে ফিরে যান
+        </span>
+
+      </div>
+
     </div>
 
-    <div class="card">
-      <h3>💰 আজকের আয়</h3>
-      <p>৳ 0</p>
+    <div class="footer">
+      © 2026 Play_Ground Pro. All rights reserved.
     </div>
 
-    <div class="card">
-      <h3>📅 মোট বুকিং</h3>
-      <p>0</p>
-    </div>
   </div>
 
-  <button onclick="showBookingForm()">➕ New Booking</button>
 
-  <div id="bookingForm" style="display:none;">
+  <script>
 
-    <form>
-      <h2>New Booking</h2>
+    function hideAll() {
+      document.getElementById("loginSection").classList.add("hidden");
+      document.getElementById("registerSection").classList.add("hidden");
+      document.getElementById("guestSection").classList.add("hidden");
+    }
 
-      <label>Customer Name</label>
-      <input type="text" placeholder="গ্রাহকের নাম" required>
+    function showLogin() {
+      hideAll();
+      document.getElementById("loginSection").classList.remove("hidden");
+    }
 
-      <label>Mobile Number</label>
-      <input type="tel" placeholder="মোবাইল নম্বর" required>
+    function showRegister() {
+      hideAll();
+      document.getElementById("registerSection").classList.remove("hidden");
+    }
 
-      <label>Sport Type</label>
-      <select required>
-        <option value="">নির্বাচন করুন</option>
-        <option>Football</option>
-        <option>Cricket</option>
-      </select>
+    function showGuest() {
+      hideAll();
+      document.getElementById("guestSection").classList.remove("hidden");
+    }
 
-      <label>Booking Date</label>
-      <input type="date" required>
+    function loginUser(event) {
+      event.preventDefault();
+      alert("Login system পরবর্তী ধাপে সংযুক্ত করা হবে।");
+    }
 
-      <label>Start Time</label>
-      <input type="time" required>
+    function registerUser(event) {
+      event.preventDefault();
+      alert("Registration system পরবর্তী ধাপে সংযুক্ত করা হবে।");
+    }
 
-      <label>End Time</label>
-      <input type="time" required>
+    function guestBooking(event) {
+      event.preventDefault();
+      alert("Guest booking system পরবর্তী ধাপে সংযুক্ত করা হবে।");
+    }
 
-      <label>Advance Payment</label>
-      <input type="number" placeholder="অগ্রিম টাকা">
+  </script>
 
-      <button type="button" onclick="saveBooking()">
-        Save Booking
-      </button>
-    </form>
-
-  </div>
-
-</div>
-
-<script>
-function showBookingForm() {
-  document.getElementById("bookingForm").style.display = "block";
-}
-</script>
-
-<script>
-const SUPABASE_URL = "https://hnmciqupyakugesclfnw.supabase.co";
-
-const SUPABASE_KEY = "আপনার_Publishable_Key_এখানে_দিন";
-
-const supabaseClient = supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
-);
-
-console.log("Supabase Connected");
-</script>
-<script>
-async function saveBooking() {
-  const form = document.querySelector("form");
-  const inputs = form.querySelectorAll("input");
-  const select = form.querySelector("select");
-
-  const customerName = inputs[0].value;
-  const mobile = inputs[1].value;
-  const sportType = select.value;
-  const bookingDate = inputs[2].value;
-  const startTime = inputs[3].value;
-  const endTime = inputs[4].value;
-  const advance = inputs[5].value || 0;
-
-  const { data, error } = await supabaseClient
-    .from("bookings")
-    .insert([{
-      customer_name: customerName,
-      mobile: mobile,
-      sport_type: sportType,
-      booking_date: bookingDate,
-      start_time: startTime,
-      end_time: endTime,
-      advance: advance
-    }]);
-
-  if (error) {
-    alert("Booking Error: " + error.message);
-  } else {
-    alert("Booking সফলভাবে সংরক্ষণ হয়েছে!");
-    form.reset();
-  }
-}
-</script>
 </body>
 </html>
