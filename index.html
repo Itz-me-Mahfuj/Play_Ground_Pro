@@ -1,12 +1,99 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>Play_Ground Pro</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f2f5f9;
+    }
+
+    header {
+      background: #0b5d3b;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .container {
+      padding: 20px;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+    }
+
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 2px 8px #ddd;
+    }
+
+    .card h3 {
+      margin: 5px;
+    }
+
+    button {
+      width: 100%;
+      padding: 15px;
+      margin-top: 15px;
+      border: none;
+      border-radius: 8px;
+      background: #0b5d3b;
+      color: white;
+      font-size: 16px;
+    }
+  </style>
 </head>
+
 <body>
-  <h1>Welcome to Play_Ground Pro</h1>
+
+<header>
+  <h1>Play_Ground Pro</h1>
   <p>Football & Cricket Turf Management</p>
+</header>
+
+<div class="container">
+
+  <div class="cards">
+
+    <div class="card">
+      <h3>⚽ Football</h3>
+      <p>Booking Management</p>
+    </div>
+
+    <div class="card">
+      <h3>🏏 Cricket</h3>
+      <p>Booking Management</p>
+    </div>
+
+    <div class="card">
+      <h3>💰 আজকের আয়</h3>
+      <p>৳ 0</p>
+    </div>
+
+    <div class="card">
+      <h3>📅 মোট বুকিং</h3>
+      <p>0</p>
+    </div>
+
+  </div>
+
+  <button>➕ New Booking</button>
+  <button>💳 Payments</button>
+  <button>🎫 Vouchers</button>
+  <button>📊 Expenses</button>
+
+</div>
+
 </body>
 </html>
