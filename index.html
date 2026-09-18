@@ -229,18 +229,14 @@ backdrop-filter: blur(18px);
   width: 100%;
 }
 
-.password-wrapper {
-  position: relative;
-  width: 100%;
-}
-
 .password-wrapper input {
+  width: 100%;
   padding-right: 48px !important;
 }
 
 .toggle-password {
   position: absolute;
-  right: 12px;
+  right: 10px;
   top: 50%;
   transform: translateY(-50%);
 
@@ -250,20 +246,29 @@ backdrop-filter: blur(18px);
 
   border: none;
   background: transparent;
-  color: #ffffff;
-  cursor: pointer;
+
+  color: rgba(255, 255, 255, 0.62);
 
   display: flex;
   align-items: center;
   justify-content: center;
+
+  cursor: pointer;
+}
+
+.toggle-password:hover {
+  color: rgba(255, 255, 255, 0.82);
 }
 
 .toggle-password svg {
-  width: 20px;
-  height: 20px;
-  stroke: currentColor;
+  width: 19px;
+  height: 19px;
+
   fill: none;
-  stroke-width: 2;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
   </style>
 </head>
@@ -794,6 +799,12 @@ backdrop-filter: blur(18px);
   );
 
   passwordInputs.forEach(function (input) {
+
+    // একই বক্সে আবার আইকন তৈরি হওয়া আটকাবে
+    if (input.parentElement.classList.contains("password-wrapper")) {
+      return;
+    }
+
     const wrapper = document.createElement("div");
     wrapper.className = "password-wrapper";
 
@@ -805,40 +816,39 @@ backdrop-filter: blur(18px);
     button.className = "toggle-password";
     button.setAttribute("aria-label", "Show password");
 
-    function eyeIcon() {
-      return `
-        <svg viewBox="0 0 24 24">
-          <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/>
-          <circle cx="12" cy="12" r="3"/>
-        </svg>
-      `;
-    }
+    const eyeIcon = `
+      <svg viewBox="0 0 24 24">
+        <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/>
+        <circle cx="12" cy="12" r="3"/>
+      </svg>
+    `;
 
-    function eyeOffIcon() {
-      return `
-        <svg viewBox="0 0 24 24">
-          <path d="M3 3l18 18"/>
-          <path d="M10.6 5.2A10.8 10.8 0 0 1 12 5c6.5 0 10 7 10 7a18 18 0 0 1-3.2 4.2"/>
-          <path d="M6.2 6.3C3.5 8.3 2 12 2 12s3.5 7 10 7a10.8 10.8 0 0 0 4-.8"/>
-          <path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/>
-        </svg>
-      `;
-    }
+    const eyeOffIcon = `
+      <svg viewBox="0 0 24 24">
+        <path d="M3 3l18 18"/>
+        <path d="M10.6 5.2A10.8 10.8 0 0 1 12 5c6.5 0 10 7 10 7a18 18 0 0 1-3.2 4.2"/>
+        <path d="M6.2 6.3C3.5 8.3 2 12 2 12s3.5 7 10 7a10.8 10.8 0 0 0 4-.8"/>
+        <path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/>
+      </svg>
+    `;
 
-    button.innerHTML = eyeIcon();
+    button.innerHTML = eyeIcon;
     wrapper.appendChild(button);
 
     button.addEventListener("click", function () {
+
       if (input.type === "password") {
         input.type = "text";
-        button.innerHTML = eyeOffIcon();
+        button.innerHTML = eyeOffIcon;
         button.setAttribute("aria-label", "Hide password");
       } else {
         input.type = "password";
-        button.innerHTML = eyeIcon();
+        button.innerHTML = eyeIcon;
         button.setAttribute("aria-label", "Show password");
       }
+
     });
+
   });
 });
   </script>
