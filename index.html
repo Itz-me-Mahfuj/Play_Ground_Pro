@@ -774,6 +774,50 @@ async function adminRegister(event) {
   window.guestBooking=function(e){e.preventDefault();pgpOpenCustomer('Guest');};
   window.adminLogin=async function(e){e.preventDefault();if(SUPABASE_PUBLISHABLE_KEY==='PASTE_YOUR_PUBLISHABLE_KEY_HERE'){alert('প্রথমে Supabase Publishable Key বসান।');return;}const email=$('adminEmail').value.trim(),password=$('adminPassword').value;const result=await supabaseClient.auth.signInWithPassword({email,password});if(result.error){alert(result.error.message);return;}pgpOpenAdmin();};
 })();
+  function showAdminRegister() {
+  document.getElementById("adminRegisterSection")
+    .classList.remove("hidden");
+}
+
+function showAdminLogin() {
+  document.getElementById("adminRegisterSection")
+    .classList.add("hidden");
+}
+
+async function adminRegister(event) {
+  event.preventDefault();
+
+  const name = document.getElementById("adminRegisterName").value.trim();
+  const email = document.getElementById("adminRegisterEmail").value.trim();
+  const password = document.getElementById("adminRegisterPassword").value;
+  const confirmPassword =
+    document.getElementById("adminRegisterConfirmPassword").value;
+
+  if (password !== confirmPassword) {
+    alert("দুইটি Password একই নয়।");
+    return;
+  }
+
+  const { error } = await supabaseClient.auth.signUp({
+    email: email,
+    password: password,
+    options: {
+      data: {
+        full_name: name,
+        role: "admin"
+      }
+    }
+  });
+
+  if (error) {
+    alert("Registration Failed: " + error.message);
+    return;
+  }
+
+  alert("Admin Registration সফল হয়েছে।");
+
+  showAdminLogin();
+}
 </script>
 
 </body>
