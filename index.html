@@ -225,50 +225,46 @@ backdrop-filter: blur(18px);
       margin-top: 22px;
     }
     .password-wrapper {
-  position: relative;
+  position: relative !important;
   width: 100%;
+  display: block;
 }
 
 .password-wrapper input {
   width: 100%;
-  padding-right: 48px !important;
+  height: 48px;
+  padding: 0 48px 0 14px !important;
+  box-sizing: border-box;
 }
 
-.toggle-password {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
+.password-wrapper .toggle-password {
+  position: absolute !important;
+  top: 24px !important;
+  right: 10px !important;
 
-  width: 28px;
-  height: 28px;
-  padding: 0;
+  transform: translateY(-50%) !important;
 
-  border: none;
-  background: transparent;
+  width: 28px !important;
+  height: 28px !important;
 
-  color: rgba(255, 255, 255, 0.62);
+  margin: 0 !important;
+  padding: 0 !important;
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 
+  border: none !important;
+  background: transparent !important;
+
+  color: rgba(255, 255, 255, 0.62) !important;
   cursor: pointer;
 }
 
-.toggle-password:hover {
-  color: rgba(255, 255, 255, 0.82);
-}
-
-.toggle-password svg {
+.password-wrapper .toggle-password svg {
   width: 19px;
   height: 19px;
-
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.8;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+  display: block;
 }
   </style>
 </head>
