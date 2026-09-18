@@ -3,35 +3,27 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>Play_Ground Pro | Login</title>
-
   <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
-
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
   <style>
     * {
       box-sizing: border-box;
     }
-
     body {
       margin: 0;
       min-height: 100vh;
       font-family: 'Hind Siliguri', sans-serif;
-
       background:
         linear-gradient(
           rgba(3, 7, 18, 0.45),
           rgba(3, 31, 23, 0.65)
         ),
         url("./football-bg.png") center 30% / cover no-repeat fixed;
-
       display: flex;
       justify-content: center;
       align-items: center;
     }
-
     .container {
       width: 100%;
       max-width: 420px;
@@ -40,28 +32,23 @@
       position: relative;
       z-index: 2;
     }
-
     .brand {
       text-align: center;
       margin-bottom: 25px;
     }
-
     .brand-icon {
       font-size: 45px;
     }
-
     .brand h1 {
       margin: 5px 0;
       font-size: 29px;
       color: #fff;
       font-weight: 700;
     }
-
     .brand h1 span {
       color: #16a34a;
       font-weight: 800;
     }
-
     .brand p {
       color: #fff;
       font-size: 15px;
@@ -69,7 +56,6 @@
       text-shadow: 0 2px 8px rgba(0,0,0,0.6);
       margin-top: 10px;
     }
-
     .card {
       background: rgba(255,255,255,0.08);
       border: 1px solid rgba(255,255,255,0.15);
@@ -78,27 +64,23 @@
       padding: 28px 24px;
       box-shadow: 0 20px 60px rgba(0,0,0,0.4);
     }
-
     h2 {
       margin: 0 0 6px;
       font-size: 25px;
       color: #fff;
       font-weight: 700;
     }
-
     .subtitle {
       color: #b7c8c0;
       font-size: 14px;
       margin-bottom: 25px;
     }
-
     label {
       display: block;
       margin-bottom: 7px;
       color: #d1fae5;
       font-size: 14px;
     }
-
     input {
       width: 100%;
       padding: 13px;
@@ -111,15 +93,12 @@
       font-size: 15px;
       outline: none;
     }
-
     input:focus {
       border-color: #34d399;
     }
-
     input::placeholder {
       color: #91a39b;
     }
-
     button {
       width: 100%;
       padding: 13px;
@@ -133,13 +112,11 @@
       font-weight: 700;
       cursor: pointer;
     }
-
     .secondary {
       background: transparent;
       color: #6ee7b7;
       border: 1px solid #276749;
     }
-
     .link {
       display: block;
       text-align: center;
@@ -148,747 +125,532 @@
       cursor: pointer;
       font-size: 14px;
     }
-
     .hidden {
       display: none !important;
     }
-
     .footer {
       text-align: center;
       color: #8da49a;
       font-size: 12px;
       margin-top: 22px;
     }
-
     /* ADMIN PANEL */
-
     .admin-panel {
       position: fixed;
       top: 0;
       right: -100%;
-
       width: min(390px, 90%);
       height: 100vh;
-
       padding: 75px 25px 25px;
-
       background: rgba(255, 255, 255, 0.08);
-backdrop-filter: blur(18px);
--webkit-backdrop-filter: blur(18px);
-
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
       border-left: 1px solid rgba(52,211,153,0.4);
       box-shadow: -10px 0 40px #0009;
-
       z-index: 9999;
       text-align: center;
       overflow-y: auto;
-
       transition: right 0.4s ease;
     }
-
     .admin-panel.active {
       right: 0;
     }
-
     .close-admin {
       position: absolute;
       top: 18px;
       right: 18px;
-
       width: auto;
       margin: 0;
       padding: 5px 10px;
-
       background: transparent;
       color: white;
       font-size: 24px;
     }
-
-    .admin-panel-icon {
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-
-  vertical-align: middle !important;
-  line-height: 1 !important;
-
-  position: relative !important;
-  top: 5px !important;
-  transform: none !important;
-}
-
+    /* ADMIN LOCK ICON - CENTER FIX */
+    .admin-icon {
+      width: 100% !important;
+      height: 55px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      margin: 0 0 15px 0 !important;
+      padding: 0 !important;
+      position: relative !important;
+      top: 0 !important;
+      left: 0 !important;
+      transform: none !important;
+      text-align: center !important;
+      line-height: 1 !important;
+    }
+    .admin-icon span {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      width: 55px !important;
+      height: 55px !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      font-size: 42px !important;
+      line-height: 1 !important;
+      position: relative !important;
+      top: 0 !important;
+      left: 0 !important;
+      transform: none !important;
+    }
     .admin-subtitle {
       color: #9ca3af;
       margin-bottom: 25px;
     }
-
     .admin-panel input {
       width: 100%;
       margin: 8px 0;
     }
-
     .admin-note {
       color: #8da49a;
       font-size: 12px;
       margin-top: 22px;
     }
+    /* PASSWORD EYE ICON */
     .password-wrapper {
-  position: relative !important;
-  width: 100%;
-  display: block;
-}
-
-.password-wrapper input {
-  width: 100%;
-  height: 48px;
-  padding: 0 48px 0 14px !important;
-  box-sizing: border-box;
-}
-
-.password-wrapper .toggle-password {
-  position: absolute !important;
-  top: 24px !important;
-  right: 10px !important;
-
-  transform: translateY(-50%) !important;
-
-  width: 28px !important;
-  height: 28px !important;
-
-  margin: 0 !important;
-  padding: 0 !important;
-
+      position: relative !important;
+      width: 100%;
+      display: block;
+    }
+    .password-wrapper input {
+      width: 100%;
+      height: 48px;
+      padding: 0 48px 0 14px !important;
+      box-sizing: border-box;
+    }
+    .password-wrapper .toggle-password {
+      position: absolute !important;
+      top: 24px !important;
+      right: 10px !important;
+      transform: translateY(-50%) !important;
+      width: 28px !important;
+      height: 28px !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      border: none !important;
+      background: transparent !important;
+      color: rgba(255, 255, 255, 0.62) !important;
+      cursor: pointer;
+    }
+    .password-wrapper .toggle-password svg {
+      width: 19px !important;
+      height: 19px !important;
+      display: block !important;
+      fill: none !important;
+      stroke: rgba(255, 255, 255, 0.62) !important;
+      stroke-width: 1.8 !important;
+      stroke-linecap: round !important;
+      stroke-linejoin: round !important;
+    }
+    .password-wrapper .toggle-password {
+      color: rgba(255, 255, 255, 0.62) !important;
+      background: transparent !important;
+    }
+/* Admin Icon Position Fix */
+.admin-panel > .admin-icon {
+  width: 100% !important;
+  height: 55px !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-
-  border: none !important;
-  background: transparent !important;
-
-  color: rgba(255, 255, 255, 0.62) !important;
-  cursor: pointer;
+  margin: 0 0 15px 0 !important;
+  padding: 0 !important;
+  position: static !important;
+  transform: none !important;
+  line-height: 1 !important;
 }
-
-.password-wrapper .toggle-password svg {
-  width: 19px !important;
-  height: 19px !important;
-
+.admin-panel > .admin-icon span {
   display: block !important;
-
-  fill: none !important;
-  stroke: rgba(255, 255, 255, 0.62) !important;
-
-  stroke-width: 1.8 !important;
-  stroke-linecap: round !important;
-  stroke-linejoin: round !important;
-}
-
-.password-wrapper .toggle-password {
-  color: rgba(255, 255, 255, 0.62) !important;
-  background: transparent !important;
-}
-    /* শুধুমাত্র Admin Login Password Eye Icon */
-.password-wrapper:has(#adminLoginPassword) {
-  position: relative !important;
-  height: 48px !important;
-}
-
-.password-wrapper:has(#adminLoginPassword) .toggle-password {
-  position: absolute !important;
-  top: 50% !important;
-  bottom: auto !important;
-  right: 10px !important;
-  transform: translateY(-50%) !important;
+  font-size: 42px !important;
+  line-height: 1 !important;
   margin: 0 !important;
   padding: 0 !important;
-  height: 28px !important;
-  width: 28px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
 }
   </style>
 </head>
-
 <body>
-
   <div class="container">
-
     <div class="brand">
       <div class="brand-icon">⚽🏏</div>
-
       <h1>
         Play_Ground <span>PRO</span>
       </h1>
-
       <p>Premium Football & Cricket Turf</p>
     </div>
-
     <div class="card">
-
       <!-- CUSTOMER LOGIN -->
-
       <div id="loginSection">
-
         <h2>Welcome Back</h2>
         <p class="subtitle">আপনার অ্যাকাউন্টে লগইন করুন</p>
-
         <form onsubmit="loginUser(event)">
-
           <label>Phone Number</label>
           <input type="tel" placeholder="আপনার ফোন নম্বর" required>
-
           <label>Password</label>
           <input type="password" placeholder="আপনার পাসওয়ার্ড" required>
-
           <button type="submit">
             LOGIN →
           </button>
-
         </form>
-
         <span class="link" onclick="showRegister()">
           নতুন অ্যাকাউন্ট তৈরি করুন
         </span>
-
         <button class="secondary" onclick="showGuest()">
           CONTINUE AS GUEST
         </button>
-
       </div>
-
-
       <!-- CUSTOMER REGISTER -->
-
       <div id="registerSection" class="hidden">
-
         <h2>Create Account</h2>
         <p class="subtitle">নতুন অ্যাকাউন্ট তৈরি করুন</p>
-
         <form onsubmit="registerUser(event)">
-
           <label>Full Name</label>
           <input type="text" placeholder="আপনার পূর্ণ নাম" required>
-
           <label>Phone Number</label>
           <input type="tel" placeholder="আপনার ফোন নম্বর" required>
-
           <label>Password</label>
           <input type="password" placeholder="পাসওয়ার্ড তৈরি করুন" required>
-
           <label>Confirm Password</label>
           <input type="password" placeholder="পাসওয়ার্ড আবার লিখুন" required>
-
           <button type="submit">
             CREATE ACCOUNT
           </button>
-
         </form>
-
         <span class="link" onclick="showLogin()">
           আগে থেকেই অ্যাকাউন্ট আছে? Login
         </span>
-
       </div>
-
-
       <!-- GUEST -->
-
       <div id="guestSection" class="hidden">
-
         <h2>Guest Booking</h2>
         <p class="subtitle">অ্যাকাউন্ট ছাড়াই বুকিং করুন</p>
-
         <form onsubmit="guestBooking(event)">
-
           <label>Full Name</label>
           <input type="text" placeholder="আপনার নাম" required>
-
           <label>Phone Number</label>
           <input type="tel" placeholder="আপনার ফোন নম্বর" required>
-
           <button type="submit">
             CONTINUE BOOKING →
           </button>
-
         </form>
-
         <span class="link" onclick="showLogin()">
           Login পেজে ফিরে যান
         </span>
-
       </div>
-
     </div>
-
     <div class="footer">
       © 2026 Play_Ground Pro. All rights reserved.
     </div>
-
   </div>
-
-
   <!-- ADMIN PANEL -->
-
   <div id="adminPanel" class="admin-panel">
-
     <button class="close-admin" onclick="closeAdminPanel()">
       ✕
     </button>
-
+    <!-- ADMIN ICON -->
     <div class="admin-icon">
-      🔐
-    </div>
-
+  <span>🔐</span>
+</div>
     <!-- ADMIN LOGIN -->
-
     <div id="adminLoginSection">
-
       <h2>Admin Login</h2>
-
       <p class="admin-subtitle">
         Authorized access only
       </p>
-
       <form onsubmit="adminLogin(event)">
-
         <input
           type="email"
           id="adminLoginEmail"
           placeholder="Admin Email"
           required
         >
-
         <input
           type="password"
           id="adminLoginPassword"
           placeholder="Password"
           required
         >
-
         <button type="submit">
           ADMIN LOGIN →
         </button>
-
       </form>
-
       <span class="link" onclick="showAdminRegister()">
         Create Admin Account
       </span>
-
     </div>
-
-
     <!-- ADMIN REGISTER -->
-
     <div id="adminRegisterSection" class="hidden">
-
       <h2>Admin Registration</h2>
-
       <p class="admin-subtitle">
         Create your admin account
       </p>
-
       <form onsubmit="adminRegister(event)">
-
         <input
           type="text"
           id="adminRegName"
           placeholder="Full Name"
           required
         >
-
         <input
           type="email"
           id="adminRegEmail"
           placeholder="Email Address"
           required
         >
-
         <input
           type="tel"
           id="adminRegPhone"
           placeholder="Mobile Number"
           required
         >
-
         <input
           type="password"
           id="adminRegPassword"
           placeholder="Password"
           required
         >
-
         <input
           type="password"
           id="adminRegConfirmPassword"
           placeholder="Confirm Password"
           required
         >
-
         <button type="submit">
           REGISTER ADMIN
         </button>
-
       </form>
-
       <span class="link" onclick="showAdminLogin()">
         Already registered? Login
       </span>
-
     </div>
-
     <div class="admin-note">
       Admin approval ও role verification পরবর্তী ধাপে যুক্ত হবে।
     </div>
-
   </div>
-
-
   <script>
-
     /* SUPABASE CONFIGURATION */
-
     const SUPABASE_URL =
       "https://hnmciqupyakugesclfnw.supabase.co";
-
     const SUPABASE_PUBLISHABLE_KEY =
       "sb_publishable_ory8XocB_s-ltfnLh9NWFw_QPMd0_D1";
-
     const supabaseClient =
       supabase.createClient(
         SUPABASE_URL,
         SUPABASE_PUBLISHABLE_KEY
       );
-
-
     /* CUSTOMER SECTION */
-
     function hideAll() {
-
       document.getElementById("loginSection")
         .classList.add("hidden");
-
       document.getElementById("registerSection")
         .classList.add("hidden");
-
       document.getElementById("guestSection")
         .classList.add("hidden");
-
     }
-
-
     function showLogin() {
-
       hideAll();
-
       document.getElementById("loginSection")
         .classList.remove("hidden");
-
     }
-
-
     function showRegister() {
-
       hideAll();
-
       document.getElementById("registerSection")
         .classList.remove("hidden");
-
     }
-
-
     function showGuest() {
-
       hideAll();
-
       document.getElementById("guestSection")
         .classList.remove("hidden");
-
     }
-
-
     function loginUser(event) {
-
       event.preventDefault();
-
       alert("Customer login পরবর্তী ধাপে যুক্ত হবে।");
-
     }
-
-
     function registerUser(event) {
-
       event.preventDefault();
-
       alert("Customer registration পরবর্তী ধাপে যুক্ত হবে।");
-
     }
-
-
     function guestBooking(event) {
-
       event.preventDefault();
-
       alert("Guest booking পরবর্তী ধাপে যুক্ত হবে।");
-
     }
-
-
     /* ADMIN SWIPE ACCESS */
-
     let startX = 0;
     let startY = 0;
-
     document.addEventListener("pointerdown", function(event) {
-
       startX = event.clientX;
       startY = event.clientY;
-
     });
-
-
     document.addEventListener("pointerup", function(event) {
-
       const deltaX = event.clientX - startX;
       const deltaY = event.clientY - startY;
-
       const fromBottomRight =
         startX > window.innerWidth * 0.65 &&
         startY > window.innerHeight * 0.65;
-
       const validSwipe =
         deltaX < -100 &&
         deltaY < -100;
-
       if (fromBottomRight && validSwipe) {
-
         document.getElementById("adminPanel")
           .classList.add("active");
-
       }
-
     });
-
-
     /* ADMIN PANEL CONTROL */
-
     function closeAdminPanel() {
-
       document.getElementById("adminPanel")
         .classList.remove("active");
-
     }
-
-
     function showAdminLogin() {
-
       document.getElementById("adminRegisterSection")
         .classList.add("hidden");
-
       document.getElementById("adminLoginSection")
         .classList.remove("hidden");
-
     }
-
-
     function showAdminRegister() {
-
       document.getElementById("adminLoginSection")
         .classList.add("hidden");
-
       document.getElementById("adminRegisterSection")
         .classList.remove("hidden");
-
     }
-
-
     /* ADMIN REGISTRATION */
-
     async function adminRegister(event) {
-
       event.preventDefault();
-
       const name =
         document.getElementById("adminRegName").value.trim();
-
       const email =
         document.getElementById("adminRegEmail").value.trim();
-
       const phone =
         document.getElementById("adminRegPhone").value.trim();
-
       const password =
         document.getElementById("adminRegPassword").value;
-
       const confirmPassword =
         document.getElementById("adminRegConfirmPassword").value;
-
-
       if (password !== confirmPassword) {
-
         alert("Password মিলছে না।");
         return;
-
       }
-
-
       if (
         SUPABASE_PUBLISHABLE_KEY ===
         "PASTE_YOUR_PUBLISHABLE_KEY_HERE"
       ) {
-
         alert("প্রথমে Supabase Publishable Key বসাও।");
         return;
-
       }
-
-
       const { error } =
         await supabaseClient.auth.signUp({
-
           email: email,
           password: password,
-
           options: {
-
             data: {
-
               full_name: name,
               phone: phone,
               requested_role: "admin"
-
             }
-
           }
-
         });
-
-
       if (error) {
-
         alert(error.message);
         return;
-
       }
-
-
       alert(
         "Registration সফল হয়েছে। Email যাচাই করো।"
       );
-
       showAdminLogin();
-
     }
-
-
     /* ADMIN LOGIN */
-
     async function adminLogin(event) {
-
       event.preventDefault();
-
       const email =
         document.getElementById("adminLoginEmail")
           .value.trim();
-
       const password =
         document.getElementById("adminLoginPassword")
           .value;
-
-
       if (
         SUPABASE_PUBLISHABLE_KEY ===
         "PASTE_YOUR_PUBLISHABLE_KEY_HERE"
       ) {
-
         alert("প্রথমে Supabase Publishable Key বসাও।");
         return;
-
       }
-
-
       const { error } =
         await supabaseClient.auth.signInWithPassword({
-
           email: email,
           password: password
-
         });
-
-
       if (error) {
-
         alert(error.message);
         return;
-
       }
-
-
       alert(
         "Login সফল হয়েছে। Admin approval ও role verification পরবর্তী ধাপে যুক্ত হবে।"
       );
-
     }
+    /* PASSWORD EYE ICON */
     document.addEventListener("DOMContentLoaded", function () {
-  const passwordInputs = document.querySelectorAll(
-    'input[type="password"]'
-  );
-
-  passwordInputs.forEach(function (input) {
-
-    // একই বক্সে আবার আইকন তৈরি হওয়া আটকাবে
-    if (input.parentElement.classList.contains("password-wrapper")) {
-      return;
-    }
-
-    const wrapper = document.createElement("div");
-    wrapper.className = "password-wrapper";
-
-    input.parentNode.insertBefore(wrapper, input);
-    wrapper.appendChild(input);
-
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = "toggle-password";
-    button.setAttribute("aria-label", "Show password");
-
-    const eyeIcon = `
-      <svg viewBox="0 0 24 24">
-        <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/>
-        <circle cx="12" cy="12" r="3"/>
-      </svg>
-    `;
-
-    const eyeOffIcon = `
-      <svg viewBox="0 0 24 24">
-        <path d="M3 3l18 18"/>
-        <path d="M10.6 5.2A10.8 10.8 0 0 1 12 5c6.5 0 10 7 10 7a18 18 0 0 1-3.2 4.2"/>
-        <path d="M6.2 6.3C3.5 8.3 2 12 2 12s3.5 7 10 7a10.8 10.8 0 0 0 4-.8"/>
-        <path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/>
-      </svg>
-    `;
-
-    button.innerHTML = eyeIcon;
-    wrapper.appendChild(button);
-
-    button.addEventListener("click", function () {
-
-      if (input.type === "password") {
-        input.type = "text";
-        button.innerHTML = eyeOffIcon;
-        button.setAttribute("aria-label", "Hide password");
-      } else {
-        input.type = "password";
+      const passwordInputs = document.querySelectorAll(
+        'input[type="password"]'
+      );
+      passwordInputs.forEach(function (input) {
+        if (
+          input.parentElement.classList.contains(
+            "password-wrapper"
+          )
+        ) {
+          return;
+        }
+        const wrapper = document.createElement("div");
+        wrapper.className = "password-wrapper";
+        input.parentNode.insertBefore(wrapper, input);
+        wrapper.appendChild(input);
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "toggle-password";
+        button.setAttribute(
+          "aria-label",
+          "Show password"
+        );
+        const eyeIcon = `
+          <svg viewBox="0 0 24 24">
+            <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/>
+            <circle cx="12" cy="12" r="3"/>
+          </svg>
+        `;
+        const eyeOffIcon = `
+          <svg viewBox="0 0 24 24">
+            <path d="M3 3l18 18"/>
+            <path d="M10.6 5.2A10.8 10.8 0 0 1 12 5c6.5 0 10 7 10 7a18 18 0 0 1-3.2 4.2"/>
+            <path d="M6.2 6.3C3.5 8.3 2 12 2 12s3.5 7 10 7a10.8 10.8 0 0 0 4-.8"/>
+            <path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/>
+          </svg>
+        `;
         button.innerHTML = eyeIcon;
-        button.setAttribute("aria-label", "Show password");
-      }
-
+        wrapper.appendChild(button);
+        button.addEventListener("click", function () {
+          if (input.type === "password") {
+            input.type = "text";
+            button.innerHTML = eyeOffIcon;
+            button.setAttribute(
+              "aria-label",
+              "Hide password"
+            );
+          } else {
+            input.type = "password";
+            button.innerHTML = eyeIcon;
+            button.setAttribute(
+              "aria-label",
+              "Show password"
+            );
+          }
+        });
+      });
     });
-
-  });
-});
   </script>
-
 </body>
 </html>
