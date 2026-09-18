@@ -384,7 +384,7 @@
       "https://hnmciqupyakugesclfnw.supabase.co";
 
     const SUPABASE_PUBLISHABLE_KEY =
-      "sb_publishable_ory8XocB_s-ltfnLh9NWFw_QPMd0_D1";
+      "PASTE_YOUR_PUBLISHABLE_KEY_HERE";
 
     const supabaseClient = supabase.createClient(
       SUPABASE_URL,
@@ -487,7 +487,7 @@
 
       if (
         SUPABASE_PUBLISHABLE_KEY ===
-        "sb_publishable_ory8XocB_s-ltfnLh9NWFw_QPMd0_D1"
+        "PASTE_YOUR_PUBLISHABLE_KEY_HERE"
       ) {
         alert("প্রথমে Supabase Publishable Key বসান।");
         return;
@@ -510,8 +510,7 @@
     }
   </script>
 
-<!-- PLAY_GROUND PRO ADD-ON FEATURES -->
-
+<!-- PLAY_GROUND PRO ADD-ON FEATURES: Base Version remains unchanged above this point -->
 <style id="pgp-addon-style">
   .pgp-screen{position:fixed;inset:0;z-index:12000;display:none;overflow:auto;padding:22px;background:linear-gradient(rgba(3,7,18,.58),rgba(3,31,23,.78)),url("./football-bg.png") center/cover no-repeat;font-family:'Hind Siliguri',sans-serif;color:#fff}
   .pgp-screen.active{display:block}
@@ -604,7 +603,6 @@
   window.adminLogin=async function(e){e.preventDefault();if(SUPABASE_PUBLISHABLE_KEY==='PASTE_YOUR_PUBLISHABLE_KEY_HERE'){alert('প্রথমে Supabase Publishable Key বসান।');return;}const email=$('adminEmail').value.trim(),password=$('adminPassword').value;const result=await supabaseClient.auth.signInWithPassword({email,password});if(result.error){alert(result.error.message);return;}pgpOpenAdmin();};
 })();
 </script>
-
 
 </body>
 </html>
