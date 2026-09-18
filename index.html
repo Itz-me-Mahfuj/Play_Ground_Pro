@@ -223,35 +223,27 @@
 
     /* ADMIN PANEL */
 
-    .admin-panel {
-      position: fixed;
-      top: 0;
-      right: -100%;
+    /* Hidden Admin Panel */
+.admin-panel {
+  position: fixed;
+  top: 0;
+  right: -100%;
+  width: min(390px, 90%);
+  height: 100vh;
+  padding: 75px 25px 25px;
 
-      width: min(390px, 90%);
-      height: 100vh;
+  /* Same transparency as Customer Login */
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
 
-      padding: 75px 25px 25px;
-
-      background:
-  linear-gradient(
-    rgba(3, 7, 18, 0.94),
-    rgba(3, 31, 23, 0.96)
-  ),
-  url("./football-bg.png") center 30% / cover no-repeat fixed;
-
-backdrop-filter: blur(18px);
--webkit-backdrop-filter: blur(18px);
-
-      border-left: 1px solid #34d39966;
-      box-shadow: -10px 0 40px #0009;
-
-      z-index: 9999;
-      text-align: center;
-      overflow-y: auto;
-
-      transition: right 0.4s ease;
-    }
+  border-left: 1px solid #34d39966;
+  box-shadow: -10px 0 40px #0009;
+  z-index: 9999;
+  text-align: center;
+  overflow-y: auto;
+  transition: right 0.4s ease;
+}
 
     .admin-panel.active {
       right: 0;
