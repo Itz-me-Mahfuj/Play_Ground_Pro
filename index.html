@@ -537,6 +537,8 @@
         <label>আপনার নাম</label><input id="pgpName" required placeholder="পূর্ণ নাম">
         <label>মোবাইল নম্বর</label><input id="pgpPhone" required type="tel" placeholder="01XXXXXXXXX">
         <label>নির্বাচিত সময়</label><input id="pgpSelectedSlot" readonly required placeholder="উপরের তালিকা থেকে সময় নির্বাচন করুন">
+        <label>বুকিং এমাউন্ট</label><input id="pgpBookingAmount" value="500" readonly><small>প্রতি স্লটের নির্ধারিত বুকিং এমাউন্ট: ৳500</small>
+        <label>বকেয়া</label><input id="pgpDueAmount" value="500" readonly>
         <label>পেমেন্ট পদ্ধতি</label>
         <select id="pgpPaymentMethod" required onchange="pgpPaymentChanged()">
           <option value="">পেমেন্ট পদ্ধতি নির্বাচন করুন</option>
@@ -562,7 +564,12 @@
             <div>নগদ (পার্সোনাল): <span>অ্যাকাউন্ট নম্বর সংরক্ষিত নেই</span></div>
             <div>রকেট (পার্সোনাল): <span>অ্যাকাউন্ট নম্বর সংরক্ষিত নেই</span></div>
           </div>
-          <p class="pgp-muted" style="font-size:11px;margin-top:4px">সেন্ড মানি করলে প্রযোজ্য চার্জসহ টাকা পাঠাতে হবে।</p>
+          <p class="pgp-muted" style="font-size:11px;margin-top:4px">পার্সোনাল নম্বরে টাকা পাঠিয়ে Transaction ID / TrxID দিন।</p>
+        </div>
+        <div id="pgpTransactionWrap" class="pgp-payment-extra" hidden>
+          <label for="pgpTransactionId">Transaction ID / TrxID</label>
+          <input id="pgpTransactionId" type="text" placeholder="আপনার Transaction ID লিখুন">
+          <small>পার্সোনাল নম্বরে পেমেন্ট করলে TrxID অবশ্যই দিতে হবে।</small>
         </div>
         <button type="submit">BOOK SLOT →</button>
       </form><p id="pgpBookingMessage"></p></div>
@@ -588,10 +595,69 @@
   window.pgpChooseSport=function(value){sport=value;$('pgpFootballBtn').classList.toggle('selected',value==='Football');$('pgpCricketBtn').classList.toggle('selected',value==='Cricket');selectedSlot='';$('pgpSelectedSlot').value='';pgpRenderSlots();};
   window.pgpRenderSlots=function(){const date=$('pgpDate').value;const box=$('pgpSlots');pgpUpdateWeekday();box.innerHTML='';if(!date){box.innerHTML='<p class="pgp-muted">প্রথমে তারিখ নির্বাচন করুন।</p>';return;}const bookings=getBookings();slots.forEach(slot=>{const state=bookings.find(b=>b.date===date&&b.sport===sport&&b.slot===slot&&b.status!=='Rejected');const b=document.createElement('button');b.type='button';b.className='pgp-slot';b.textContent=slot;if(state){b.classList.add(state.status==='Pending'?'pending':'booked');b.disabled=true;b.title=state.status;}else{b.textContent=slot+' • Available';b.onclick=()=>{selectedSlot=slot;$('pgpSelectedSlot').value=slot;document.querySelectorAll('.pgp-slot').forEach(x=>x.classList.remove('selected'));b.classList.add('selected');};}box.appendChild(b);});};
   window.pgpUpdateWeekday=function(){const date=$('pgpDate').value;const names=['রবিবার','সোমবার','মঙ্গলবার','বুধবার','বৃহস্পতিবার','শুক্রবার','শনিবার'];$('pgpWeekday').textContent=date?names[new Date(date+'T12:00:00').getDay()]:'বার';};
-  window.pgpPaymentChanged=function(){const method=$('pgpPaymentMethod').value;$('pgpOnlineOptions').hidden=method!=='Online Payment';$('pgpSendMoneyOptions').hidden=method!=='Send Money';$('pgpOnlineProvider').required=method==='Online Payment';if(method!=='Online Payment')$('pgpOnlineProvider').value='';};
-  window.pgpCreateBooking=function(e){e.preventDefault();const date=$('pgpDate').value,name=$('pgpName').value.trim(),phone=$('pgpPhone').value.trim(),paymentMethod=$('pgpPaymentMethod').value,onlineProvider=$('pgpOnlineProvider').value;if(!selectedSlot){$('pgpBookingMessage').textContent='একটি সময় নির্বাচন করুন।';return;}if(!paymentMethod){$('pgpBookingMessage').textContent='পেমেন্ট পদ্ধতি নির্বাচন করুন।';return;}if(paymentMethod==='Online Payment'&&!onlineProvider){$('pgpBookingMessage').textContent='অনলাইন পেমেন্ট মাধ্যম নির্বাচন করুন।';return;}const bookings=getBookings();if(bookings.some(b=>b.date===date&&b.sport===sport&&b.slot===selectedSlot&&b.status!=='Rejected')){ $('pgpBookingMessage').textContent='দুঃখিত, সময়টি ইতোমধ্যে বুকড।';pgpRenderSlots();return;}const autoApproved=paymentMethod==='Online Payment';bookings.push({id:'PGP-'+Date.now(),name,phone,date,sport,slot:selectedSlot,paymentMethod,onlineProvider:paymentMethod==='Online Payment'?onlineProvider:'',status:autoApproved?'Approved':'Pending',approvalType:autoApproved?'Automatic':'Admin Approval',createdAt:new Date().toISOString()});saveBookings(bookings);$('pgpBookingMessage').textContent=autoApproved?'অনলাইন পেমেন্ট বুকিং গ্রহণ করা হয়েছে। পেমেন্ট যাচাই হলে স্বয়ংক্রিয়ভাবে Confirm হবে।':'বুকিং রিকোয়েস্ট গ্রহণ করা হয়েছে। Admin approval প্রয়োজন।';selectedSlot='';$('pgpSelectedSlot').value='';$('pgpPaymentMethod').value='';$('pgpOnlineProvider').value='';pgpPaymentChanged();pgpRenderSlots();pgpRenderMyBookings();pgpRenderAdmin();};
+  window.pgpPaymentChanged=function(){
+  const method=$('pgpPaymentMethod').value;
+  $('pgpOnlineOptions').hidden=method!=='Online Payment';
+  $('pgpSendMoneyOptions').hidden=method!=='Send Money';
+  $('pgpOnlineProvider').required=method==='Online Payment';
+  $('pgpTransactionWrap').hidden=method!=='Send Money';
+  $('pgpTransactionId').required=method==='Send Money';
+  if(method!=='Online Payment')$('pgpOnlineProvider').value='';
+  if(method!=='Online Payment'&&method!=='Send Money')$('pgpTransactionId').value='';
+};
+  window.pgpCreateBooking=function(e){
+  e.preventDefault();
+  const date=$('pgpDate').value,
+    totalAmount=500,
+    dueAmount=500,
+    name=$('pgpName').value.trim(),
+    phone=$('pgpPhone').value.trim(),
+    paymentMethod=$('pgpPaymentMethod').value,
+    onlineProvider=$('pgpOnlineProvider').value,
+    transactionId=$('pgpTransactionId').value.trim();
+
+  if(!date){$('pgpBookingMessage').textContent='তারিখ নির্বাচন করুন।';return;}
+  if(!selectedSlot){$('pgpBookingMessage').textContent='একটি সময় নির্বাচন করুন।';return;}
+  if(!paymentMethod){$('pgpBookingMessage').textContent='পেমেন্ট পদ্ধতি নির্বাচন করুন।';return;}
+  if(paymentMethod==='Online Payment'&&!onlineProvider){$('pgpBookingMessage').textContent='অনলাইন পেমেন্ট মাধ্যম নির্বাচন করুন।';return;}
+  if(paymentMethod==='Send Money'&&!transactionId){
+    $('pgpBookingMessage').textContent='Transaction ID / TrxID লিখুন।';return;
+  }
+
+  const bookings=getBookings();
+  if(bookings.some(b=>b.date===date&&b.sport===sport&&b.slot===selectedSlot&&b.status!=='Rejected')){
+    $('pgpBookingMessage').textContent='দুঃখিত, সময়টি ইতোমধ্যে বুকড।';
+    pgpRenderSlots();return;
+  }
+
+  bookings.push({
+    id:'PGP-'+Date.now(),
+    name,phone,date,sport,slot:selectedSlot,
+    paymentMethod,
+    onlineProvider:paymentMethod==='Online Payment'?onlineProvider:'',
+    transactionId:transactionId||'',
+    totalAmount,dueAmount,
+    voucherCode:'PGP-V-'+Date.now().toString().slice(-8),
+    status:'Approved',
+    approvalType:'Auto Confirmation',
+    createdAt:new Date().toISOString()
+  });
+
+  saveBookings(bookings);
+  $('pgpBookingMessage').textContent='পেমেন্ট সম্পন্ন হলে আপনার বুকিং স্বয়ংক্রিয়ভাবে কনফার্ম হয়েছে।';
+  selectedSlot='';
+  $('pgpSelectedSlot').value='';
+  $('pgpPaymentMethod').value='';
+  $('pgpOnlineProvider').value='';
+  $('pgpTransactionId').value='';
+  $('pgpDueAmount').value='500';
+  pgpPaymentChanged();
+  pgpRenderSlots();
+  pgpRenderMyBookings();
+  pgpRenderAdmin();
+};
   window.pgpRenderMyBookings=function(){const mine=getBookings().filter(b=>b.phone===($('pgpPhone')?.value||'')||b.name===($('pgpName')?.value||''));$('pgpMyBookings').innerHTML=mine.length?mine.map(b=>`${b.date} • ${b.sport} • ${b.slot} • <span class="pgp-badge">${b.status}</span>`).join('<br>'):'এখনো কোনো বুকিং নেই।';};
-  window.pgpRenderAdmin=function(){const b=getBookings();$('pgpTotalCount').textContent=b.length;$('pgpPendingCount').textContent=b.filter(x=>x.status==='Pending').length;$('pgpApprovedCount').textContent=b.filter(x=>x.status==='Approved').length;if(!b.length){$('pgpAdminBookings').textContent='কোনো বুকিং নেই।';return;}const table=document.createElement('table');table.className='pgp-table';table.innerHTML='<tr><th>Date</th><th>Sport</th><th>Slot</th><th>Name</th><th>Payment</th><th>Status</th><th>Action</th></tr>';b.forEach(x=>{const tr=document.createElement('tr');tr.innerHTML=`<td>${x.date}</td><td>${x.sport}</td><td>${x.slot}</td><td>${x.name}</td><td>${x.paymentMethod||'—'}</td><td>${x.status}</td><td></td>`;const td=tr.lastElementChild;if(x.status==='Pending'){['Approve','Reject'].forEach(action=>{const btn=document.createElement('button');btn.textContent=action;btn.style.width='auto';btn.style.margin='2px';btn.style.padding='5px 8px';btn.onclick=()=>{x.status=action==='Approve'?'Approved':'Rejected';saveBookings(b);pgpRenderAdmin();pgpRenderSlots();pgpRenderMyBookings();};td.appendChild(btn);});}table.appendChild(tr);});$('pgpAdminBookings').innerHTML='';$('pgpAdminBookings').appendChild(table);};
+  window.pgpRenderAdmin=function(){const b=getBookings();$('pgpTotalCount').textContent=b.length;$('pgpPendingCount').textContent=b.filter(x=>x.status==='Pending').length;$('pgpApprovedCount').textContent=b.filter(x=>x.status==='Approved').length;if(!b.length){$('pgpAdminBookings').textContent='কোনো বুকিং নেই।';return;}const table=document.createElement('table');table.className='pgp-table';table.innerHTML='<tr><th>Date</th><th>Sport</th><th>Slot</th><th>Name</th><th>Amount</th><th>Payment</th><th>TrxID</th><th>Voucher</th><th>Status</th><th>Action</th></tr>';b.forEach(x=>{const tr=document.createElement('tr');tr.innerHTML=`<td>${x.date}</td><td>${x.sport}</td><td>${x.slot}</td><td>${x.name}</td><td>৳${x.totalAmount||500}<br>বকেয়া: ৳${x.dueAmount??500}</td><td>${x.paymentMethod||'—'}${x.onlineProvider?' ('+x.onlineProvider+')':''}</td><td>${x.transactionId||'—'}</td><td>${x.voucherCode||'—'}</td><td>${x.status}</td><td></td>`;const td=tr.lastElementChild;if(x.status==='Pending'){['Approve','Reject'].forEach(action=>{const btn=document.createElement('button');btn.textContent=action;btn.style.width='auto';btn.style.margin='2px';btn.style.padding='5px 8px';btn.onclick=()=>{x.status=action==='Approve'?'Approved':'Rejected';if(action==='Approve'&&!x.voucherCode){x.voucherCode='PGP-V-'+Date.now().toString().slice(-8);}saveBookings(b);pgpRenderAdmin();pgpRenderSlots();pgpRenderMyBookings();};td.appendChild(btn);});}table.appendChild(tr);});$('pgpAdminBookings').innerHTML='';$('pgpAdminBookings').appendChild(table);};
   window.pgpOpenCustomer=function(user){currentUser=user||'Guest';$('pgpCustomerScreen').classList.add('active');$('pgpAdminScreen').classList.remove('active');const d=new Date();$('pgpDate').value=d.toISOString().slice(0,10);pgpRenderSlots();pgpRenderMyBookings();};
   window.pgpOpenAdmin=function(){$('pgpAdminScreen').classList.add('active');$('pgpCustomerScreen').classList.remove('active');pgpRenderAdmin();};
   window.pgpCloseScreens=function(){$('pgpCustomerScreen').classList.remove('active');$('pgpAdminScreen').classList.remove('active');};
