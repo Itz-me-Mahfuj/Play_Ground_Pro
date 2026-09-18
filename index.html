@@ -287,16 +287,25 @@ backdrop-filter: blur(18px);
   color: rgba(255, 255, 255, 0.62) !important;
   background: transparent !important;
 }
-    /* শুধু Admin Panel-এর Password Eye Icon */
-.admin-panel .password-wrapper {
-  height: 48px !important;
+    /* শুধুমাত্র Admin Login Password Eye Icon */
+.password-wrapper:has(#adminLoginPassword) {
   position: relative !important;
+  height: 48px !important;
 }
 
-.admin-panel .password-wrapper .toggle-password {
+.password-wrapper:has(#adminLoginPassword) .toggle-password {
+  position: absolute !important;
   top: 50% !important;
+  bottom: auto !important;
   right: 10px !important;
   transform: translateY(-50%) !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  height: 28px !important;
+  width: 28px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
   </style>
 </head>
