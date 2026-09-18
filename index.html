@@ -175,6 +175,31 @@
 
 
 
+
+    /* Admin form labels: left aligned and close to each related box */
+    .admin-panel form { text-align: left; }
+    .admin-panel form > label {
+      display: block;
+      margin: 9px 0 3px 3px;
+      color: #d1fae5;
+      font-size: 13px;
+      font-weight: 600;
+      line-height: 1.25;
+      text-align: left;
+    }
+    .admin-panel form > input {
+      margin: 0 0 9px 0 !important;
+      box-sizing: border-box;
+    }
+    .admin-panel .password-field { margin-bottom: 9px; }
+    .admin-panel h3 {
+      margin: 8px 0 20px;
+      color: #86efac;
+      font-size: 25px;
+      font-weight: 700;
+      text-align: center;
+    }
+
     /* Password fields with correctly aligned eye icon */
     .password-field {
       position: relative;
@@ -360,71 +385,53 @@
     <h2>Admin Control Center</h2>
     <p class="admin-subtitle">Authorized access only</p>
 
-    <form onsubmit="adminLogin(event)">
-      <input type="email" id="adminEmail" placeholder="Admin Email" required>
-      <div class="password-field">
-          <input type="password" id="adminPassword" placeholder="Password" required>
-          <button type="button" class="password-toggle" data-target="adminPassword" aria-label="পাসওয়ার্ড দেখুন" aria-pressed="false">
+    <div id="adminLoginSection">
+      <form onsubmit="adminLogin(event)">
+        <label for="adminEmail">এডমিন ইমেইল</label>
+        <input type="email" id="adminEmail" placeholder="Admin Email" required>
+        <label for="adminPassword">পাসওয়ার্ড</label>
+        <div class="password-field">
+            <input type="password" id="adminPassword" placeholder="Password" required>
+            <button type="button" class="password-toggle" data-target="adminPassword" aria-label="পাসওয়ার্ড দেখুন" aria-pressed="false">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            </button>
+          </div>
+        <button type="submit">ADMIN LOGIN →</button>
+      </form>
+      <p class="link" onclick="showAdminRegister()">নতুন Admin Account তৈরি করুন</p>
+    </div>
+
+    <div id="adminRegisterSection" class="hidden">
+      <h3>Admin Registration</h3>
+      <form onsubmit="adminRegister(event)">
+        <label for="adminName">Admin Name</label>
+        <input type="text" id="adminName" placeholder="Admin Name" required>
+        <label for="adminPhone">Phone Number</label>
+        <input type="tel" id="adminPhone" placeholder="Phone Number" required>
+        <label for="adminRegisterEmail">Admin Email</label>
+        <input type="email" id="adminRegisterEmail" placeholder="Admin Email" required>
+        <label for="adminRegisterPassword">Create Password</label>
+        <div class="password-field">
+          <input type="password" id="adminRegisterPassword" placeholder="Create Password" required>
+          <button type="button" class="password-toggle" data-target="adminRegisterPassword" aria-label="পাসওয়ার্ড দেখুন" aria-pressed="false">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
           </button>
         </div>
-      <button type="submit">ADMIN LOGIN →</button>
-    </form>
+        <label for="adminConfirmPassword">Confirm Password</label>
+        <div class="password-field">
+          <input type="password" id="adminConfirmPassword" placeholder="Confirm Password" required>
+          <button type="button" class="password-toggle" data-target="adminConfirmPassword" aria-label="পাসওয়ার্ড দেখুন" aria-pressed="false">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+          </button>
+        </div>
+        <button type="submit">REGISTER ADMIN →</button>
+      </form>
+      <p class="link" onclick="showAdminLogin()">আগের Admin Login-এ ফিরে যান</p>
+    </div>
 
-   <div style="margin-top:18px;">
-  <span
-    class="link"
-    onclick="showAdminRegister()"
-  >
-    নতুন Admin Account তৈরি করুন
-  </span>
-</div>
-
-<div class="admin-note">
+    <div class="admin-note">
       Admin role verification ও dashboard পরবর্তী ধাপে যুক্ত হবে।
     </div>
-    <div id="adminRegisterSection" class="hidden" style="margin-top:25px;">
-  <h3>Admin Registration</h3>
-
-  <form onsubmit="adminRegister(event)">
-    <input
-      type="text"
-      id="adminRegisterName"
-      placeholder="Admin নাম"
-      required
-    >
-
-    <input
-      type="email"
-      id="adminRegisterEmail"
-      placeholder="Admin Email"
-      required
-    >
-
-    <input
-      type="password"
-      id="adminRegisterPassword"
-      placeholder="নতুন Password"
-      minlength="6"
-      required
-    >
-
-    <input
-      type="password"
-      id="adminRegisterConfirmPassword"
-      placeholder="Password আবার লিখুন"
-      minlength="6"
-      required
-    >
-
-    <button type="submit">
-      CREATE ADMIN ACCOUNT
-    </button>
-  </form>
-
-  <span class="link" onclick="showAdminLogin()">
-    Admin Login-এ ফিরে যান
-  </span>
   </div>
 
   <button type="button" id="adminDot" class="admin-dot" aria-label="Admin Access">•</button>
@@ -477,6 +484,28 @@
     function guestBooking(event) {
       event.preventDefault();
       alert("Guest booking system পরবর্তী ধাপে সংযুক্ত করা হবে।");
+    }
+
+    function showAdminRegister() {
+      document.getElementById("adminLoginSection").classList.add("hidden");
+      document.getElementById("adminRegisterSection").classList.remove("hidden");
+    }
+
+    function showAdminLogin() {
+      document.getElementById("adminRegisterSection").classList.add("hidden");
+      document.getElementById("adminLoginSection").classList.remove("hidden");
+    }
+
+    function adminRegister(event) {
+      event.preventDefault();
+      const password = document.getElementById("adminRegisterPassword").value;
+      const confirmPassword = document.getElementById("adminConfirmPassword").value;
+      if (password !== confirmPassword) {
+        alert("Password মিলছে না।");
+        return;
+      }
+      alert("Admin registration form প্রস্তুত হয়েছে। পরবর্তী ধাপে database ও approval যুক্ত করা যাবে।");
+      showAdminLogin();
     }
 
     /* PASSWORD VISIBILITY — all password fields */
@@ -538,63 +567,11 @@
 
       if (
         SUPABASE_PUBLISHABLE_KEY ===
-        "PASTE_YOUR_PUBLISHABLE_KEY_HERE"
+        "sb_publishable_ory8XocB_s-ltfnLh9NWFw_QPMd0_D1"
       ) {
         alert("প্রথমে Supabase Publishable Key বসান।");
         return;
       }
-      /* ADMIN REGISTRATION */
-
-function showAdminRegister() {
-  document.getElementById("adminRegisterSection")
-    .classList.remove("hidden");
-}
-
-function showAdminLogin() {
-  document.getElementById("adminRegisterSection")
-    .classList.add("hidden");
-}
-
-async function adminRegister(event) {
-  event.preventDefault();
-
-  const name = document.getElementById("adminRegisterName").value.trim();
-  const email = document.getElementById("adminRegisterEmail").value.trim();
-  const password = document.getElementById("adminRegisterPassword").value;
-  const confirmPassword = document.getElementById(
-    "adminRegisterConfirmPassword"
-  ).value;
-
-  if (password !== confirmPassword) {
-    alert("দুইটি Password একই নয়।");
-    return;
-  }
-
-  if (password.length < 6) {
-    alert("Password কমপক্ষে ৬ অক্ষরের হতে হবে।");
-    return;
-  }
-
-  const { error } = await supabaseClient.auth.signUp({
-    email: email,
-    password: password,
-    options: {
-      data: {
-        full_name: name,
-        role: "admin"
-      }
-    }
-  });
-
-  if (error) {
-    alert("Registration Failed: " + error.message);
-    return;
-  }
-
-  alert("Admin Registration সফল হয়েছে। Email Verification প্রয়োজন হতে পারে।");
-
-  showAdminLogin();
-}
 
       const { error } =
         await supabaseClient.auth.signInWithPassword({
@@ -613,7 +590,8 @@ async function adminRegister(event) {
     }
   </script>
 
-<!-- PLAY_GROUND PRO ADD-ON FEATURES: Base Version remains unchanged above this point -->
+<!-- PLAY_GROUND PRO ADD-ON FEATURES -->
+
 <style id="pgp-addon-style">
   .pgp-screen{position:fixed;inset:0;z-index:12000;display:none;overflow:auto;padding:22px;background:linear-gradient(rgba(3,7,18,.58),rgba(3,31,23,.78)),url("./football-bg.png") center/cover no-repeat;font-family:'Hind Siliguri',sans-serif;color:#fff}
   .pgp-screen.active{display:block}
@@ -628,10 +606,13 @@ async function adminRegister(event) {
   .pgp-choice{background:rgba(0,0,0,.2)!important;color:#d1fae5!important;border:1px solid #ffffff26!important}.pgp-choice.selected{background:linear-gradient(135deg,#059669,#34d399)!important;color:#022c22!important}
   .pgp-slots{display:grid;grid-template-columns:repeat(auto-fit,minmax(105px,1fr));gap:9px;margin-top:12px}.pgp-slot{margin:0!important;padding:10px 5px!important;font-size:13px!important;background:rgba(0,0,0,.25)!important;color:#d1fae5!important;border:1px solid #ffffff26!important}.pgp-slot.booked{background:#7f1d1d!important;color:#fecaca!important;cursor:not-allowed}.pgp-slot.pending{background:#854d0e!important;color:#fef08a!important;cursor:not-allowed}.pgp-slot.selected{background:#10b981!important;color:#022c22!important}
   .pgp-table{width:100%;border-collapse:collapse;font-size:13px}.pgp-table th,.pgp-table td{padding:9px;border-bottom:1px solid #ffffff1f;text-align:left}.pgp-badge{display:inline-block;padding:3px 8px;border-radius:999px;background:#065f46;color:#d1fae5;font-size:11px}
-  .pgp-form input,.pgp-form select{margin:7px 0;width:100%;box-sizing:border-box;background:rgba(0,0,0,.2)!important;color:#d1fae5!important;border:1px solid #ffffff26!important;border-radius:8px;padding:11px}.pgp-form button{margin-top:8px}.pgp-form small{font-size:10px;color:#a7f3d0}.pgp-payment-extra{margin-top:4px}.pgp-watermark,.pgp-account-list{padding:10px;border:1px dashed #ffffff35;border-radius:8px;color:#ffffff55;font-size:12px;font-style:italic}.pgp-account-list div{padding:6px 0;color:#d1fae5;font-style:normal}.pgp-account-list span{display:block;color:#ffffff55;font-size:11px;font-style:italic}.pgp-form select option {
-  background: #0f2925 !important;
-  color: #d1fae5 !important;
-}
+  .pgp-form label{display:block;margin:5px 0 2px;color:#d1fae5;font-size:13px;font-weight:600}.pgp-form input,.pgp-form select{margin:0 0 9px;width:100%;box-sizing:border-box;background:rgba(0,0,0,.2)!important;color:#d1fae5!important;border:1px solid #ffffff26!important;border-radius:8px;padding:11px}.pgp-form input:focus,.pgp-form select:focus{border-color:#34d399!important;outline:none}.pgp-form button{margin-top:8px}
+  .pgp-form select{color-scheme:dark;background:rgba(0,0,0,.2)!important;color:#d1fae5!important;backdrop-filter:none!important}
+  .pgp-form select option{background:rgba(20,65,48,.72)!important;background-color:rgba(20,65,48,.72)!important;color:#d1fae5!important}
+  .admin-panel form > label{font-size:15px;margin:5px 0 2px 3px}
+  .admin-panel form > input{margin:0 0 5px 0!important}
+  .admin-panel .password-field{margin-bottom:5px}
+  .admin-panel h3{margin:5px 0 12px;font-size:28px}.pgp-form small{font-size:10px;color:#a7f3d0}.pgp-payment-extra{margin-top:4px}.pgp-watermark,.pgp-account-list{padding:10px;border:1px dashed #ffffff35;border-radius:8px;color:#ffffff55;font-size:12px;font-style:italic}.pgp-account-list div{padding:6px 0;color:#d1fae5;font-style:normal}.pgp-account-list span{display:block;color:#ffffff55;font-size:11px;font-style:italic}.pgp-my-bookings-box h3,.pgp-my-bookings-box #pgpMyBookings{text-align:center}
 </style>
 
 <section id="pgpCustomerScreen" class="pgp-screen" aria-label="Customer dashboard">
@@ -643,8 +624,6 @@ async function adminRegister(event) {
         <label>আপনার নাম</label><input id="pgpName" required placeholder="পূর্ণ নাম">
         <label>মোবাইল নম্বর</label><input id="pgpPhone" required type="tel" placeholder="01XXXXXXXXX">
         <label>নির্বাচিত সময়</label><input id="pgpSelectedSlot" readonly required placeholder="উপরের তালিকা থেকে সময় নির্বাচন করুন">
-        <label>বুকিং এমাউন্ট</label><input id="pgpBookingAmount" value="500" readonly><small>প্রতি স্লটের নির্ধারিত বুকিং এমাউন্ট: ৳500</small>
-        <label>বকেয়া</label><input id="pgpDueAmount" value="500" readonly>
         <label>পেমেন্ট পদ্ধতি</label>
         <select id="pgpPaymentMethod" required onchange="pgpPaymentChanged()">
           <option value="">পেমেন্ট পদ্ধতি নির্বাচন করুন</option>
@@ -661,7 +640,9 @@ async function adminRegister(event) {
             <option value="রকেট">৩. রকেট</option>
             <option value="ব্যাংক">৪. ব্যাংক</option>
           </select>
-          <div class="pgp-watermark">অ্যাকাউন্ট নম্বর সংরক্ষিত নেই</div>
+          <label>Transaction ID / TrxID</label>
+          <input id="pgpTransactionId" placeholder="পেমেন্ট করলে TrxID লিখুন" maxlength="80">
+          <div class="pgp-watermark">অ্যাকাউন্ট নম্বর Admin Settings থেকে বসাতে হবে</div>
         </div>
         <div id="pgpSendMoneyOptions" class="pgp-payment-extra" hidden>
           <label>সেন্ড মানি নম্বর (পার্সোনাল)</label>
@@ -670,17 +651,12 @@ async function adminRegister(event) {
             <div>নগদ (পার্সোনাল): <span>অ্যাকাউন্ট নম্বর সংরক্ষিত নেই</span></div>
             <div>রকেট (পার্সোনাল): <span>অ্যাকাউন্ট নম্বর সংরক্ষিত নেই</span></div>
           </div>
-          <p class="pgp-muted" style="font-size:11px;margin-top:4px">পার্সোনাল নম্বরে টাকা পাঠিয়ে Transaction ID / TrxID দিন।</p>
-        </div>
-        <div id="pgpTransactionWrap" class="pgp-payment-extra" hidden>
-          <label for="pgpTransactionId">Transaction ID / TrxID</label>
-          <input id="pgpTransactionId" type="text" placeholder="আপনার Transaction ID লিখুন">
-          <small>পার্সোনাল নম্বরে পেমেন্ট করলে TrxID অবশ্যই দিতে হবে।</small>
+          <p class="pgp-muted" style="font-size:11px;margin-top:4px">সেন্ড মানি করলে প্রযোজ্য চার্জসহ টাকা পাঠাতে হবে।</p>
         </div>
         <button type="submit">BOOK SLOT →</button>
       </form><p id="pgpBookingMessage"></p></div>
     </div>
-    <div class="pgp-box" style="margin-top:14px"><h3>আমার বুকিং</h3><div id="pgpMyBookings" class="pgp-muted">এখনো কোনো বুকিং নেই।</div></div>
+    <div class="pgp-box pgp-my-bookings-box" style="margin-top:14px"><h3>আমার বুকিং</h3><div id="pgpMyBookings" class="pgp-muted">এখনো কোনো বুকিং নেই।</div></div>
   </div>
 </section>
 
@@ -701,69 +677,10 @@ async function adminRegister(event) {
   window.pgpChooseSport=function(value){sport=value;$('pgpFootballBtn').classList.toggle('selected',value==='Football');$('pgpCricketBtn').classList.toggle('selected',value==='Cricket');selectedSlot='';$('pgpSelectedSlot').value='';pgpRenderSlots();};
   window.pgpRenderSlots=function(){const date=$('pgpDate').value;const box=$('pgpSlots');pgpUpdateWeekday();box.innerHTML='';if(!date){box.innerHTML='<p class="pgp-muted">প্রথমে তারিখ নির্বাচন করুন।</p>';return;}const bookings=getBookings();slots.forEach(slot=>{const state=bookings.find(b=>b.date===date&&b.sport===sport&&b.slot===slot&&b.status!=='Rejected');const b=document.createElement('button');b.type='button';b.className='pgp-slot';b.textContent=slot;if(state){b.classList.add(state.status==='Pending'?'pending':'booked');b.disabled=true;b.title=state.status;}else{b.textContent=slot+' • Available';b.onclick=()=>{selectedSlot=slot;$('pgpSelectedSlot').value=slot;document.querySelectorAll('.pgp-slot').forEach(x=>x.classList.remove('selected'));b.classList.add('selected');};}box.appendChild(b);});};
   window.pgpUpdateWeekday=function(){const date=$('pgpDate').value;const names=['রবিবার','সোমবার','মঙ্গলবার','বুধবার','বৃহস্পতিবার','শুক্রবার','শনিবার'];$('pgpWeekday').textContent=date?names[new Date(date+'T12:00:00').getDay()]:'বার';};
-  window.pgpPaymentChanged=function(){
-  const method=$('pgpPaymentMethod').value;
-  $('pgpOnlineOptions').hidden=method!=='Online Payment';
-  $('pgpSendMoneyOptions').hidden=method!=='Send Money';
-  $('pgpOnlineProvider').required=method==='Online Payment';
-  $('pgpTransactionWrap').hidden=method!=='Send Money';
-  $('pgpTransactionId').required=method==='Send Money';
-  if(method!=='Online Payment')$('pgpOnlineProvider').value='';
-  if(method!=='Online Payment'&&method!=='Send Money')$('pgpTransactionId').value='';
-};
-  window.pgpCreateBooking=function(e){
-  e.preventDefault();
-  const date=$('pgpDate').value,
-    totalAmount=500,
-    dueAmount=500,
-    name=$('pgpName').value.trim(),
-    phone=$('pgpPhone').value.trim(),
-    paymentMethod=$('pgpPaymentMethod').value,
-    onlineProvider=$('pgpOnlineProvider').value,
-    transactionId=$('pgpTransactionId').value.trim();
-
-  if(!date){$('pgpBookingMessage').textContent='তারিখ নির্বাচন করুন।';return;}
-  if(!selectedSlot){$('pgpBookingMessage').textContent='একটি সময় নির্বাচন করুন।';return;}
-  if(!paymentMethod){$('pgpBookingMessage').textContent='পেমেন্ট পদ্ধতি নির্বাচন করুন।';return;}
-  if(paymentMethod==='Online Payment'&&!onlineProvider){$('pgpBookingMessage').textContent='অনলাইন পেমেন্ট মাধ্যম নির্বাচন করুন।';return;}
-  if(paymentMethod==='Send Money'&&!transactionId){
-    $('pgpBookingMessage').textContent='Transaction ID / TrxID লিখুন।';return;
-  }
-
-  const bookings=getBookings();
-  if(bookings.some(b=>b.date===date&&b.sport===sport&&b.slot===selectedSlot&&b.status!=='Rejected')){
-    $('pgpBookingMessage').textContent='দুঃখিত, সময়টি ইতোমধ্যে বুকড।';
-    pgpRenderSlots();return;
-  }
-
-  bookings.push({
-    id:'PGP-'+Date.now(),
-    name,phone,date,sport,slot:selectedSlot,
-    paymentMethod,
-    onlineProvider:paymentMethod==='Online Payment'?onlineProvider:'',
-    transactionId:transactionId||'',
-    totalAmount,dueAmount,
-    voucherCode:'PGP-V-'+Date.now().toString().slice(-8),
-    status:'Approved',
-    approvalType:'Auto Confirmation',
-    createdAt:new Date().toISOString()
-  });
-
-  saveBookings(bookings);
-  $('pgpBookingMessage').textContent='পেমেন্ট সম্পন্ন হলে আপনার বুকিং স্বয়ংক্রিয়ভাবে কনফার্ম হয়েছে।';
-  selectedSlot='';
-  $('pgpSelectedSlot').value='';
-  $('pgpPaymentMethod').value='';
-  $('pgpOnlineProvider').value='';
-  $('pgpTransactionId').value='';
-  $('pgpDueAmount').value='500';
-  pgpPaymentChanged();
-  pgpRenderSlots();
-  pgpRenderMyBookings();
-  pgpRenderAdmin();
-};
+  window.pgpPaymentChanged=function(){const method=$('pgpPaymentMethod').value;$('pgpOnlineOptions').hidden=method!=='Online Payment';$('pgpSendMoneyOptions').hidden=method!=='Send Money';$('pgpOnlineProvider').required=method==='Online Payment';if($('pgpTransactionId'))$('pgpTransactionId').required=method==='Online Payment'||method==='Send Money';if(method!=='Online Payment')$('pgpOnlineProvider').value='';};
+  window.pgpCreateBooking=function(e){e.preventDefault();const date=$('pgpDate').value,name=$('pgpName').value.trim(),phone=$('pgpPhone').value.trim(),paymentMethod=$('pgpPaymentMethod').value,onlineProvider=$('pgpOnlineProvider').value,transactionId=($('pgpTransactionId')?.value||'').trim();if(!selectedSlot){$('pgpBookingMessage').textContent='একটি সময় নির্বাচন করুন।';return;}if(!paymentMethod){$('pgpBookingMessage').textContent='পেমেন্ট পদ্ধতি নির্বাচন করুন।';return;}if(paymentMethod==='Online Payment'&&!onlineProvider){$('pgpBookingMessage').textContent='অনলাইন পেমেন্ট মাধ্যম নির্বাচন করুন।';return;}if((paymentMethod==='Online Payment'||paymentMethod==='Send Money')&&!transactionId){$('pgpBookingMessage').textContent='পেমেন্টের Transaction ID / TrxID দিন।';return;}const bookings=getBookings();if(bookings.some(b=>b.date===date&&b.sport===sport&&b.slot===selectedSlot&&b.status!=='Rejected')){ $('pgpBookingMessage').textContent='দুঃখিত, সময়টি ইতোমধ্যে বুকড।';pgpRenderSlots();return;}const autoApproved=false;bookings.push({id:'PGP-'+Date.now(),name,phone,date,sport,slot:selectedSlot,paymentMethod,onlineProvider:paymentMethod==='Online Payment'?onlineProvider:'',transactionId,status:'Pending',approvalType:'Admin Approval',createdAt:new Date().toISOString()});saveBookings(bookings);$('pgpBookingMessage').textContent=autoApproved?'অনলাইন পেমেন্ট বুকিং গ্রহণ করা হয়েছে। পেমেন্ট যাচাই হলে স্বয়ংক্রিয়ভাবে Confirm হবে।':'বুকিং রিকোয়েস্ট গ্রহণ করা হয়েছে। Admin approval প্রয়োজন।';selectedSlot='';$('pgpSelectedSlot').value='';$('pgpPaymentMethod').value='';$('pgpOnlineProvider').value='';if($('pgpTransactionId'))$('pgpTransactionId').value='';pgpPaymentChanged();pgpRenderSlots();pgpRenderMyBookings();pgpRenderAdmin();};
   window.pgpRenderMyBookings=function(){const mine=getBookings().filter(b=>b.phone===($('pgpPhone')?.value||'')||b.name===($('pgpName')?.value||''));$('pgpMyBookings').innerHTML=mine.length?mine.map(b=>`${b.date} • ${b.sport} • ${b.slot} • <span class="pgp-badge">${b.status}</span>`).join('<br>'):'এখনো কোনো বুকিং নেই।';};
-  window.pgpRenderAdmin=function(){const b=getBookings();$('pgpTotalCount').textContent=b.length;$('pgpPendingCount').textContent=b.filter(x=>x.status==='Pending').length;$('pgpApprovedCount').textContent=b.filter(x=>x.status==='Approved').length;if(!b.length){$('pgpAdminBookings').textContent='কোনো বুকিং নেই।';return;}const table=document.createElement('table');table.className='pgp-table';table.innerHTML='<tr><th>Date</th><th>Sport</th><th>Slot</th><th>Name</th><th>Amount</th><th>Payment</th><th>TrxID</th><th>Voucher</th><th>Status</th><th>Action</th></tr>';b.forEach(x=>{const tr=document.createElement('tr');tr.innerHTML=`<td>${x.date}</td><td>${x.sport}</td><td>${x.slot}</td><td>${x.name}</td><td>৳${x.totalAmount||500}<br>বকেয়া: ৳${x.dueAmount??500}</td><td>${x.paymentMethod||'—'}${x.onlineProvider?' ('+x.onlineProvider+')':''}</td><td>${x.transactionId||'—'}</td><td>${x.voucherCode||'—'}</td><td>${x.status}</td><td></td>`;const td=tr.lastElementChild;if(x.status==='Pending'){['Approve','Reject'].forEach(action=>{const btn=document.createElement('button');btn.textContent=action;btn.style.width='auto';btn.style.margin='2px';btn.style.padding='5px 8px';btn.onclick=()=>{x.status=action==='Approve'?'Approved':'Rejected';if(action==='Approve'&&!x.voucherCode){x.voucherCode='PGP-V-'+Date.now().toString().slice(-8);}saveBookings(b);pgpRenderAdmin();pgpRenderSlots();pgpRenderMyBookings();};td.appendChild(btn);});}table.appendChild(tr);});$('pgpAdminBookings').innerHTML='';$('pgpAdminBookings').appendChild(table);};
+  window.pgpRenderAdmin=function(){const b=getBookings();$('pgpTotalCount').textContent=b.length;$('pgpPendingCount').textContent=b.filter(x=>x.status==='Pending').length;$('pgpApprovedCount').textContent=b.filter(x=>x.status==='Approved').length;if(!b.length){$('pgpAdminBookings').textContent='কোনো বুকিং নেই।';return;}const table=document.createElement('table');table.className='pgp-table';table.innerHTML='<tr><th>Date</th><th>Sport</th><th>Slot</th><th>Name</th><th>Payment</th><th>TrxID</th><th>Status</th><th>Action</th></tr>';b.forEach(x=>{const tr=document.createElement('tr');tr.innerHTML=`<td>${x.date}</td><td>${x.sport}</td><td>${x.slot}</td><td>${x.name}</td><td>${x.paymentMethod||'—'}</td><td>${x.transactionId||'—'}</td><td>${x.status}</td><td></td>`;const td=tr.lastElementChild;if(x.status==='Pending'){['Approve','Reject'].forEach(action=>{const btn=document.createElement('button');btn.textContent=action;btn.style.width='auto';btn.style.margin='2px';btn.style.padding='5px 8px';btn.onclick=()=>{x.status=action==='Approve'?'Approved':'Rejected';saveBookings(b);pgpRenderAdmin();pgpRenderSlots();pgpRenderMyBookings();};td.appendChild(btn);});}table.appendChild(tr);});$('pgpAdminBookings').innerHTML='';$('pgpAdminBookings').appendChild(table);};
   window.pgpOpenCustomer=function(user){currentUser=user||'Guest';$('pgpCustomerScreen').classList.add('active');$('pgpAdminScreen').classList.remove('active');const d=new Date();$('pgpDate').value=d.toISOString().slice(0,10);pgpRenderSlots();pgpRenderMyBookings();};
   window.pgpOpenAdmin=function(){$('pgpAdminScreen').classList.add('active');$('pgpCustomerScreen').classList.remove('active');pgpRenderAdmin();};
   window.pgpCloseScreens=function(){$('pgpCustomerScreen').classList.remove('active');$('pgpAdminScreen').classList.remove('active');};
@@ -774,51 +691,8 @@ async function adminRegister(event) {
   window.guestBooking=function(e){e.preventDefault();pgpOpenCustomer('Guest');};
   window.adminLogin=async function(e){e.preventDefault();if(SUPABASE_PUBLISHABLE_KEY==='PASTE_YOUR_PUBLISHABLE_KEY_HERE'){alert('প্রথমে Supabase Publishable Key বসান।');return;}const email=$('adminEmail').value.trim(),password=$('adminPassword').value;const result=await supabaseClient.auth.signInWithPassword({email,password});if(result.error){alert(result.error.message);return;}pgpOpenAdmin();};
 })();
-  function showAdminRegister() {
-  document.getElementById("adminRegisterSection")
-    .classList.remove("hidden");
-}
-
-function showAdminLogin() {
-  document.getElementById("adminRegisterSection")
-    .classList.add("hidden");
-}
-
-async function adminRegister(event) {
-  event.preventDefault();
-
-  const name = document.getElementById("adminRegisterName").value.trim();
-  const email = document.getElementById("adminRegisterEmail").value.trim();
-  const password = document.getElementById("adminRegisterPassword").value;
-  const confirmPassword =
-    document.getElementById("adminRegisterConfirmPassword").value;
-
-  if (password !== confirmPassword) {
-    alert("দুইটি Password একই নয়।");
-    return;
-  }
-
-  const { error } = await supabaseClient.auth.signUp({
-    email: email,
-    password: password,
-    options: {
-      data: {
-        full_name: name,
-        role: "admin"
-      }
-    }
-  });
-
-  if (error) {
-    alert("Registration Failed: " + error.message);
-    return;
-  }
-
-  alert("Admin Registration সফল হয়েছে।");
-
-  showAdminLogin();
-}
 </script>
+
 
 </body>
 </html>
