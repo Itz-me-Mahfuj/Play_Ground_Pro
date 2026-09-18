@@ -543,6 +543,58 @@
         alert("প্রথমে Supabase Publishable Key বসান।");
         return;
       }
+      /* ADMIN REGISTRATION */
+
+function showAdminRegister() {
+  document.getElementById("adminRegisterSection")
+    .classList.remove("hidden");
+}
+
+function showAdminLogin() {
+  document.getElementById("adminRegisterSection")
+    .classList.add("hidden");
+}
+
+async function adminRegister(event) {
+  event.preventDefault();
+
+  const name = document.getElementById("adminRegisterName").value.trim();
+  const email = document.getElementById("adminRegisterEmail").value.trim();
+  const password = document.getElementById("adminRegisterPassword").value;
+  const confirmPassword = document.getElementById(
+    "adminRegisterConfirmPassword"
+  ).value;
+
+  if (password !== confirmPassword) {
+    alert("দুইটি Password একই নয়।");
+    return;
+  }
+
+  if (password.length < 6) {
+    alert("Password কমপক্ষে ৬ অক্ষরের হতে হবে।");
+    return;
+  }
+
+  const { error } = await supabaseClient.auth.signUp({
+    email: email,
+    password: password,
+    options: {
+      data: {
+        full_name: name,
+        role: "admin"
+      }
+    }
+  });
+
+  if (error) {
+    alert("Registration Failed: " + error.message);
+    return;
+  }
+
+  alert("Admin Registration সফল হয়েছে। Email Verification প্রয়োজন হতে পারে।");
+
+  showAdminLogin();
+}
 
       const { error } =
         await supabaseClient.auth.signInWithPassword({
