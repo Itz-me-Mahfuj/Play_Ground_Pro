@@ -383,6 +383,48 @@
 <div class="admin-note">
       Admin role verification ও dashboard পরবর্তী ধাপে যুক্ত হবে।
     </div>
+    <div id="adminRegisterSection" class="hidden" style="margin-top:25px;">
+  <h3>Admin Registration</h3>
+
+  <form onsubmit="adminRegister(event)">
+    <input
+      type="text"
+      id="adminRegisterName"
+      placeholder="Admin নাম"
+      required
+    >
+
+    <input
+      type="email"
+      id="adminRegisterEmail"
+      placeholder="Admin Email"
+      required
+    >
+
+    <input
+      type="password"
+      id="adminRegisterPassword"
+      placeholder="নতুন Password"
+      minlength="6"
+      required
+    >
+
+    <input
+      type="password"
+      id="adminRegisterConfirmPassword"
+      placeholder="Password আবার লিখুন"
+      minlength="6"
+      required
+    >
+
+    <button type="submit">
+      CREATE ADMIN ACCOUNT
+    </button>
+  </form>
+
+  <span class="link" onclick="showAdminLogin()">
+    Admin Login-এ ফিরে যান
+  </span>
   </div>
 
   <button type="button" id="adminDot" class="admin-dot" aria-label="Admin Access">•</button>
