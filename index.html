@@ -480,6 +480,7 @@
       event.preventDefault();
       alert("Guest booking পরবর্তী ধাপে যুক্ত হবে।");
     }
+    
     /* ADMIN SWIPE ACCESS */
     let startX = 0;
     let startY = 0;
@@ -496,10 +497,7 @@
       const validSwipe =
         deltaX < -100 &&
         deltaY < -100;
-      if (fromBottomRight && validSwipe) {
-        document.getElementById("adminPanel")
-          .classList.add("active");
-      }
+    
     });
     /* ADMIN PANEL CONTROL */
     function closeAdminPanel() {
