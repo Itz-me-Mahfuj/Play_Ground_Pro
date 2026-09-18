@@ -273,6 +273,41 @@
   margin: 0 !important;
   padding: 0 !important;
 }
+    /* ADMIN DOT */
+
+.admin-dot {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+
+  width: 48px;
+  height: 48px;
+
+  border-radius: 50%;
+  border: 1px solid rgba(52, 211, 153, 0.55);
+
+  background: rgba(16, 185, 129, 0.16);
+  color: rgba(255, 255, 255, 0.75);
+
+  backdrop-filter: blur(5px);
+
+  font-size: 20px;
+  cursor: pointer;
+
+  z-index: 9998;
+
+  box-shadow: 0 0 14px rgba(16, 185, 129, 0.18);
+
+  touch-action: none;
+  user-select: none;
+
+  transition: 0.25s ease;
+}
+
+.admin-dot:active {
+  transform: scale(0.9);
+  background: rgba(16, 185, 129, 0.35);
+}
   </style>
 </head>
 <body>
@@ -481,24 +516,52 @@
       alert("Guest booking পরবর্তী ধাপে যুক্ত হবে।");
     }
     
-    /* ADMIN SWIPE ACCESS */
-    let startX = 0;
-    let startY = 0;
-    document.addEventListener("pointerdown", function(event) {
-      startX = event.clientX;
-      startY = event.clientY;
-    });
-    document.addEventListener("pointerup", function(event) {
-      const deltaX = event.clientX - startX;
-      const deltaY = event.clientY - startY;
-      const fromBottomRight =
-        startX > window.innerWidth * 0.65 &&
-        startY > window.innerHeight * 0.65;
-      const validSwipe =
-        deltaX < -100 &&
-        deltaY < -100;
-    
-    });
+    /* ADMIN DOT CLICK + SWIPE ACCESS */
+
+const adminDot = document.getElementById("adminDot");
+const adminPanel = document.getElementById("adminPanel");
+
+let startX = 0;
+let startY = 0;
+let isSwiping = false;
+
+/* Click করলে Admin Panel খুলবে */
+adminDot.addEventListener("click", function () {
+  if (!isSwiping) {
+    adminPanel.classList.add("active");
+  }
+
+  isSwiping = false;
+});
+
+/* Swipe শুরু */
+adminDot.addEventListener("pointerdown", function (event) {
+  startX = event.clientX;
+  startY = event.clientY;
+  isSwiping = false;
+
+  adminDot.setPointerCapture(event.pointerId);
+});
+
+/* Swipe শেষ */
+adminDot.addEventListener("pointerup", function (event) {
+  const deltaX = event.clientX - startX;
+  const deltaY = event.clientY - startY;
+
+  const validSwipe =
+    deltaX < -45 &&
+    deltaY < -45;
+
+  if (validSwipe) {
+    isSwiping = true;
+    adminPanel.classList.add("active");
+  }
+});
+
+/* Pointer cancel হলে */
+adminDot.addEventListener("pointercancel", function () {
+  isSwiping = false;
+});
     /* ADMIN PANEL CONTROL */
     function closeAdminPanel() {
       document.getElementById("adminPanel")
@@ -650,5 +713,9 @@
       });
     });
   </script>
+  <!-- ADMIN DOT -->
+<button id="adminDot" class="admin-dot" aria-label="Admin Access">
+  🔐
+</button>
 </body>
 </html>
