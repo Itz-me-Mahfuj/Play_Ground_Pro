@@ -881,23 +881,6 @@
     <div class="pgp-box" style="margin-top:14px"><h3>Booking Management</h3><div id="pgpAdminBookings" class="pgp-muted">কোনো বুকিং নেই।</div></div>
     <div class="pgp-box" style="margin-top:14px"><h3>Recurring Booking Requests</h3><div id="pgpAdminRecurring" class="pgp-muted">কোনো recurring request নেই।</div></div>
     <div class="pgp-box" style="margin-top:14px"><h3>Turf & Pricing Settings</h3><div class="pr-grid"><div><label>Football Normal Rate</label><input id="pgpFootballNormal" type="number" value="1500"></div><div><label>Football Peak Rate</label><input id="pgpFootballPeak" type="number" value="1800"></div><div><label>Cricket Normal Rate</label><input id="pgpCricketNormal" type="number" value="1200"></div><div><label>Cricket Peak Rate</label><input id="pgpCricketPeak" type="number" value="1500"></div></div><button type="button" onclick="pgpSaveAdminSettings()">Save Settings</button><div id="pgpAdminSettingsMsg" class="pgp-note"></div></div>
-    <div class="pgp-box pgp-module-grid" style="margin-top:14px">
-      <h3 style="grid-column:1/-1">Dashboard Modules</h3>
-      <div id="pgpModuleCalendar" class="pgp-module-card"><b>🗓️ Booking Calendar</b><p>Daily / Weekly / Monthly calendar structure.</p><span>পরবর্তী ধাপে Supabase Calendar সংযুক্ত হবে।</span></div>
-      <div id="pgpModuleFootball" class="pgp-module-card"><b>⚽ Football Management</b><p>Normal ৳1500 • Peak ৳1800 • 7–11 PM</p><span>Rate ও schedule control.</span></div>
-      <div id="pgpModuleCricket" class="pgp-module-card"><b>🏏 Cricket Management</b><p>Normal ৳1200 • Peak ৳1500 • 2–7 PM</p><span>Rate ও schedule control.</span></div>
-      <div id="pgpModulePayments" class="pgp-module-card"><b>💳 Payment Management</b><p>bKash • Nagad • Rocket • Cash • Bank</p><span>Payment verification workflow.</span></div>
-      <div id="pgpModuleApproval" class="pgp-module-card"><b>✅ Admin Approval</b><p>Approve / Reject / Hold / Audit</p><span>Approval workflow structure.</span></div>
-      <div id="pgpModuleVoucher" class="pgp-module-card"><b>🎟️ Voucher & Receipt</b><p>Voucher ID • QR • Print / PDF</p><span>Voucher generation structure.</span></div>
-      <div id="pgpModuleCustomers" class="pgp-module-card"><b>👥 Customer Management</b><p>Profile • Booking history • Due</p><span>Customer database connection pending.</span></div>
-      <div id="pgpModuleTurf" class="pgp-module-card"><b>🏟️ Turf & Facility</b><p>Availability • Maintenance • Closure</p><span>Facility control structure.</span></div>
-      <div id="pgpModuleStaff" class="pgp-module-card"><b>👨‍💼 Staff Management</b><p>Roles • Status • Permissions</p><span>Role-based staff control.</span></div>
-      <div id="pgpModuleReports" class="pgp-module-card"><b>📊 Reports & Analytics</b><p>Revenue • Booking • Utilization</p><span>Export and analytics structure.</span></div>
-      <div id="pgpModuleExpenses" class="pgp-module-card"><b>💰 Expense Management</b><p>Salary • Maintenance • Utilities</p><span>Expense tracking structure.</span></div>
-      <div id="pgpModuleNotifications" class="pgp-module-card"><b>🔔 Notifications</b><p>Email • SMS • In-app alerts</p><span>Notification integration pending.</span></div>
-      <div id="pgpModuleSecurity" class="pgp-module-card"><b>🔐 Security & Permissions</b><p>RLS • Sessions • Access policies</p><span>Supabase security controls.</span></div>
-      <div id="pgpModuleSettings" class="pgp-module-card"><b>⚙️ Settings</b><p>Business • Booking • Payment settings</p><span>Configuration structure.</span></div>
-    </div>
     <div class="pgp-box" style="margin-top:14px"><h3>Activity Log / Audit Logs</h3><div id="pgpAdminLog" class="pgp-muted">কোনো activity নেই।</div></div>
       </div>
     </div>
@@ -1201,13 +1184,13 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 
 <style id="pgp-phase1-dashboard-css">
 #pgpAdminScreen .pgp-admin-layout{display:grid;grid-template-columns:230px minmax(0,1fr);gap:16px;align-items:start}
-#pgpAdminScreen .pgp-sidebar{position:sticky;top:16px;padding:14px;border:1px solid rgba(255,255,255,.15);border-radius:18px;background:rgba(10,30,24,.52);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 14px 40px #0004}
+#pgpAdminScreen .pgp-sidebar{position:sticky;top:16px;height:calc(100vh - 32px);max-height:calc(100vh - 32px);overflow-y:auto;overflow-x:hidden;padding:14px;border:1px solid rgba(255,255,255,.15);border-radius:18px;background:rgba(10,30,24,.52);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 14px 40px #0004}
 #pgpAdminScreen .pgp-sidebar h3{margin:0 0 12px;font-size:17px}
 #pgpAdminScreen .pgp-nav{display:grid;gap:7px}
 #pgpAdminScreen .pgp-nav button{width:100%;margin:0!important;text-align:left;background:rgba(255,255,255,.07)!important;border:1px solid rgba(255,255,255,.12)!important;color:#e5fff3!important;padding:10px 11px!important;border-radius:10px!important;font-size:12px!important}
 #pgpAdminScreen .pgp-nav button:hover{background:rgba(16,185,129,.22)!important}
 #pgpAdminScreen .pgp-admin-content{min-width:0}
-@media(max-width:760px){#pgpAdminScreen .pgp-admin-layout{grid-template-columns:1fr}#pgpAdminScreen .pgp-sidebar{position:static}#pgpAdminScreen .pgp-nav{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:760px){#pgpAdminScreen .pgp-admin-layout{grid-template-columns:1fr}#pgpAdminScreen .pgp-sidebar{position:static;height:auto;max-height:none;overflow:visible}#pgpAdminScreen .pgp-nav{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
 #pgpAdminScreen .pgp-module-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 #pgpAdminScreen .pgp-module-grid>h3{margin:0 0 2px}
@@ -1296,5 +1279,72 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 })();
 </script>
 
+
+<style id="pgp-final-admin-visual-fixes">
+/* Admin menu: same glassy-blur treatment as the rest of the interface */
+#pgpAdminScreen .pgp-sidebar{
+  background:rgba(255,255,255,.075)!important;
+  border:1px solid rgba(255,255,255,.18)!important;
+  box-shadow:0 18px 55px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.08)!important;
+  backdrop-filter:blur(24px) saturate(135%)!important;
+  -webkit-backdrop-filter:blur(24px) saturate(135%)!important;
+  height:calc(100vh - 32px)!important;
+  max-height:calc(100vh - 32px)!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  scrollbar-width:thin;
+}
+#pgpAdminScreen .pgp-sidebar::-webkit-scrollbar{width:7px}
+#pgpAdminScreen .pgp-sidebar::-webkit-scrollbar-thumb{background:rgba(167,243,208,.35);border-radius:999px}
+#pgpAdminScreen .pgp-sidebar::-webkit-scrollbar-track{background:transparent}
+/* Prevent white dropdown menus in laptop/desktop admin view */
+#pgpAdminScreen select,
+#pgpAdminScreen .pgp-form select,
+#pgpAdminScreen .pgp-module-panel select,
+#pgpAdminScreen #pgpAdminSportFilter,
+#pgpAdminScreen #pgpAdminStatusFilter{
+  color-scheme:dark!important;
+  background-color:#12352b!important;
+  color:#ecfdf5!important;
+  border-color:rgba(167,243,208,.35)!important;
+}
+#pgpAdminScreen select option,
+#pgpAdminScreen .pgp-form select option,
+#pgpAdminScreen .pgp-module-panel select option{
+  background-color:#12352b!important;
+  color:#ecfdf5!important;
+}
+@media(max-width:760px){#pgpAdminScreen .pgp-sidebar{height:auto!important;max-height:none!important;overflow:visible!important}}
+
+  /* Global glass-blur dropdown styling */
+  select,
+  .pgp-admin-content select,
+  .pgp-form select,
+  .pgp-admin-layout select {
+    background: linear-gradient(135deg, rgba(255,255,255,.14), rgba(255,255,255,.045)) !important;
+    background-color: rgba(16, 48, 38, .58) !important;
+    color: #eafff4 !important;
+    border: 1px solid rgba(255,255,255,.22) !important;
+    border-radius: 12px !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.10), 0 8px 24px rgba(0,0,0,.12) !important;
+    backdrop-filter: blur(18px) saturate(140%) !important;
+    -webkit-backdrop-filter: blur(18px) saturate(140%) !important;
+    color-scheme: dark !important;
+  }
+  select:focus,
+  .pgp-admin-content select:focus,
+  .pgp-form select:focus {
+    background: linear-gradient(135deg, rgba(52,211,153,.20), rgba(255,255,255,.06)) !important;
+    border-color: rgba(52,211,153,.70) !important;
+    outline: none !important;
+  }
+  select option,
+  .pgp-admin-content select option,
+  .pgp-form select option,
+  .pgp-admin-layout select option {
+    background-color: #173d31 !important;
+    color: #eafff4 !important;
+  }
+</style>
 </body>
 </html>
