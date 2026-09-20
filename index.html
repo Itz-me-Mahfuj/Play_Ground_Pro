@@ -326,11 +326,11 @@
 
         <form onsubmit="loginUser(event)">
           <label>Phone Number</label>
-          <input id="customerLoginPhone" type="tel" placeholder="আপনার ফোন নম্বর" required>
+          <input id="customerLoginPhone" type="tel" placeholder="আপনার ফোন নম্বর" minlength="11" maxlength="11" pattern="[0-9]{11}" inputmode="numeric" required>
 
           <label>Password</label>
           <div class="password-field">
-            <input id="customerLoginPassword" type="password" placeholder="আপনার পাসওয়ার্ড" required>
+            <input id="customerLoginPassword" type="password" placeholder="আপনার পাসওয়ার্ড" minlength="6" required>
             <button type="button" class="password-toggle" data-target="customerLoginPassword" aria-label="পাসওয়ার্ড দেখুন" aria-pressed="false">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
             </button>
@@ -350,14 +350,14 @@
         <p class="subtitle">আপনার ফোন নম্বর দিয়ে পাসওয়ার্ড পরিবর্তন করুন</p>
         <form onsubmit="resetCustomerPassword(event)">
           <label>Phone Number</label>
-          <input id="customerResetPhone" type="tel" placeholder="আপনার ফোন নম্বর" required>
+          <input id="customerResetPhone" type="tel" placeholder="আপনার ফোন নম্বর" minlength="11" maxlength="11" pattern="[0-9]{11}" inputmode="numeric" required>
           <label>New Password</label>
           <div class="password-field">
-            <input id="customerResetPassword" type="password" placeholder="নতুন পাসওয়ার্ড" required>
+            <input id="customerResetPassword" type="password" placeholder="নতুন পাসওয়ার্ড" minlength="6" required>
           </div>
           <label>Confirm Password</label>
           <div class="password-field">
-            <input id="customerResetConfirmPassword" type="password" placeholder="পাসওয়ার্ড আবার লিখুন" required>
+            <input id="customerResetConfirmPassword" type="password" placeholder="পাসওয়ার্ড আবার লিখুন" minlength="6" required>
           </div>
           <button type="submit">RESET PASSWORD</button>
         </form>
@@ -374,11 +374,11 @@
           <input id="customerRegisterName" type="text" placeholder="আপনার পূর্ণ নাম" required>
 
           <label>Phone Number</label>
-          <input id="customerRegisterPhone" type="tel" placeholder="আপনার ফোন নম্বর" required>
+          <input id="customerRegisterPhone" type="tel" placeholder="আপনার ফোন নম্বর" minlength="11" maxlength="11" pattern="[0-9]{11}" inputmode="numeric" required>
 
           <label>Password</label>
           <div class="password-field">
-            <input id="registerPassword" type="password" placeholder="পাসওয়ার্ড তৈরি করুন" required>
+            <input id="registerPassword" type="password" placeholder="পাসওয়ার্ড তৈরি করুন" minlength="6" required>
             <button type="button" class="password-toggle" data-target="registerPassword" aria-label="পাসওয়ার্ড দেখুন" aria-pressed="false">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
             </button>
@@ -386,7 +386,7 @@
 
           <label>Confirm Password</label>
           <div class="password-field">
-            <input id="confirmPassword" type="password" placeholder="পাসওয়ার্ড আবার লিখুন" required>
+            <input id="confirmPassword" type="password" placeholder="পাসওয়ার্ড আবার লিখুন" minlength="6" required>
             <button type="button" class="password-toggle" data-target="confirmPassword" aria-label="পাসওয়ার্ড দেখুন" aria-pressed="false">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
             </button>
@@ -408,7 +408,7 @@
           <input type="text" placeholder="আপনার নাম" required>
 
           <label>Phone Number</label>
-          <input type="tel" placeholder="আপনার ফোন নম্বর" required>
+          <input type="tel" placeholder="আপনার ফোন নম্বর" minlength="11" maxlength="11" pattern="[0-9]{11}" inputmode="numeric" required>
 
           <button type="submit">CONTINUE BOOKING →</button>
         </form>
@@ -434,7 +434,7 @@
         <input type="email" id="adminEmail" placeholder="Admin Email" required>
         <label for="adminPassword">পাসওয়ার্ড</label>
         <div class="password-field">
-            <input type="password" id="adminPassword" placeholder="Password" required>
+            <input type="password" id="adminPassword" placeholder="Password" minlength="6" required>
             <button type="button" class="password-toggle" data-target="adminPassword" aria-label="পাসওয়ার্ড দেখুন" aria-pressed="false">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
             </button>
@@ -472,19 +472,19 @@
         <label for="adminName">Admin Name</label>
         <input type="text" id="adminName" placeholder="Admin Name" required>
         <label for="adminPhone">Phone Number</label>
-        <input type="tel" id="adminPhone" placeholder="Phone Number" required>
+        <input type="tel" id="adminPhone" placeholder="Phone Number" minlength="11" maxlength="11" pattern="[0-9]{11}" inputmode="numeric" required>
         <label for="adminRegisterEmail">Admin Email</label>
         <input type="email" id="adminRegisterEmail" placeholder="Admin Email" required>
         <label for="adminRegisterPassword">Create Password</label>
         <div class="password-field">
-          <input type="password" id="adminRegisterPassword" placeholder="Create Password" required>
+          <input type="password" id="adminRegisterPassword" placeholder="Create Password" minlength="6" required>
           <button type="button" class="password-toggle" data-target="adminRegisterPassword" aria-label="পাসওয়ার্ড দেখুন" aria-pressed="false">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
           </button>
         </div>
         <label for="adminConfirmPassword">Confirm Password</label>
         <div class="password-field">
-          <input type="password" id="adminConfirmPassword" placeholder="Confirm Password" required>
+          <input type="password" id="adminConfirmPassword" placeholder="Confirm Password" minlength="6" required>
           <button type="button" class="password-toggle" data-target="adminConfirmPassword" aria-label="পাসওয়ার্ড দেখুন" aria-pressed="false">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
           </button>
@@ -809,7 +809,7 @@
       <div class="pgp-box booking-box"><h3>নতুন বুকিং</h3><p>Football অথবা Cricket নির্বাচন করে সময় বেছে নিন।</p><div class="pgp-actions" aria-label="Sport selection"><button class="pgp-choice selected" id="pgpFootballBtn" onclick="pgpChooseSport('Football')">⚽ Football</button><button class="pgp-choice" id="pgpCricketBtn" onclick="pgpChooseSport('Cricket')">🏏 Cricket</button></div><p class="pgp-muted" style="text-align:center;margin-top:8px">বুকিং সময়: সকাল ৬টা থেকে পরের দিন রাত ৩টা পর্যন্ত</p><div class="pgp-date-row"><label for="pgpDate">তারিখ</label><input id="pgpDate" type="date"><span id="pgpWeekday" class="pgp-weekday">বার</span></div><div id="pgpSlots" class="pgp-slots"></div></div>
       <div class="pgp-box"><h3>বুকিং তথ্য</h3><form class="pgp-form" onsubmit="pgpCreateBooking(event)">
         <label>আপনার নাম</label><input id="pgpName" required placeholder="পূর্ণ নাম">
-        <label>মোবাইল নম্বর</label><input id="pgpPhone" required type="tel" placeholder="01XXXXXXXXX">
+        <label>মোবাইল নম্বর</label><input id="pgpPhone" minlength="11" maxlength="11" pattern="[0-9]{11}" inputmode="numeric" required type="tel" placeholder="01XXXXXXXXX">
         <label>নির্বাচিত সময়</label><input id="pgpSelectedSlot" readonly required placeholder="উপরের তালিকা থেকে সময় নির্বাচন করুন">
         <label>পেমেন্ট পদ্ধতি</label>
         <select id="pgpPaymentMethod" required onchange="pgpPaymentChanged()">
