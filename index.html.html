@@ -1,0 +1,1300 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Play_Ground Pro | Login</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: 'Hind Siliguri', sans-serif;
+      background:
+        linear-gradient(rgba(3, 7, 18, 0.45), rgba(3, 31, 23, 0.65)),
+        url("./football-bg.png") center 30% / cover no-repeat fixed;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 420px;
+      margin: 0 auto;
+      padding: 18px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .brand { text-align: center; margin-bottom: 25px; }
+    .brand-icon { font-size: 45px; }
+
+    .brand h1 {
+      margin: 5px 0;
+      font-size: 29px;
+      color: #fff !important;
+      font-weight: 700 !important;
+    }
+
+    .brand h1 span {
+      color: #16a34a !important;
+      font-weight: 800;
+    }
+
+    .brand p {
+      color: #fff !important;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+      margin-top: 10px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(18px);
+      border-radius: 24px;
+      padding: 28px 24px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    }
+
+    h2 {
+      margin: 0 0 6px;
+      font-size: 25px;
+      color: #fff !important;
+      font-weight: 700 !important;
+    }
+
+    .subtitle { color: #b7c8c0; font-size: 14px; margin-bottom: 25px; }
+
+    label {
+      display: block;
+      margin-bottom: 7px;
+      color: #d1fae5;
+      font-size: 14px;
+    }
+
+    input {
+      width: 100%;
+      padding: 13px;
+      margin-bottom: 16px;
+      border-radius: 11px;
+      border: 1px solid #36534a;
+      background: rgba(0,0,0,0.25);
+      color: white;
+      font-family: inherit;
+      font-size: 15px;
+      outline: none;
+    }
+
+    input:focus { border-color: #34d399; }
+    input::placeholder { color: #91a39b; }
+
+    button {
+      width: 100%;
+      padding: 13px;
+      margin-top: 10px;
+      border: none;
+      border-radius: 11px;
+      background: linear-gradient(135deg, #059669, #34d399);
+      color: #022c22;
+      font-family: inherit;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .secondary {
+      background: transparent;
+      color: #6ee7b7;
+      border: 1px solid #276749;
+    }
+
+    .link {
+      display: block;
+      text-align: center;
+      margin-top: 18px;
+      color: #6ee7b7;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .hidden { display: none !important; }
+
+    .footer {
+      text-align: center;
+      color: #8da49a;
+      font-size: 12px;
+      margin-top: 22px;
+    }
+
+    /* Hidden Admin Panel */
+    .admin-panel {
+      position: fixed;
+      top: 0;
+      right: -100%;
+      width: min(390px, 90%);
+      height: 100vh;
+      padding: 75px 25px 25px;
+      /* Same background as the customer login page */
+      background:
+        linear-gradient(rgba(3, 7, 18, 0.45), rgba(3, 31, 23, 0.65)),
+        url("./football-bg.png") center 30% / cover no-repeat;
+      border-left: 1px solid #34d39966;
+      box-shadow: -10px 0 40px #0009;
+      z-index: 9999;
+      text-align: center;
+      overflow-y: auto;
+      transition: right 0.4s ease;
+    }
+
+    .admin-panel.active { right: 0; }
+
+    .close-admin {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      width: auto;
+      margin: 0;
+      padding: 5px 10px;
+      background: transparent;
+      color: #fff;
+      font-size: 24px;
+    }
+
+    .admin-icon { font-size: 45px; margin-bottom: 15px; }
+    .admin-subtitle { color: #9ca3af; margin-bottom: 25px; }
+    .admin-panel input { width: 100%; margin: 8px 0; }
+
+
+
+
+    /* Admin form labels: left aligned and close to each related box */
+    .admin-panel form { text-align: left; }
+    .admin-panel form > label {
+      display: block;
+      margin: 9px 0 3px 3px;
+      color: #d1fae5;
+      font-size: 13px;
+      font-weight: 600;
+      line-height: 1.25;
+      text-align: left;
+    }
+    .admin-panel form > input {
+      margin: 0 0 9px 0 !important;
+      box-sizing: border-box;
+    }
+    .admin-panel .password-field { margin-bottom: 9px; }
+    .admin-panel h3 {
+      margin: 8px 0 20px;
+      color: #86efac;
+      font-size: 25px;
+      font-weight: 700;
+      text-align: center;
+    }
+
+
+    /* Admin Login/Registration/Reset cards: same glass-blur style as Customer Login */
+    #adminLoginSection,
+    #adminRegisterSection,
+    #adminResetSection,
+    #adminRecoverySection {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      -webkit-backdrop-filter: blur(18px);
+      backdrop-filter: blur(18px);
+      border-radius: 24px;
+      padding: 28px 24px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    }
+
+    #adminLoginSection .link,
+    #adminRegisterSection .link,
+    #adminResetSection .link,
+    #adminRecoverySection .link {
+      text-shadow: 0 1px 5px rgba(0, 0, 0, 0.35);
+    }
+
+    /* Password fields with correctly aligned eye icon */
+    .password-field {
+      position: relative;
+      width: 100%;
+      height: 47px;
+      margin-bottom: 16px;
+    }
+
+    .password-field input {
+      width: 100% !important;
+      height: 47px !important;
+      margin: 0 !important;
+      padding: 13px 48px 13px 13px !important;
+    }
+
+    .password-toggle {
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px !important;
+      height: 32px !important;
+      padding: 4px !important;
+      margin: 0 !important;
+      border: 0 !important;
+      border-radius: 8px !important;
+      background: transparent !important;
+      color: #91a39b !important;
+      cursor: pointer;
+      box-shadow: none !important;
+    }
+
+    .password-toggle:hover,
+    .password-toggle:focus-visible {
+      color: #91a39b !important;
+      background: rgba(145, 163, 155, 0.10) !important;
+      outline: none;
+    }
+
+    .password-toggle svg {
+      width: 21px;
+      height: 21px;
+      pointer-events: none;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    /* Transparent bottom-right admin access button */
+    .admin-dot {
+      position: fixed;
+      right: 14px;
+      bottom: 14px;
+      z-index: 10000;
+      width: 34px !important;
+      height: 34px;
+      padding: 0 !important;
+      margin: 0 !important;
+      border: 1px solid rgba(110, 231, 183, 0.18) !important;
+      border-radius: 50% !important;
+      background: rgba(0, 0, 0, 0.04) !important;
+      color: rgba(110, 231, 183, 0.35) !important;
+      font-size: 14px !important;
+      opacity: 0.35;
+      box-shadow: none !important;
+    }
+
+    .admin-dot:hover,
+    .admin-dot:focus-visible {
+      opacity: 1;
+      color: #6ee7b7 !important;
+      border-color: rgba(110, 231, 183, 0.7) !important;
+      outline: none;
+    }
+
+    .admin-note {
+      color: #8da49a;
+      font-size: 12px;
+      margin-top: 22px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="brand">
+      <div class="brand-icon">⚽🏏</div>
+      <h1>Play_Ground <span>PRO</span></h1>
+      <p>Premium Football & Cricket Turf</p>
+    </div>
+
+    <div class="card">
+      <!-- LOGIN -->
+      <div id="loginSection">
+        <h2>Welcome Back</h2>
+        <p class="subtitle">আপনার অ্যাকাউন্টে লগইন করুন</p>
+
+        <form onsubmit="loginUser(event)">
+          <label>Phone Number</label>
+          <input id="customerLoginPhone" type="tel" placeholder="আপনার ফোন নম্বর" minlength="11" maxlength="11" pattern="[0-9]{11}" inputmode="numeric" required>
+
+          <label>Password</label>
+          <div class="password-field">
+            <input id="customerLoginPassword" type="password" placeholder="আপনার পাসওয়ার্ড" minlength="6" required>
+            <button type="button" class="password-toggle" data-target="customerLoginPassword" aria-label="পাসওয়ার্ড দেখুন" aria-pressed="false">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            </button>
+          </div>
+
+          <p class="link" onclick="showCustomerReset()">পাসওয়ার্ড ভুলে গেছেন?</p>
+          <button type="submit">LOGIN →</button>
+        </form>
+
+        <span class="link" onclick="showRegister()">নতুন অ্যাকাউন্ট তৈরি করুন</span>
+        <button class="secondary" onclick="showGuest()">CONTINUE AS GUEST</button>
+      </div>
+
+      <!-- CUSTOMER PASSWORD RESET -->
+      <div id="customerResetSection" class="hidden">
+        <h2>Reset Password</h2>
+        <p class="subtitle">আপনার ফোন নম্বর দিয়ে পাসওয়ার্ড পরিবর্তন করুন</p>
+        <form onsubmit="resetCustomerPassword(event)">
+          <label>Phone Number</label>
+          <input id="customerResetPhone" type="tel" placeholder="আপনার ফোন নম্বর" minlength="11" maxlength="11" pattern="[0-9]{11}" inputmode="numeric" required>
+          <label>New Password</label>
+          <div class="password-field">
+            <input id="customerResetPassword" type="password" placeholder="নতুন পাসওয়ার্ড" minlength="6" required>
+          </div>
+          <label>Confirm Password</label>
+          <div class="password-field">
+            <input id="customerResetConfirmPassword" type="password" placeholder="পাসওয়ার্ড আবার লিখুন" minlength="6" required>
+          </div>
+          <button type="submit">RESET PASSWORD</button>
+        </form>
+        <span class="link" onclick="showLogin()">Login পেজে ফিরে যান</span>
+      </div>
+
+      <!-- REGISTER -->
+      <div id="registerSection" class="hidden">
+        <h2>Create Account</h2>
+        <p class="subtitle">নতুন অ্যাকাউন্ট তৈরি করুন</p>
+
+        <form onsubmit="registerUser(event)">
+          <label>Full Name</label>
+          <input id="customerRegisterName" type="text" placeholder="আপনার পূর্ণ নাম" required>
+
+          <label>Phone Number</label>
+          <input id="customerRegisterPhone" type="tel" placeholder="আপনার ফোন নম্বর" minlength="11" maxlength="11" pattern="[0-9]{11}" inputmode="numeric" required>
+
+          <label>Password</label>
+          <div class="password-field">
+            <input id="registerPassword" type="password" placeholder="পাসওয়ার্ড তৈরি করুন" minlength="6" required>
+            <button type="button" class="password-toggle" data-target="registerPassword" aria-label="পাসওয়ার্ড দেখুন" aria-pressed="false">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            </button>
+          </div>
+
+          <label>Confirm Password</label>
+          <div class="password-field">
+            <input id="confirmPassword" type="password" placeholder="পাসওয়ার্ড আবার লিখুন" minlength="6" required>
+            <button type="button" class="password-toggle" data-target="confirmPassword" aria-label="পাসওয়ার্ড দেখুন" aria-pressed="false">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            </button>
+          </div>
+
+          <button type="submit">CREATE ACCOUNT</button>
+        </form>
+
+        <span class="link" onclick="showLogin()">আগে থেকেই অ্যাকাউন্ট আছে? Login</span>
+      </div>
+
+      <!-- GUEST -->
+      <div id="guestSection" class="hidden">
+        <h2>Guest Booking</h2>
+        <p class="subtitle">অ্যাকাউন্ট ছাড়াই বুকিং করুন</p>
+
+        <form onsubmit="guestBooking(event)">
+          <label>Full Name</label>
+          <input type="text" placeholder="আপনার নাম" required>
+
+          <label>Phone Number</label>
+          <input type="tel" placeholder="আপনার ফোন নম্বর" minlength="11" maxlength="11" pattern="[0-9]{11}" inputmode="numeric" required>
+
+          <button type="submit">CONTINUE BOOKING →</button>
+        </form>
+
+        <span class="link" onclick="showLogin()">Login পেজে ফিরে যান</span>
+      </div>
+    </div>
+
+    <div class="footer">© 2026 Play_Ground Pro. All rights reserved.</div>
+  </div>
+
+  <!-- HIDDEN ADMIN PANEL -->
+  <div id="adminPanel" class="admin-panel">
+    <button class="close-admin" onclick="closeAdminPanel()">✕</button>
+
+    <div class="admin-icon">🔐</div>
+    <h2>Admin Control Center</h2>
+    <p class="admin-subtitle">Authorized access only</p>
+
+    <div id="adminLoginSection">
+      <form onsubmit="adminLogin(event)">
+        <label for="adminEmail">এডমিন ইমেইল</label>
+        <input type="email" id="adminEmail" placeholder="Admin Email" required>
+        <label for="adminPassword">পাসওয়ার্ড</label>
+        <div class="password-field">
+            <input type="password" id="adminPassword" placeholder="Password" minlength="6" required>
+            <button type="button" class="password-toggle" data-target="adminPassword" aria-label="পাসওয়ার্ড দেখুন" aria-pressed="false">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            </button>
+          </div>
+          <p class="link" onclick="showAdminReset()">Admin পাসওয়ার্ড ভুলে গেছেন?</p>
+        <button type="submit">ADMIN LOGIN →</button>
+      </form>
+      <p class="link" onclick="showAdminRegister()">নতুন Admin Account তৈরি করুন</p>
+    </div>
+
+    <div id="adminResetSection" class="hidden">
+      <h3>Reset Admin Password</h3>
+      <form onsubmit="resetAdminPassword(event)">
+        <label for="adminResetEmail">Admin Email</label>
+        <input type="email" id="adminResetEmail" placeholder="Admin Email" required>
+        <button type="submit">SEND RESET EMAIL</button>
+      </form>
+      <p class="link" onclick="showAdminLogin()">Admin Login-এ ফিরে যান</p>
+    </div>
+
+    <div id="adminRecoverySection" class="hidden">
+      <h3>Set New Admin Password</h3>
+      <form onsubmit="saveAdminNewPassword(event)">
+        <label for="adminNewPassword">New Password</label>
+        <input type="password" id="adminNewPassword" placeholder="নতুন পাসওয়ার্ড" minlength="6" required>
+        <label for="adminNewPasswordConfirm">Confirm Password</label>
+        <input type="password" id="adminNewPasswordConfirm" placeholder="পাসওয়ার্ড আবার লিখুন" minlength="6" required>
+        <button type="submit">SAVE NEW PASSWORD</button>
+      </form>
+    </div>
+
+    <div id="adminRegisterSection" class="hidden">
+      <h3>Admin Registration</h3>
+      <form onsubmit="adminRegister(event)">
+        <label for="adminName">Admin Name</label>
+        <input type="text" id="adminName" placeholder="Admin Name" required>
+        <label for="adminPhone">Phone Number</label>
+        <input type="tel" id="adminPhone" placeholder="Phone Number" minlength="11" maxlength="11" pattern="[0-9]{11}" inputmode="numeric" required>
+        <label for="adminRegisterEmail">Admin Email</label>
+        <input type="email" id="adminRegisterEmail" placeholder="Admin Email" required>
+        <label for="adminRegisterPassword">Create Password</label>
+        <div class="password-field">
+          <input type="password" id="adminRegisterPassword" placeholder="Create Password" minlength="6" required>
+          <button type="button" class="password-toggle" data-target="adminRegisterPassword" aria-label="পাসওয়ার্ড দেখুন" aria-pressed="false">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+          </button>
+        </div>
+        <label for="adminConfirmPassword">Confirm Password</label>
+        <div class="password-field">
+          <input type="password" id="adminConfirmPassword" placeholder="Confirm Password" minlength="6" required>
+          <button type="button" class="password-toggle" data-target="adminConfirmPassword" aria-label="পাসওয়ার্ড দেখুন" aria-pressed="false">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+          </button>
+        </div>
+        <button type="submit">REGISTER ADMIN →</button>
+      </form>
+      <p class="link" onclick="showAdminLogin()">আগের Admin Login-এ ফিরে যান</p>
+    </div>
+
+    <div class="admin-note">
+      Admin role verification ও dashboard পরবর্তী ধাপে যুক্ত হবে।
+    </div>
+  </div>
+
+  <button type="button" id="adminDot" class="admin-dot" aria-label="Admin Access">•</button>
+
+  <script>
+    /* SUPABASE CONFIGURATION */
+    const SUPABASE_URL =
+      "https://hnmciqupyakugesclfnw.supabase.co";
+
+    const SUPABASE_PUBLISHABLE_KEY =
+      "sb_publishable_ory8XocB_s-ltfnLh9NWFw_QPMd0_D1";
+
+    const supabaseClient = supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_PUBLISHABLE_KEY
+    );
+
+    /* CUSTOMER SECTION CONTROL */
+    function hideAll() {
+      document.getElementById("loginSection").classList.add("hidden");
+      document.getElementById("registerSection").classList.add("hidden");
+      document.getElementById("guestSection").classList.add("hidden");
+      document.getElementById("customerResetSection").classList.add("hidden");
+    }
+
+    function showLogin() {
+      hideAll();
+      document.getElementById("loginSection").classList.remove("hidden");
+    }
+
+    function showRegister() {
+      hideAll();
+      document.getElementById("registerSection").classList.remove("hidden");
+    }
+
+    function showGuest() {
+      hideAll();
+      document.getElementById("guestSection").classList.remove("hidden");
+    }
+
+    function getCustomerAccounts() {
+      try { return JSON.parse(localStorage.getItem("pgpCustomerAccounts") || "[]"); }
+      catch (e) { return []; }
+    }
+
+    function loginUser(event) {
+      event.preventDefault();
+      const phone = document.getElementById("customerLoginPhone").value.trim();
+      const password = document.getElementById("customerLoginPassword").value;
+      const account = getCustomerAccounts().find(a => a.phone === phone && a.password === password);
+      if (!account) { alert("মোবাইল নম্বর অথবা পাসওয়ার্ড সঠিক নয়।"); return; }
+      localStorage.setItem("pgpCurrentCustomer", JSON.stringify(account));
+      pgpOpenCustomer(account.name || "Customer");
+    }
+
+    function showCustomerReset() {
+      hideAll();
+      document.getElementById("customerResetSection").classList.remove("hidden");
+    }
+
+    function resetCustomerPassword(event) {
+      event.preventDefault();
+      const phone = document.getElementById("customerResetPhone").value.trim();
+      const password = document.getElementById("customerResetPassword").value;
+      const confirmPassword = document.getElementById("customerResetConfirmPassword").value;
+      if (password !== confirmPassword) {
+        alert("নতুন পাসওয়ার্ড মিলছে না।");
+        return;
+      }
+      const accounts = getCustomerAccounts();
+      const index = accounts.findIndex(a => a.phone === phone);
+      if (index === -1) {
+        alert("এই ফোন নম্বরের কোনো অ্যাকাউন্ট পাওয়া যায়নি।");
+        return;
+      }
+      accounts[index].password = password;
+      accounts[index].updatedAt = new Date().toISOString();
+      localStorage.setItem("pgpCustomerAccounts", JSON.stringify(accounts));
+      alert("Customer পাসওয়ার্ড সফলভাবে পরিবর্তন হয়েছে।");
+      showLogin();
+    }
+
+    function showAdminReset() {
+      document.getElementById("adminLoginSection").classList.add("hidden");
+      document.getElementById("adminRegisterSection").classList.add("hidden");
+      document.getElementById("adminResetSection").classList.remove("hidden");
+    }
+
+    async function resetAdminPassword(event) {
+      event.preventDefault();
+      const email = document.getElementById("adminResetEmail").value.trim();
+      if (!supabaseClient) {
+        alert("Supabase সংযোগ পাওয়া যাচ্ছে না।");
+        return;
+      }
+      const redirectUrl = "https://itz-me-mahfuj.github.io/Play_Ground_Pro/";
+      const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+        redirectTo: redirectUrl
+      });
+      if (error) {
+        alert(error.message);
+        return;
+      }
+      alert("Password reset email পাঠানো হয়েছে। আপনার ইমেইল চেক করুন।");
+      showAdminLogin();
+    }
+
+    function registerUser(event) {
+      event.preventDefault();
+      const name = document.getElementById("customerRegisterName").value.trim();
+      const phone = document.getElementById("customerRegisterPhone").value.trim();
+      const password = document.getElementById("registerPassword").value;
+      const accounts = getCustomerAccounts();
+      if (accounts.some(a => a.phone === phone)) { alert("এই মোবাইল নম্বর দিয়ে ইতোমধ্যে অ্যাকাউন্ট আছে।"); return; }
+      const account = { name, phone, password, createdAt: new Date().toISOString() };
+      accounts.push(account);
+      localStorage.setItem("pgpCustomerAccounts", JSON.stringify(accounts));
+      localStorage.setItem("pgpCurrentCustomer", JSON.stringify(account));
+      alert("অ্যাকাউন্ট সফলভাবে তৈরি হয়েছে।");
+      pgpOpenCustomer(name || "Customer");
+    }
+
+    function guestBooking(event) {
+      event.preventDefault();
+      alert("Guest booking system পরবর্তী ধাপে সংযুক্ত করা হবে।");
+    }
+
+    function showAdminRegister() {
+      document.getElementById("adminLoginSection").classList.add("hidden");
+      document.getElementById("adminRegisterSection").classList.remove("hidden");
+    }
+
+    async function saveAdminNewPassword(event) {
+      event.preventDefault();
+      const password = document.getElementById("adminNewPassword").value;
+      const confirmPassword = document.getElementById("adminNewPasswordConfirm").value;
+      if (password !== confirmPassword) {
+        alert("নতুন পাসওয়ার্ড মিলছে না।");
+        return;
+      }
+      const { error } = await supabaseClient.auth.updateUser({ password });
+      if (error) {
+        alert(error.message);
+        return;
+      }
+      alert("Admin পাসওয়ার্ড সফলভাবে পরিবর্তন হয়েছে।");
+      showAdminLogin();
+    }
+
+    function showAdminRecovery() {
+      document.getElementById("adminLoginSection").classList.add("hidden");
+      document.getElementById("adminResetSection").classList.add("hidden");
+      document.getElementById("adminRegisterSection").classList.add("hidden");
+      document.getElementById("adminRecoverySection").classList.remove("hidden");
+    }
+
+    function checkRecoverySession() {
+      const hash = window.location.hash || "";
+      const search = window.location.search || "";
+      const isRecovery =
+        hash.includes("type=recovery") ||
+        search.includes("type=recovery") ||
+        hash.includes("access_token=") && hash.includes("type=recovery");
+
+      if (isRecovery) {
+        openAdminPanel();
+        showAdminRecovery();
+      }
+    }
+
+    if (supabaseClient && supabaseClient.auth) {
+      supabaseClient.auth.onAuthStateChange(function(event) {
+        if (event === "PASSWORD_RECOVERY") {
+          openAdminPanel();
+          showAdminRecovery();
+        }
+      });
+    }
+
+    function showAdminLogin() {
+      document.getElementById("adminRegisterSection").classList.add("hidden");
+      document.getElementById("adminResetSection").classList.add("hidden");
+      document.getElementById("adminRecoverySection").classList.add("hidden");
+      document.getElementById("adminLoginSection").classList.remove("hidden");
+    }
+
+    async function adminRegister(event) {
+      event.preventDefault();
+      const name = document.getElementById("adminName").value.trim();
+      const phone = document.getElementById("adminPhone").value.trim();
+      const email = document.getElementById("adminRegisterEmail").value.trim();
+      const password = document.getElementById("adminRegisterPassword").value;
+      const confirmPassword = document.getElementById("adminConfirmPassword").value;
+      if (password !== confirmPassword) {
+        alert("Password মিলছে না।");
+        return;
+      }
+      if (SUPABASE_PUBLISHABLE_KEY === "PASTE_YOUR_PUBLISHABLE_KEY_HERE") {
+        alert("Supabase Publishable Key সঠিকভাবে বসানো হয়নি।");
+        return;
+      }
+      const { data, error } = await supabaseClient.auth.signUp({
+        email,
+        password,
+        options: { data: { role: "admin", name, phone } }
+      });
+      if (error) { alert(error.message); return; }
+      if (data && data.session) {
+        alert("Admin account তৈরি হয়েছে। এখন Login করুন।");
+      } else {
+        alert("Admin account তৈরি হয়েছে। আপনার ইমেইল Verify করে তারপর Login করুন।");
+      }
+      document.getElementById("adminEmail").value = email;
+      showAdminLogin();
+    }
+
+    /* PASSWORD VISIBILITY — all password fields */
+    document.querySelectorAll(".password-toggle").forEach(function(toggle) {
+      toggle.addEventListener("click", function() {
+        const input = document.getElementById(toggle.dataset.target);
+        if (!input) return;
+
+        const isHidden = input.type === "password";
+        input.type = isHidden ? "text" : "password";
+        toggle.setAttribute("aria-pressed", String(isHidden));
+        toggle.setAttribute("aria-label", isHidden ? "পাসওয়ার্ড লুকান" : "পাসওয়ার্ড দেখুন");
+        toggle.innerHTML = isHidden
+          ? '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3l18 18"></path><path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"></path><path d="M9.9 5.2A10.8 10.8 0 0 1 12 5c6.5 0 10 7 10 7a18.4 18.4 0 0 1-3.1 3.9"></path><path d="M6.1 6.1C3.4 8.1 2 12 2 12s3.5 7 10 7a10.8 10.8 0 0 0 4.1-.8"></path></svg>'
+          : '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"></path><circle cx="12" cy="12" r="3"></circle></svg>';
+      });
+    });
+
+    /* ADMIN ACCESS: manual click only — no automatic swipe opening */
+    const adminPanel = document.getElementById("adminPanel");
+    const adminDot = document.getElementById("adminDot");
+
+    function openAdminPanel() {
+      adminPanel.classList.add("active");
+    }
+
+    /* Admin panel will open only when the admin access dot is clicked. */
+    adminDot.addEventListener("click", openAdminPanel);
+
+    /* ADMIN PANEL */
+    function closeAdminPanel() {
+      document.getElementById("adminPanel").classList.remove("active");
+    }
+
+    /* ADMIN LOGIN */
+    async function adminLogin(event) {
+      event.preventDefault();
+
+      const email = document.getElementById("adminEmail").value.trim();
+      const password = document.getElementById("adminPassword").value;
+
+      if (
+        SUPABASE_PUBLISHABLE_KEY ===
+        "sb_publishable_ory8XocB_s-ltfnLh9NWFw_QPMd0_D1"
+      ) {
+        alert("প্রথমে Supabase Publishable Key বসান।");
+        return;
+      }
+
+      const { error } =
+        await supabaseClient.auth.signInWithPassword({
+          email: email,
+          password: password
+        });
+
+      if (error) {
+        alert(error.message);
+        return;
+      }
+
+      alert(
+        "Login সফল হয়েছে। Admin Role Verification ও Dashboard পরবর্তী ধাপে যুক্ত হবে।"
+      );
+    }
+  </script>
+
+<!-- PLAY_GROUND PRO ADD-ON FEATURES -->
+
+<style id="pgp-addon-style">
+  .pgp-screen{position:fixed;inset:0;z-index:12000;display:none;overflow:auto;padding:22px;background:linear-gradient(rgba(3,7,18,.58),rgba(3,31,23,.78)),url("./football-bg.png") center/cover no-repeat;font-family:'Hind Siliguri',sans-serif;color:#fff}
+  .pgp-screen.active{display:block}
+  .pgp-wrap{width:min(980px,100%);margin:0 auto}
+  .pgp-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+  .pgp-title{font-size:24px;font-weight:700;margin:0}.pgp-muted{color:#b7c8c0;font-size:13px}
+  .pgp-close{width:auto;margin:0;padding:8px 13px;background:rgba(0,0,0,.3);color:#fff;border:1px solid #ffffff30}
+  .pgp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+  .pgp-box{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(18px);border-radius:18px;padding:18px;box-shadow:0 14px 40px #0004}
+  .pgp-box h3{margin:0 0 8px;font-size:18px}.pgp-box p{margin:4px 0;color:#c8d8d0;font-size:13px}.pgp-box.booking-box h3,.pgp-box.booking-box>p{text-align:center}.pgp-date-row{display:flex;align-items:center;gap:10px;margin-top:12px}.pgp-date-row label{margin:0;white-space:nowrap}.pgp-date-row input{margin:0!important;flex:1}.pgp-weekday{min-width:92px;text-align:center;color:#6ee7b7;font-weight:700;font-size:14px}
+  .pgp-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:14px}.pgp-actions button{width:auto;margin:0;padding:10px 16px}
+  .pgp-choice{background:rgba(0,0,0,.2)!important;color:#d1fae5!important;border:1px solid #ffffff26!important}.pgp-choice.selected{background:linear-gradient(135deg,#059669,#34d399)!important;color:#022c22!important}
+  .pgp-slots{display:grid;grid-template-columns:repeat(auto-fit,minmax(105px,1fr));gap:9px;margin-top:12px}.pgp-slot{margin:0!important;padding:10px 5px!important;font-size:13px!important;background:rgba(0,0,0,.25)!important;color:#d1fae5!important;border:1px solid #ffffff26!important}.pgp-slot.booked{background:#7f1d1d!important;color:#fecaca!important;cursor:not-allowed}.pgp-slot.pending{background:#854d0e!important;color:#fef08a!important;cursor:not-allowed}.pgp-slot.selected{background:#10b981!important;color:#022c22!important}
+  .pgp-table{width:100%;border-collapse:collapse;font-size:13px}.pgp-table th,.pgp-table td{padding:9px;border-bottom:1px solid #ffffff1f;text-align:left}.pgp-badge{display:inline-block;padding:3px 8px;border-radius:999px;background:#065f46;color:#d1fae5;font-size:11px}
+  .pgp-form label{display:block;margin:5px 0 2px;color:#d1fae5;font-size:13px;font-weight:600}.pgp-form input,.pgp-form select{margin:0 0 9px;width:100%;box-sizing:border-box;background:rgba(0,0,0,.2)!important;color:#d1fae5!important;border:1px solid #ffffff26!important;border-radius:8px;padding:11px}.pgp-form input:focus,.pgp-form select:focus{border-color:#34d399!important;outline:none}.pgp-form button{margin-top:8px}
+  .pgp-form select{color-scheme:dark;background:rgba(0,0,0,.2)!important;color:#d1fae5!important;backdrop-filter:none!important}
+  .pgp-form select option{background:rgba(20,65,48,.72)!important;background-color:rgba(20,65,48,.72)!important;color:#d1fae5!important}
+  .admin-panel form > label{font-size:15px;margin:5px 0 2px 3px}
+  .admin-panel form > input{margin:0 0 5px 0!important}
+  .admin-panel .password-field{margin-bottom:5px}
+  .admin-panel h3{margin:5px 0 12px;font-size:28px}.pgp-form small{font-size:10px;color:#a7f3d0}.pgp-payment-extra{margin-top:4px}.pgp-watermark,.pgp-account-list{padding:10px;border:1px dashed #ffffff35;border-radius:8px;color:#ffffff55;font-size:12px;font-style:italic}.pgp-account-list div{padding:6px 0;color:#d1fae5;font-style:normal}.pgp-account-list span{display:block;color:#ffffff55;font-size:11px;font-style:italic}.pgp-my-bookings-box h3,.pgp-my-bookings-box #pgpMyBookings{text-align:center}
+</style>
+
+<section id="pgpCustomerScreen" class="pgp-screen" aria-label="Customer dashboard">
+  <div class="pgp-wrap">
+    <div class="pgp-top"><div><h2 class="pgp-title">Customer Dashboard</h2><div class="pgp-muted">Play_Ground Pro • Booking Center</div></div><button class="pgp-close" type="button" onclick="pgpCloseScreens()">✕</button></div>
+    <div class="pgp-grid">
+      <div class="pgp-box booking-box"><h3>নতুন বুকিং</h3><p>Football অথবা Cricket নির্বাচন করে সময় বেছে নিন।</p><div class="pgp-actions" aria-label="Sport selection"><button class="pgp-choice selected" id="pgpFootballBtn" onclick="pgpChooseSport('Football')">⚽ Football</button><button class="pgp-choice" id="pgpCricketBtn" onclick="pgpChooseSport('Cricket')">🏏 Cricket</button></div><p class="pgp-muted" style="text-align:center;margin-top:8px">বুকিং সময়: সকাল ৬টা থেকে পরের দিন রাত ৩টা পর্যন্ত</p><div class="pgp-date-row"><label for="pgpDate">তারিখ</label><input id="pgpDate" type="date"><span id="pgpWeekday" class="pgp-weekday">বার</span></div><div id="pgpSlots" class="pgp-slots"></div></div>
+      <div class="pgp-box"><h3>বুকিং তথ্য</h3><form class="pgp-form" onsubmit="pgpCreateBooking(event)">
+        <label>আপনার নাম</label><input id="pgpName" required placeholder="পূর্ণ নাম">
+        <label>মোবাইল নম্বর</label><input id="pgpPhone" minlength="11" maxlength="11" pattern="[0-9]{11}" inputmode="numeric" required type="tel" placeholder="01XXXXXXXXX">
+        <label>নির্বাচিত সময়</label><input id="pgpSelectedSlot" readonly required placeholder="উপরের তালিকা থেকে সময় নির্বাচন করুন">
+        <label>পেমেন্ট পদ্ধতি</label>
+        <select id="pgpPaymentMethod" required onchange="pgpPaymentChanged()">
+          <option value="">পেমেন্ট পদ্ধতি নির্বাচন করুন</option>
+          <option value="Online Payment">অনলাইন পেমেন্ট</option>
+          <option value="Cash">ক্যাশ পেমেন্ট</option>
+          <option value="Send Money">সেন্ড মানি <small>(চার্জসহ)</small></option>
+        </select>
+        <div id="pgpOnlineOptions" class="pgp-payment-extra" hidden>
+          <label>অনলাইন পেমেন্ট মাধ্যম</label>
+          <select id="pgpOnlineProvider">
+            <option value="">মাধ্যম নির্বাচন করুন</option>
+            <option value="বিকাশ">১. বিকাশ</option>
+            <option value="নগদ">২. নগদ</option>
+            <option value="রকেট">৩. রকেট</option>
+            <option value="ব্যাংক">৪. ব্যাংক</option>
+          </select>
+          <label>Transaction ID / TrxID</label>
+          <input id="pgpTransactionId" placeholder="পেমেন্ট করলে TrxID লিখুন" maxlength="80">
+          <div class="pgp-watermark">অ্যাকাউন্ট নম্বর Admin Settings থেকে বসাতে হবে</div>
+        </div>
+        <div id="pgpSendMoneyOptions" class="pgp-payment-extra" hidden>
+          <label>সেন্ড মানি নম্বর (পার্সোনাল)</label>
+          <div class="pgp-account-list">
+            <div>বিকাশ (পার্সোনাল): <span>অ্যাকাউন্ট নম্বর সংরক্ষিত নেই</span></div>
+            <div>নগদ (পার্সোনাল): <span>অ্যাকাউন্ট নম্বর সংরক্ষিত নেই</span></div>
+            <div>রকেট (পার্সোনাল): <span>অ্যাকাউন্ট নম্বর সংরক্ষিত নেই</span></div>
+          </div>
+          <p class="pgp-muted" style="font-size:11px;margin-top:4px">সেন্ড মানি করলে প্রযোজ্য চার্জসহ টাকা পাঠাতে হবে।</p>
+        </div>
+        <button type="submit">BOOK SLOT →</button>
+      </form><p id="pgpBookingMessage"></p></div>
+    </div>
+    <div class="pgp-box pgp-my-bookings-box" style="margin-top:14px"><h3>আমার বুকিং</h3><div id="pgpMyBookings" class="pgp-muted">এখনো কোনো বুকিং নেই।</div></div>
+  </div>
+</section>
+
+<section id="pgpAdminScreen" class="pgp-screen" aria-label="Admin dashboard">
+  <div class="pgp-wrap">
+    <div class="pgp-admin-layout">
+      <aside class="pgp-sidebar" aria-label="Admin navigation">
+        <h3>Admin Menu</h3>
+        <div class="pgp-nav">
+          <button type="button" onclick="document.getElementById('pgpAdminScreen').scrollIntoView({behavior:'smooth'})">🏠 Dashboard Overview</button>
+          <button type="button" onclick="document.getElementById('pgpAdminBookings').scrollIntoView({behavior:'smooth'})">📋 Booking Management</button>
+          <button type="button" onclick="document.getElementById('pgpModuleCalendar').scrollIntoView({behavior:'smooth'})">🗓️ Booking Calendar</button>
+          <button type="button" onclick="document.getElementById('pgpModuleFootball').scrollIntoView({behavior:'smooth'})">⚽ Football Management</button>
+          <button type="button" onclick="document.getElementById('pgpModuleCricket').scrollIntoView({behavior:'smooth'})">🏏 Cricket Management</button>
+          <button type="button" onclick="document.getElementById('pgpModulePayments').scrollIntoView({behavior:'smooth'})">💳 Payment Management</button>
+          <button type="button" onclick="document.getElementById('pgpModuleApproval').scrollIntoView({behavior:'smooth'})">✅ Admin Approval</button>
+          <button type="button" onclick="document.getElementById('pgpModuleVoucher').scrollIntoView({behavior:'smooth'})">🎟️ Voucher & Receipt</button>
+          <button type="button" onclick="document.getElementById('pgpModuleCustomers').scrollIntoView({behavior:'smooth'})">👥 Customer Management</button>
+          <button type="button" onclick="document.getElementById('pgpAdminRecurring').scrollIntoView({behavior:'smooth'})">🔁 Recurring Booking</button>
+          <button type="button" onclick="document.getElementById('pgpModuleTurf').scrollIntoView({behavior:'smooth'})">🏟️ Turf & Facility</button>
+          <button type="button" onclick="document.getElementById('pgpModuleStaff').scrollIntoView({behavior:'smooth'})">👨‍💼 Staff Management</button>
+          <button type="button" onclick="document.getElementById('pgpModuleReports').scrollIntoView({behavior:'smooth'})">📊 Reports & Analytics</button>
+          <button type="button" onclick="document.getElementById('pgpModuleExpenses').scrollIntoView({behavior:'smooth'})">💰 Expense Management</button>
+          <button type="button" onclick="document.getElementById('pgpModuleNotifications').scrollIntoView({behavior:'smooth'})">🔔 Notifications</button>
+          <button type="button" onclick="document.getElementById('pgpModuleSecurity').scrollIntoView({behavior:'smooth'})">🔐 Security & Permissions</button>
+          <button type="button" onclick="document.getElementById('pgpAdminLog').scrollIntoView({behavior:'smooth'})">📝 Audit Logs</button>
+          <button type="button" onclick="document.getElementById('pgpModuleSettings').scrollIntoView({behavior:'smooth'})">⚙️ Settings</button>
+          <button type="button" onclick="pgpCloseScreens()">🚪 Close Dashboard</button>
+        </div>
+      </aside>
+      <div class="pgp-admin-content">
+    <div class="pgp-top"><div><h2 class="pgp-title">Admin Dashboard</h2><div class="pgp-muted">Play_Ground Pro • Control Center</div></div><button class="pgp-close" type="button" onclick="pgpCloseScreens()">✕</button></div>
+    <div class="pgp-grid"><div class="pgp-box"><h3 id="pgpTotalCount">0</h3><p>Total Bookings</p></div><div class="pgp-box"><h3 id="pgpPendingCount">0</h3><p>Pending</p></div><div class="pgp-box"><h3 id="pgpApprovedCount">0</h3><p>Approved</p></div><div class="pgp-box"><h3 id="pgpRevenueCount">৳0</h3><p>Recorded Advance</p></div></div>
+    <div class="pgp-box" style="margin-top:14px"><h3>Dashboard Controls</h3><div class="pr-grid"><div><label>Sport Filter</label><select id="pgpAdminSportFilter"><option value="all">All Sports</option><option>Football</option><option>Cricket</option></select></div><div><label>Status Filter</label><select id="pgpAdminStatusFilter"><option value="all">All Status</option><option>Pending</option><option>Approved</option><option>Rejected</option><option>Completed</option></select></div><div><label>Search</label><input id="pgpAdminSearch" placeholder="নাম, ফোন, Booking ID বা TrxID"></div></div><div class="pr-actions"><button type="button" onclick="pgpRenderAdmin()">Refresh</button><button type="button" onclick="pgpAdminExportCSV()">Export CSV</button></div></div>
+    <div class="pgp-box" style="margin-top:14px"><h3>Booking Management</h3><div id="pgpAdminBookings" class="pgp-muted">কোনো বুকিং নেই।</div></div>
+    <div class="pgp-box" style="margin-top:14px"><h3>Recurring Booking Requests</h3><div id="pgpAdminRecurring" class="pgp-muted">কোনো recurring request নেই।</div></div>
+    <div class="pgp-box" style="margin-top:14px"><h3>Turf & Pricing Settings</h3><div class="pr-grid"><div><label>Football Normal Rate</label><input id="pgpFootballNormal" type="number" value="1500"></div><div><label>Football Peak Rate</label><input id="pgpFootballPeak" type="number" value="1800"></div><div><label>Cricket Normal Rate</label><input id="pgpCricketNormal" type="number" value="1200"></div><div><label>Cricket Peak Rate</label><input id="pgpCricketPeak" type="number" value="1500"></div></div><button type="button" onclick="pgpSaveAdminSettings()">Save Settings</button><div id="pgpAdminSettingsMsg" class="pgp-note"></div></div>
+    <div class="pgp-box pgp-module-grid" style="margin-top:14px">
+      <h3 style="grid-column:1/-1">Dashboard Modules</h3>
+      <div id="pgpModuleCalendar" class="pgp-module-card"><b>🗓️ Booking Calendar</b><p>Daily / Weekly / Monthly calendar structure.</p><span>পরবর্তী ধাপে Supabase Calendar সংযুক্ত হবে।</span></div>
+      <div id="pgpModuleFootball" class="pgp-module-card"><b>⚽ Football Management</b><p>Normal ৳1500 • Peak ৳1800 • 7–11 PM</p><span>Rate ও schedule control.</span></div>
+      <div id="pgpModuleCricket" class="pgp-module-card"><b>🏏 Cricket Management</b><p>Normal ৳1200 • Peak ৳1500 • 2–7 PM</p><span>Rate ও schedule control.</span></div>
+      <div id="pgpModulePayments" class="pgp-module-card"><b>💳 Payment Management</b><p>bKash • Nagad • Rocket • Cash • Bank</p><span>Payment verification workflow.</span></div>
+      <div id="pgpModuleApproval" class="pgp-module-card"><b>✅ Admin Approval</b><p>Approve / Reject / Hold / Audit</p><span>Approval workflow structure.</span></div>
+      <div id="pgpModuleVoucher" class="pgp-module-card"><b>🎟️ Voucher & Receipt</b><p>Voucher ID • QR • Print / PDF</p><span>Voucher generation structure.</span></div>
+      <div id="pgpModuleCustomers" class="pgp-module-card"><b>👥 Customer Management</b><p>Profile • Booking history • Due</p><span>Customer database connection pending.</span></div>
+      <div id="pgpModuleTurf" class="pgp-module-card"><b>🏟️ Turf & Facility</b><p>Availability • Maintenance • Closure</p><span>Facility control structure.</span></div>
+      <div id="pgpModuleStaff" class="pgp-module-card"><b>👨‍💼 Staff Management</b><p>Roles • Status • Permissions</p><span>Role-based staff control.</span></div>
+      <div id="pgpModuleReports" class="pgp-module-card"><b>📊 Reports & Analytics</b><p>Revenue • Booking • Utilization</p><span>Export and analytics structure.</span></div>
+      <div id="pgpModuleExpenses" class="pgp-module-card"><b>💰 Expense Management</b><p>Salary • Maintenance • Utilities</p><span>Expense tracking structure.</span></div>
+      <div id="pgpModuleNotifications" class="pgp-module-card"><b>🔔 Notifications</b><p>Email • SMS • In-app alerts</p><span>Notification integration pending.</span></div>
+      <div id="pgpModuleSecurity" class="pgp-module-card"><b>🔐 Security & Permissions</b><p>RLS • Sessions • Access policies</p><span>Supabase security controls.</span></div>
+      <div id="pgpModuleSettings" class="pgp-module-card"><b>⚙️ Settings</b><p>Business • Booking • Payment settings</p><span>Configuration structure.</span></div>
+    </div>
+    <div class="pgp-box" style="margin-top:14px"><h3>Activity Log / Audit Logs</h3><div id="pgpAdminLog" class="pgp-muted">কোনো activity নেই।</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script id="pgp-addon-script">
+(function(){
+  const slots=['৬–৭ সকাল','৭–৮ সকাল','৮–৯ সকাল','৯–১০ সকাল','১০–১১ সকাল','১১–১২ দুপুর','১২–১ দুপুর','১–২ দুপুর','২–৩ দুপুর','৩–৪ বিকেল','৪–৫ বিকেল','৫–৬ বিকেল','৬–৭ সন্ধ্যা','৭–৮ রাত','৮–৯ রাত','৯–১০ রাত','১০–১১ রাত','১১–১২ রাত','১২–১ রাত','১–২ রাত','২–৩ রাত'];
+  let sport='Football',selectedSlot='',currentUser='Guest';
+  const getBookings=()=>JSON.parse(localStorage.getItem('pgpBookings')||'[]');
+  const saveBookings=b=>localStorage.setItem('pgpBookings',JSON.stringify(b));
+  const $=id=>document.getElementById(id);
+  window.pgpChooseSport=function(value){sport=value;$('pgpFootballBtn').classList.toggle('selected',value==='Football');$('pgpCricketBtn').classList.toggle('selected',value==='Cricket');selectedSlot='';$('pgpSelectedSlot').value='';pgpRenderSlots();};
+  window.pgpRenderSlots=function(){const date=$('pgpDate').value;const box=$('pgpSlots');pgpUpdateWeekday();box.innerHTML='';if(!date){box.innerHTML='<p class="pgp-muted">প্রথমে তারিখ নির্বাচন করুন।</p>';return;}const bookings=getBookings();slots.forEach(slot=>{const state=bookings.find(b=>b.date===date&&b.sport===sport&&b.slot===slot&&b.status!=='Rejected');const b=document.createElement('button');b.type='button';b.className='pgp-slot';b.textContent=slot;if(state){b.classList.add(state.status==='Pending'?'pending':'booked');b.disabled=true;b.title=state.status;}else{b.textContent=slot+' • Available';b.onclick=()=>{selectedSlot=slot;$('pgpSelectedSlot').value=slot;document.querySelectorAll('.pgp-slot').forEach(x=>x.classList.remove('selected'));b.classList.add('selected');};}box.appendChild(b);});};
+  window.pgpUpdateWeekday=function(){const date=$('pgpDate').value;const names=['রবিবার','সোমবার','মঙ্গলবার','বুধবার','বৃহস্পতিবার','শুক্রবার','শনিবার'];$('pgpWeekday').textContent=date?names[new Date(date+'T12:00:00').getDay()]:'বার';};
+  window.pgpPaymentChanged=function(){const method=$('pgpPaymentMethod').value;$('pgpOnlineOptions').hidden=method!=='Online Payment';$('pgpSendMoneyOptions').hidden=method!=='Send Money';$('pgpOnlineProvider').required=method==='Online Payment';if($('pgpTransactionId'))$('pgpTransactionId').required=method==='Online Payment'||method==='Send Money';if(method!=='Online Payment')$('pgpOnlineProvider').value='';};
+  window.pgpCreateBooking=function(e){e.preventDefault();const date=$('pgpDate').value,name=$('pgpName').value.trim(),phone=$('pgpPhone').value.trim(),paymentMethod=$('pgpPaymentMethod').value,onlineProvider=$('pgpOnlineProvider').value,transactionId=($('pgpTransactionId')?.value||'').trim();if(!selectedSlot){$('pgpBookingMessage').textContent='একটি সময় নির্বাচন করুন।';return;}if(!paymentMethod){$('pgpBookingMessage').textContent='পেমেন্ট পদ্ধতি নির্বাচন করুন।';return;}if(paymentMethod==='Online Payment'&&!onlineProvider){$('pgpBookingMessage').textContent='অনলাইন পেমেন্ট মাধ্যম নির্বাচন করুন।';return;}if((paymentMethod==='Online Payment'||paymentMethod==='Send Money')&&!transactionId){$('pgpBookingMessage').textContent='পেমেন্টের Transaction ID / TrxID দিন।';return;}const bookings=getBookings();if(bookings.some(b=>b.date===date&&b.sport===sport&&b.slot===selectedSlot&&b.status!=='Rejected')){ $('pgpBookingMessage').textContent='দুঃখিত, সময়টি ইতোমধ্যে বুকড।';pgpRenderSlots();return;}const autoApproved=false;bookings.push({id:'PGP-'+Date.now(),name,phone,date,sport,slot:selectedSlot,paymentMethod,onlineProvider:paymentMethod==='Online Payment'?onlineProvider:'',transactionId,status:'Pending',approvalType:'Admin Approval',createdAt:new Date().toISOString()});saveBookings(bookings);$('pgpBookingMessage').textContent=autoApproved?'অনলাইন পেমেন্ট বুকিং গ্রহণ করা হয়েছে। পেমেন্ট যাচাই হলে স্বয়ংক্রিয়ভাবে Confirm হবে।':'বুকিং রিকোয়েস্ট গ্রহণ করা হয়েছে। Admin approval প্রয়োজন।';selectedSlot='';$('pgpSelectedSlot').value='';$('pgpPaymentMethod').value='';$('pgpOnlineProvider').value='';if($('pgpTransactionId'))$('pgpTransactionId').value='';pgpPaymentChanged();pgpRenderSlots();pgpRenderMyBookings();pgpRenderAdmin();};
+  window.pgpRenderMyBookings=function(){const mine=getBookings().filter(b=>b.phone===($('pgpPhone')?.value||'')||b.name===($('pgpName')?.value||''));$('pgpMyBookings').innerHTML=mine.length?mine.map(b=>`${b.date} • ${b.sport} • ${b.slot} • <span class="pgp-badge">${b.status}</span>`).join('<br>'):'এখনো কোনো বুকিং নেই।';};
+  window.pgpRenderAdmin=function(){
+ const all=getBookings();
+ const sport=($('pgpAdminSportFilter')?.value||'all'),status=($('pgpAdminStatusFilter')?.value||'all'),q=($('pgpAdminSearch')?.value||'').toLowerCase();
+ const b=all.filter(x=>(sport==='all'||x.sport===sport)&&(status==='all'||x.status===status)&&(!q||JSON.stringify(x).toLowerCase().includes(q)));
+ $('pgpTotalCount').textContent=all.length; $('pgpPendingCount').textContent=all.filter(x=>x.status==='Pending').length; $('pgpApprovedCount').textContent=all.filter(x=>x.status==='Approved').length; $('pgpRevenueCount').textContent='৳'+all.reduce((n,x)=>n+Number(x.advance||x.amount||0),0);
+ if(!b.length){$('pgpAdminBookings').textContent='কোনো বুকিং নেই।';}else{const table=document.createElement('table');table.className='pgp-table';table.innerHTML='<tr><th>ID</th><th>Date</th><th>Sport</th><th>Slot</th><th>Name</th><th>Payment</th><th>TrxID</th><th>Status</th><th>Action</th></tr>';b.forEach(x=>{const tr=document.createElement('tr');tr.innerHTML=`<td>${x.id||'—'}</td><td>${x.date||'—'}</td><td>${x.sport||'—'}</td><td>${x.slot||'—'}</td><td>${x.name||'—'}<br><small>${x.phone||''}</small></td><td>${x.paymentMethod||'—'}</td><td>${x.transactionId||'—'}</td><td>${x.status||'Pending'}</td><td></td>`;const td=tr.lastElementChild;['Approve','Reject','Complete'].forEach(action=>{if((action==='Approve'&&x.status!=='Pending')||(action==='Reject'&&x.status!=='Pending')||(action==='Complete'&&x.status!=='Approved'))return;const btn=document.createElement('button');btn.textContent=action;btn.style.width='auto';btn.style.margin='2px';btn.style.padding='5px 8px';btn.onclick=()=>{x.status=action==='Approve'?'Approved':action==='Reject'?'Rejected':'Completed';saveBookings(all);pgpAdminLog(action+' '+(x.id||''));pgpRenderAdmin();pgpRenderSlots();pgpRenderMyBookings();};td.appendChild(btn);});table.appendChild(tr);});$('pgpAdminBookings').innerHTML='';$('pgpAdminBookings').appendChild(table);}
+ const rr=JSON.parse(localStorage.getItem('pgpRecurringRequests')||'[]');$('pgpAdminRecurring').innerHTML=rr.length?rr.map((x,i)=>`<div class="pr-upcoming-item"><b>RB-${i+1} • ${x.type||x.pattern||'Recurring'}</b><small>${x.startDate||x.start||''} • ${(x.slots||[x.slot]).join(' + ')} • Advance ৳${Number(x.advancePerMatch||x.advance||0)}</small><span class="pr-status">${x.status||'Pending'}</span><div class="pr-actions"><button type="button" onclick="pgpRecurringAction(${i},'Approved')">Approve</button><button type="button" onclick="pgpRecurringAction(${i},'Rejected')">Reject</button><button type="button" onclick="pgpRecurringAction(${i},'Paused')">Pause</button><button type="button" onclick="pgpRecurringAction(${i},'Cancelled')">Cancel</button></div></div>`).join(''):'কোনো recurring request নেই।';
+};
+window.pgpAdminLog=function(msg){const a=JSON.parse(localStorage.getItem('pgpAdminLog')||'[]');a.unshift(new Date().toLocaleString('bn-BD')+' — '+msg);localStorage.setItem('pgpAdminLog',JSON.stringify(a.slice(0,30)));if($('pgpAdminLog'))$('pgpAdminLog').innerHTML=a.slice(0,10).map(x=>'<div>'+x+'</div>').join('');};
+window.pgpRecurringAction=function(i,status){const a=JSON.parse(localStorage.getItem('pgpRecurringRequests')||'[]');if(a[i]){a[i].status=status;localStorage.setItem('pgpRecurringRequests',JSON.stringify(a));pgpAdminLog(status+' recurring request '+i);pgpRenderAdmin();}};
+window.pgpSaveAdminSettings=function(){const settings={footballNormal:$('pgpFootballNormal').value,footballPeak:$('pgpFootballPeak').value,cricketNormal:$('pgpCricketNormal').value,cricketPeak:$('pgpCricketPeak').value};localStorage.setItem('pgpAdminSettings',JSON.stringify(settings));$('pgpAdminSettingsMsg').textContent='সেটিংস সংরক্ষণ হয়েছে।';pgpAdminLog('Pricing settings updated');};
+window.pgpAdminExportCSV=function(){const rows=getBookings();const csv=['ID,Date,Sport,Slot,Name,Phone,Payment,Transaction,Status',...rows.map(x=>[x.id,x.date,x.sport,x.slot,x.name,x.phone,x.paymentMethod,x.transactionId,x.status].map(v=>'"'+String(v||'').replace(/"/g,'""')+'"').join(','))].join('\n');const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='play_ground_bookings.csv';a.click();URL.revokeObjectURL(url);};
+window.pgpOpenCustomer=function(user){currentUser=user||'Guest';$('pgpCustomerScreen').classList.add('active');$('pgpAdminScreen').classList.remove('active');const d=new Date();$('pgpDate').value=d.toISOString().slice(0,10);pgpRenderSlots();pgpRenderMyBookings();};
+  window.pgpOpenAdmin=function(){$('pgpAdminScreen').classList.add('active');$('pgpCustomerScreen').classList.remove('active');pgpRenderAdmin();};
+  window.pgpCloseScreens=function(){$('pgpCustomerScreen').classList.remove('active');$('pgpAdminScreen').classList.remove('active');};
+  $('pgpDate').addEventListener('change',pgpRenderSlots);$('pgpAdminSportFilter')?.addEventListener('change',pgpRenderAdmin);$('pgpAdminStatusFilter')?.addEventListener('change',pgpRenderAdmin);$('pgpAdminSearch')?.addEventListener('input',pgpRenderAdmin);$('pgpName').addEventListener('input',pgpRenderMyBookings);$('pgpPhone').addEventListener('input',pgpRenderMyBookings);
+  const oldLogin=window.loginUser,oldRegister=window.registerUser,oldGuest=window.guestBooking,oldAdminLogin=window.adminLogin;
+  window.loginUser=loginUser;
+  window.registerUser=registerUser;
+  window.guestBooking=function(e){e.preventDefault();pgpOpenCustomer('Guest');};
+  window.adminLogin=async function(e){
+  e.preventDefault();
+  if(SUPABASE_PUBLISHABLE_KEY==='PASTE_YOUR_PUBLISHABLE_KEY_HERE'){
+    alert('প্রথমে Supabase Publishable Key বসান।'); return;
+  }
+  const email=$('adminEmail').value.trim().toLowerCase();
+  const password=$('adminPassword').value;
+  const result=await supabaseClient.auth.signInWithPassword({email,password});
+  if(result.error){alert(result.error.message);return;}
+  const user=result.data?.user;
+  if(!user){alert('User session পাওয়া যায়নি।');return;}
+  const check=await supabaseClient.from('staff').select('id,staff_id,staff_name,email,role,status,auth_user_id').or('auth_user_id.eq.'+user.id+',email.eq.'+email).limit(1);
+  if(check.error){
+    alert('Admin permission যাচাই করা যাচ্ছে না। staff টেবিলের কলাম ও RLS policy পরীক্ষা করুন।');
+    await supabaseClient.auth.signOut(); return;
+  }
+  const staff=check.data?.[0];
+  if(!staff || String(staff.role||'').toLowerCase()!=='admin' || (staff.status && String(staff.status).toLowerCase()!=='active')){
+    alert('এই অ্যাকাউন্টের Admin অনুমতি নেই। আগে staff টেবিলে role=admin এবং status=active যুক্ত করুন।');
+    await supabaseClient.auth.signOut(); return;
+  }
+  pgpOpenAdmin();
+};
+})();
+</script>
+
+
+<style id="pgp-batch-v1-style">
+.pgp-nav{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}.pgp-nav button{width:auto!important;margin:0!important;padding:9px 12px!important;font-size:12px!important}.pgp-module{display:none}.pgp-module.active{display:block}.pgp-stat{font-size:25px!important;color:#6ee7b7}.pgp-list{padding-left:18px;color:#d1fae5;font-size:13px;line-height:1.9}.pgp-note{border-left:3px solid #34d399;padding:8px 10px;background:#ffffff08;border-radius:6px;font-size:12px;color:#c8d8d0}
+</style>
+<script id="pgp-batch-v1-script">
+(function(){
+ const customer=document.getElementById('pgpCustomerScreen');
+ if(!customer||document.getElementById('pgpBatchNav')) return;
+ const nav=document.createElement('div');nav.id='pgpBatchNav';nav.className='pgp-nav';
+ nav.innerHTML="<button type='button' onclick=\"pgpModule('booking')\">নতুন বুকিং</button><button type='button' onclick=\"pgpModule('recurring')\">Recurring Booking</button><button type='button' onclick=\"pgpModule('profile')\">Profile</button><button type='button' onclick=\"pgpModule('notice')\">Notifications</button>";
+ const wrap=customer.querySelector('.pgp-wrap'); const first=wrap.querySelector('.pgp-grid'); wrap.insertBefore(nav,first);
+ const box=document.createElement('div');box.id='pgpBatchModules';
+ box.innerHTML=`<div id="pgpModuleRecurring" class="pgp-box pgp-module"><h3>Recurring Booking</h3><p>নিয়মিত বুকিং, কাস্টম সাইকেল, একাধিক দিন, সিডিউল প্রিভিউ, মূল্য হিসাব, পেমেন্ট ও অ্যাডমিন অনুমোদনের সম্পূর্ণ ব্যবস্থা।</p><form class="pgp-form" onsubmit="pgpSaveRecurring(event)">
+<label>বুকিং সাইকেল</label><select id="pgpRecurringType" required onchange="pgpRecurringTypeChanged()"><option value="once">One Time (একবার)</option><option value="weekly">১ সপ্তাহ</option><option value="2weeks">২ সপ্তাহ</option><option value="3weeks">৩ সপ্তাহ</option><option value="4weeks">৪ সপ্তাহ</option><option value="monthly">১ মাস</option><option value="3months">৩ মাস</option><option value="6months">৬ মাস</option><option value="9months">৯ মাস</option><option value="12months">১২ মাস</option><option value="custom">Custom (নিজের ব্যবধান)</option></select>
+<div id="pgpCustomCycleWrap" style="display:none"><label>Custom Cycle</label><div class="pr-grid"><div><label>একক</label><select id="pgpCustomUnit"><option value="days">দিন (প্রতি কত দিন পর)</option><option value="weeks">সপ্তাহ (প্রতি কত সপ্তাহ পর)</option><option value="months">মাস (প্রতি কত মাস পর)</option></select><small class="pgp-inline-help">(দিন = নির্দিষ্ট দিন পরপর, সপ্তাহ = নির্দিষ্ট সপ্তাহ পরপর, মাস = প্রতি মাসের ব্যবধানে)</small></div><div><label>সংখ্যা</label><input id="pgpCustomCycle" type="number" min="1" max="365" value="7" placeholder="কত দিন/সপ্তাহ/মাস পরপর হবে?"></div></div></div>
+<label>শুরুর তারিখ</label><div class="pgp-date-row"><input id="pgpRecurringStartDate" type="date" required><span id="pgpRecurringWeekday" class="pgp-weekday">বার</span></div>
+<label>শুরুর সময়</label><select id="pgpRecurringStartTime" required onchange="pgpRenderSlotPickers()"></select>
+<div id="pgpWeeklyDaysWrap" style="display:none"><label>সাপ্তাহিক দিন নির্বাচন</label><div id="pgpWeeklyDays" class="pr-day-grid"></div><div class="pr-muted">একাধিক দিন নির্বাচন করা যাবে।</div></div>
+<label>প্রতিম্যাচের সময়কাল</label><input id="pgpMatchDuration" type="text" value="১ ঘণ্টা (স্থির)" readonly>
+<label>প্রতি সিডিউলে স্লট সংখ্যা</label><input id="pgpSlotCount" type="number" min="1" max="10" value="1" required oninput="pgpRenderSlotPickers()">
+<div id="pgpSlotPickers" class="pgp-note" style="margin-top:8px"></div>
+<label>নির্বাচিত দিনগুলো</label><div id="pgpSelectedDays" class="pgp-note" style="margin-top:8px">শুরুর তারিখ নির্বাচন করুন।</div>
+<button type="button" class="pgp-mini-btn" onclick="pgpAddRecurringDate()">+ দিন যোগ করুন</button><div id="pgpSchedulePreview" class="pgp-note" style="margin-top:10px"></div>
+<label>বুকিং মেয়াদ</label><select id="pgpRecurringDuration" required><option value="permanent">স্থায়ী — ক্যান্সেল না করা পর্যন্ত</option><option value="3months">৩ মাস</option><option value="6months">৬ মাস</option><option value="9months">৯ মাস</option><option value="12months">১২ মাস</option></select>
+<label>প্রতি ম্যাচের অগ্রিম (টাকা)</label><input id="pgpAdvancePerMatch" type="number" min="0" value="300" required oninput="pgpCalculateRecurringTotal()">
+<div id="pgpRecurringPrice" class="pgp-note">মোট অগ্রিম: ৩০০ টাকা</div>
+<label>পেমেন্ট মাধ্যম</label><select id="pgpRecurringPayment" required><option value="bkash">bKash</option><option value="nagad">Nagad</option><option value="rocket">Rocket</option><option value="bank">Bank</option><option value="cash">Cash</option></select>
+<label>Transaction ID (প্রযোজ্য হলে)</label><input id="pgpRecurringTxn" type="text" placeholder="Transaction ID লিখুন">
+<button type="submit">রিকোয়েস্ট সংরক্ষণ</button></form><div id="pgpRecurringMessage" class="pgp-note"></div></div><div id="pgpModuleProfile" class="pgp-box pgp-module"><h3>Customer Profile</h3><p>নাম ও মোবাইল নম্বর বুকিং ফর্ম থেকে নেওয়া হবে।</p><div class="pgp-note">প্রোফাইলের স্থায়ী সংরক্ষণ ও অ্যাকাউন্ট-ভিত্তিক ডেটা পরবর্তী Supabase ধাপে যুক্ত হবে।</div></div><div id="pgpModuleNotice" class="pgp-box pgp-module"><h3>Notifications</h3><ul class="pgp-list"><li>নতুন বুকিং Pending অবস্থায় থাকবে।</li><li>Admin Approve করলে বুকিং Approved হবে।</li><li>Reject হলে সময়টি পুনরায় Available হবে।</li></ul></div>`;wrap.insertBefore(box,first);
+ window.pgpModule=function(name){document.querySelectorAll('.pgp-module').forEach(x=>x.classList.remove('active'));if(name==='booking'){first.style.display='';}else{first.style.display='none';}const target=document.getElementById('pgpModule'+name.charAt(0).toUpperCase()+name.slice(1));if(target)target.classList.add('active');};
+ let recurringDays=[];let selectedWeekdays=[];
+ const dayNames=['রবিবার','সোমবার','মঙ্গলবার','বুধবার','বৃহস্পতিবার','শুক্রবার','শনিবার'];
+ const slotLabels=['৬–৭ সকাল','৭–৮ সকাল','৮–৯ সকাল','৯–১০ সকাল','১০–১১ সকাল','১১–১২ দুপুর','১২–১ দুপুর','১–২ দুপুর','২–৩ দুপুর','৩–৪ বিকেল','৪–৫ বিকেল','৫–৬ বিকেল','৬–৭ সন্ধ্যা','৭–৮ রাত','৮–৯ রাত','৯–১০ রাত','১০–১১ রাত','১১–১২ রাত','১২–১ রাত','১–২ রাত','২–৩ রাত'];
+ window.pgpRecurringTypeChanged=function(){recurringDays=[];selectedWeekdays=[];const type=document.getElementById('pgpRecurringType').value;document.getElementById('pgpCustomCycleWrap').style.display=type==='custom'?'block':'none';document.getElementById('pgpWeeklyDaysWrap').style.display=type==='weekly'?'block':'none';pgpRenderWeeklyDays();pgpAddRecurringDate(true);pgpRenderSlotPickers();pgpCalculateRecurringTotal();};
+ window.pgpRenderWeeklyDays=function(){const box=document.getElementById('pgpWeeklyDays');if(!box)return;box.innerHTML=dayNames.map((d,i)=>'<button type="button" class="pr-day-btn '+(selectedWeekdays.includes(i)?'selected':'')+'" onclick="pgpToggleWeekday('+i+')">'+d+'</button>').join('');};
+ window.pgpToggleWeekday=function(i){if(selectedWeekdays.includes(i))selectedWeekdays=selectedWeekdays.filter(x=>x!==i);else selectedWeekdays.push(i);if(!selectedWeekdays.length){const date=document.getElementById('pgpRecurringStartDate').value;if(date)selectedWeekdays=[new Date(date+'T12:00:00').getDay()];}pgpRenderWeeklyDays();pgpRenderRecurringDays();pgpCalculateRecurringTotal();};
+ window.pgpRenderSlotPickers=function(){const n=Math.max(1,Math.min(10,Number(document.getElementById('pgpSlotCount').value)||1));const start=document.getElementById('pgpRecurringStartTime').value||slotLabels[0];const box=document.getElementById('pgpSlotPickers');box.innerHTML='<b>স্লট বাছাই করুন</b><div class="pr-muted">প্রথম স্লট শুরুর সময় অনুযায়ী স্বয়ংক্রিয়। অতিরিক্ত স্লটগুলো নিজে নির্বাচন করুন।</div>'+Array.from({length:n},(_,i)=>'<label>স্লট '+(i+1)+'</label><select class="pgp-rec-slot" '+(i===0?'disabled':'')+' required>'+slotLabels.map(x=>'<option value="'+x+'"'+((i===0?x===start:x===slotLabels[Math.min(slotLabels.length-1,Number(document.getElementById('pgpRecurringStartTime').selectedIndex||0)+i)])?' selected':'')+'>'+x+'</option>').join('')+'</select>').join('');pgpCalculateRecurringTotal();};
+ window.pgpRemoveRecurringDay=function(value){recurringDays=recurringDays.filter(x=>x.value!==value);pgpRenderRecurringDays();pgpCalculateRecurringTotal();};
+ window.pgpRenderRecurringDays=function(){const box=document.getElementById('pgpSelectedDays');if(!box)return;if(document.getElementById('pgpRecurringType').value==='weekly'){box.innerHTML=selectedWeekdays.length?selectedWeekdays.map(i=>'<span class="pr-day-chip">'+dayNames[i]+'</span>').join(''):'কোনো দিন নির্বাচন করা হয়নি।';return;}if(!recurringDays.length){box.textContent='এখনো কোনো দিন যোগ করা হয়নি।';return;}box.innerHTML=recurringDays.map(x=>'<span style="display:inline-flex;align-items:center;gap:5px;background:#065f46;color:#d1fae5;border-radius:999px;padding:4px 8px;margin:3px">'+x.label+'<button type="button" onclick="pgpRemoveRecurringDay(\''+x.value+'\')" style="width:auto!important;margin:0!important;padding:0 4px!important;background:transparent!important;color:#fecaca!important">×</button></span>').join('');};
+ window.pgpAddRecurringDate=function(silent){const date=document.getElementById('pgpRecurringStartDate').value;if(!date){if(!silent)document.getElementById('pgpRecurringMessage').textContent='প্রথমে একটি তারিখ নির্বাচন করুন।';return;}if(document.getElementById('pgpRecurringType').value==='weekly'){if(!selectedWeekdays.length)selectedWeekdays=[new Date(date+'T12:00:00').getDay()];pgpRenderWeeklyDays();pgpRenderRecurringDays();return;}const weekday=dayNames[new Date(date+'T12:00:00').getDay()];if(!recurringDays.some(x=>x.value===date))recurringDays.push({value:date,label:date+' — '+weekday});if(!silent)document.getElementById('pgpRecurringMessage').textContent='তারিখ যোগ হয়েছে।';pgpRenderRecurringDays();pgpCalculateRecurringTotal();};
+ window.pgpGetScheduleDates=function(){const type=document.getElementById('pgpRecurringType').value;const start=document.getElementById('pgpRecurringStartDate').value;if(!start)return[];const duration=document.getElementById('pgpRecurringDuration').value;const end=new Date(start+'T12:00:00');if(duration==='permanent')end.setMonth(end.getMonth()+12);else end.setMonth(end.getMonth()+(duration==='3months'?3:duration==='6months'?6:duration==='9months'?9:12));const out=[];const add=d=>{if(d<=end)out.push(d.toISOString().slice(0,10));};if(type==='weekly'){const days=selectedWeekdays.length?selectedWeekdays:[new Date(start+'T12:00:00').getDay()];let d=new Date(start+'T12:00:00');for(let guard=0;guard<370&&d<=end;guard++,d.setDate(d.getDate()+1)){if(days.includes(d.getDay()))add(new Date(d));}return[...new Set(out)].sort();}let d=new Date(start+'T12:00:00');let guard=0;while(d<=end&&guard++<370){add(new Date(d));if(type==='once')break;if(type==='2weeks')d.setDate(d.getDate()+14);else if(type==='3weeks')d.setDate(d.getDate()+21);else if(type==='4weeks')d.setDate(d.getDate()+28);else if(type==='monthly'||type==='3months'||type==='6months'||type==='9months'||type==='12months'){d.setMonth(d.getMonth()+(type==='monthly'?1:Number(type.replace('months',''))));}else if(type==='custom'){const n=Math.max(1,Number(document.getElementById('pgpCustomCycle').value)||1);const unit=document.getElementById('pgpCustomUnit').value;if(unit==='weeks')d.setDate(d.getDate()+n*7);else if(unit==='months')d.setMonth(d.getMonth()+n);else d.setDate(d.getDate()+n);}else d.setDate(d.getDate()+7);}return[...new Set(out)].sort();};
+ window.pgpRenderSchedulePreview=function(){const box=document.getElementById('pgpSchedulePreview');if(!box)return;const dates=pgpGetScheduleDates();if(!dates.length){box.innerHTML='<b>সিডিউল প্রিভিউ</b><div class="pr-muted">শুরুর তারিখ নির্বাচন করলে ভবিষ্যৎ সিডিউল এখানে দেখা যাবে।</div>';return;}const slots=[...document.querySelectorAll('.pgp-rec-slot')].map(x=>x.value);box.innerHTML='<b>সিডিউল প্রিভিউ ('+dates.length+'টি)</b>'+dates.slice(0,60).map((d,i)=>'<div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;padding:7px 0;border-bottom:1px solid #ffffff1f"><span>'+(i+1)+'. '+d+' — '+dayNames[new Date(d+'T12:00:00').getDay()]+'</span><span>'+slots.join(', ')+'</span></div>').join('')+(dates.length>60?'<div class="pr-muted">আরও '+(dates.length-60)+'টি সিডিউল রয়েছে।</div>':'');};
+ window.pgpUpdateRecurringWeekday=function(){const date=document.getElementById('pgpRecurringStartDate').value;document.getElementById('pgpRecurringWeekday').textContent=date?dayNames[new Date(date+'T12:00:00').getDay()]:'বার';};
+ window.pgpCalculateRecurringTotal=function(){const n=Math.max(1,Number(document.getElementById('pgpSlotCount').value)||1);const advance=Math.max(0,Number(document.getElementById('pgpAdvancePerMatch').value)||0);const schedules=pgpGetScheduleDates().length;document.getElementById('pgpRecurringPrice').textContent='প্রতি সিডিউলে মোট খেলার সময়: '+n+' ঘণ্টা | মোট সিডিউল: '+schedules+' | আনুমানিক মোট অগ্রিম: '+(schedules*n*advance)+' টাকা';pgpRenderSchedulePreview();};
+ window.pgpSaveRecurring=function(e){e.preventDefault();const dates=pgpGetScheduleDates();if(!dates.length){document.getElementById('pgpRecurringMessage').textContent='সঠিক তারিখ/প্যাটার্ন নির্বাচন করুন।';return;}const slots=[...document.querySelectorAll('.pgp-rec-slot')].map(x=>x.value);const data=JSON.parse(localStorage.getItem('pgpRecurringRequests')||'[]');data.push({type:document.getElementById('pgpRecurringType').value,customCycle:Number(document.getElementById('pgpCustomCycle').value||0),customUnit:document.getElementById('pgpCustomUnit').value,startDate:document.getElementById('pgpRecurringStartDate').value,startTime:document.getElementById('pgpRecurringStartTime').value,weekdays:selectedWeekdays,days:recurringDays,matchDuration:1,slotCount:Number(document.getElementById('pgpSlotCount').value),slots,bookingDuration:document.getElementById('pgpRecurringDuration').value,advancePerMatch:Number(document.getElementById('pgpAdvancePerMatch').value),payment:document.getElementById('pgpRecurringPayment').value,transactionId:document.getElementById('pgpRecurringTxn').value,createdAt:new Date().toISOString(),status:'Pending'});localStorage.setItem('pgpRecurringRequests',JSON.stringify(data));document.getElementById('pgpRecurringMessage').textContent='Recurring booking request সংরক্ষণ হয়েছে। Admin review-এর জন্য পাঠানো হয়েছে।';e.target.reset();recurringDays=[];selectedWeekdays=[];pgpInitRecurringControls();};
+ window.pgpInitRecurringControls=function(){const time=document.getElementById('pgpRecurringStartTime');time.innerHTML=slotLabels.map(x=>'<option value="'+x+'">'+x+'</option>').join('');pgpUpdateRecurringWeekday();pgpRecurringTypeChanged();pgpRenderSlotPickers();pgpCalculateRecurringTotal();};
+ document.getElementById('pgpRecurringStartDate').addEventListener('change',function(){pgpUpdateRecurringWeekday();if(document.getElementById('pgpRecurringType').value==='weekly'){selectedWeekdays=[new Date(this.value+'T12:00:00').getDay()];pgpRenderWeeklyDays();}else{recurringDays=[];pgpAddRecurringDate(true);}pgpRenderSlotPickers();pgpCalculateRecurringTotal();});document.getElementById('pgpRecurringDuration').addEventListener('change',pgpCalculateRecurringTotal);document.getElementById('pgpCustomCycle').addEventListener('input',pgpCalculateRecurringTotal);document.getElementById('pgpCustomUnit').addEventListener('change',pgpCalculateRecurringTotal);pgpInitRecurringControls();
+})();
+</script>
+
+
+<style id="pgp-recurring-v3-fixes">
+.pgp-form select{color-scheme:dark!important;background:#12352b!important;color:#d1fae5!important;}
+.pgp-form select option{background:#12352b!important;color:#d1fae5!important;}
+.pgp-date-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.pgp-date-row input{flex:1;min-width:145px;}
+.pgp-weekday{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:0 12px;border:1px solid #2f6b55;border-radius:10px;background:#0b241c;color:#86efac;font-weight:600;}
+</style>
+<style id="pgpProfessionalRecurringCSS">
+/* Recurring Booking: match the normal booking screen style */
+#pgpModuleRecurring{font-family:'Hind Siliguri',sans-serif;color:#fff}
+#pgpModuleRecurring>h3{text-align:center;font-size:22px;margin:0 0 8px;color:#fff}
+#pgpModuleRecurring>p.pr-muted{text-align:center;font-size:13px}
+#pgpModuleRecurring .pr-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
+#pgpModuleRecurring .pr-card{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-radius:18px;padding:16px;margin-top:14px;box-shadow:0 14px 40px #0004}
+#pgpModuleRecurring .pr-card h4{margin:0 0 10px;font-size:18px;color:#fff}
+#pgpModuleRecurring .pr-day-grid{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+#pgpModuleRecurring .pr-day-btn{border:1px solid rgba(255,255,255,.25);border-radius:12px;padding:8px 10px;background:rgba(255,255,255,.08);color:#fff;cursor:pointer}
+#pgpModuleRecurring .pr-day-btn.selected{background:#059669;border-color:#34d399}
+#pgpModuleRecurring .pr-day-chip{display:inline-block;background:#065f46;color:#d1fae5;border-radius:999px;padding:5px 10px;margin:3px}
+#pgpModuleRecurring .pr-muted{color:#c8d8d0;font-size:12px;line-height:1.8}
+#pgpModuleRecurring label{display:block;margin:5px 0 3px;color:#d1fae5;font-size:13px;font-weight:600}
+#pgpModuleRecurring input,#pgpModuleRecurring select{width:100%;box-sizing:border-box;margin:0 0 9px;background:rgba(0,0,0,.20)!important;color:#d1fae5!important;border:1px solid #ffffff26!important;border-radius:9px;padding:11px;font-family:inherit}
+#pgpModuleRecurring select{color-scheme:dark}
+#pgpModuleRecurring select option{background:#183b32;color:#d1fae5}
+#pgpModuleRecurring input:focus,#pgpModuleRecurring select:focus{outline:none;border-color:#34d399!important;box-shadow:0 0 0 2px rgba(52,211,153,.12)}
+#pgpModuleRecurring .pr-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}
+#pgpModuleRecurring .pr-actions button,#pgpModuleRecurring .pr-mini-btn{width:100%!important;min-height:44px!important;margin:0!important;padding:9px 10px!important;font-family:inherit;font-size:12px!important;font-weight:600;border-radius:10px!important;white-space:normal;line-height:1.45}
+#pgpModuleRecurring .pr-actions button{background:linear-gradient(135deg,#059669,#34d399)!important;color:#022c22!important;border:0!important}
+#pgpModuleRecurring .pr-mini-btn{background:rgba(16,185,129,.18)!important;color:#d1fae5!important;border:1px solid #34d39955!important}
+#pgpModuleRecurring .pr-table{width:100%;border-collapse:collapse;font-size:12px;display:block;overflow-x:auto}
+#pgpModuleRecurring .pr-table th,#pgpModuleRecurring .pr-table td{padding:9px;border-bottom:1px solid #ffffff1f;text-align:left;white-space:normal;vertical-align:top}
+#pgpModuleRecurring .pr-status{display:inline-block;padding:4px 8px;border-radius:999px;background:#854d0e;color:#fef08a;font-size:11px;white-space:nowrap}
+#pgpModuleRecurring .pr-status.confirmed,#pgpModuleRecurring .pr-status.approved{background:#065f46;color:#d1fae5}
+#pgpModuleRecurring .pr-status.cancelled{background:#7f1d1d;color:#fecaca}
+#pgpModuleRecurring .pr-status.paused{background:#374151;color:#e5e7eb}
+#pgpModuleRecurring .pr-alert{margin:10px 0;padding:12px;border:1px solid #b45309;border-radius:12px;background:rgba(120,53,15,.22);color:#fde68a;font-size:12px;line-height:1.7}
+#pgpModuleRecurring .pr-day-picker{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:7px;margin-top:9px}
+#pgpModuleRecurring .pr-day-btn{width:100%;min-height:44px;border:1px solid #ffffff26;background:rgba(0,0,0,.25);color:#d1fae5;border-radius:10px;padding:8px 4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:600}
+#pgpModuleRecurring .pr-day-btn.active{background:linear-gradient(135deg,#059669,#34d399);border-color:#6ee7b7;color:#022c22;box-shadow:0 0 0 2px rgba(52,211,153,.18)}
+#pgpModuleRecurring .pr-day-btn:disabled{opacity:.4;cursor:not-allowed}
+#pgpModuleRecurring .pr-chip{display:inline-flex;align-items:center;gap:6px;background:#065f46;color:#d1fae5;border:1px solid #047857;border-radius:999px;padding:6px 10px;margin:4px;font-size:11px}
+#pgpModuleRecurring .pr-chip button{background:transparent!important;border:0!important;color:#fff!important;padding:0!important;margin:0!important;width:auto!important}
+#pgpModuleRecurring .pr-auto-note{margin:10px 0;padding:10px 12px;border:1px dashed #ffffff35;border-radius:12px;color:#c8d8d0;font-size:12px;line-height:1.7;background:#ffffff08}
+#pgpModuleRecurring .pr-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}
+#pgpModuleRecurring .pr-stat{min-width:0;min-height:76px;border:1px solid #ffffff26;border-radius:12px;padding:10px;background:rgba(0,0,0,.22);color:#d1fae5;box-sizing:border-box}
+#pgpModuleRecurring .pr-stat b{display:block;font-size:16px;margin-top:3px;overflow-wrap:anywhere}
+#pgpModuleRecurring .pr-upcoming-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:8px;align-items:stretch}
+#pgpModuleRecurring .pr-upcoming-item{min-width:0;height:100%;box-sizing:border-box;padding:12px;border:1px solid #ffffff26;border-radius:12px;background:rgba(0,0,0,.22);color:#d1fae5;line-height:1.55;overflow-wrap:anywhere;display:flex;flex-direction:column;justify-content:flex-start}
+#pgpModuleRecurring .pr-upcoming-item small{display:block;color:#c8d8d0;margin-top:5px}
+#pgpModuleRecurring .pr-upcoming-item .pr-status{margin-top:8px;align-self:flex-start}
+#pgpModuleRecurring .pr-countdown{display:inline-block;margin-top:5px;padding:4px 8px;border-radius:999px;background:#123c32;color:#a7f3d0;font-size:11px}
+#pgpModuleRecurring .pr-slot-pickers{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:10px}
+#pgpModuleRecurring .pr-slot-pickers label{margin-top:0}
+#pgpModuleRecurring .pr-slot-pickers select{width:100%;box-sizing:border-box}
+@media(max-width:520px){#pgpModuleRecurring .pr-slot-pickers{grid-template-columns:1fr}}
+@media(max-width:520px){
+  #pgpModuleRecurring .pr-actions{grid-template-columns:1fr}
+  #pgpModuleRecurring .pr-day-picker{grid-template-columns:repeat(4,minmax(0,1fr))}
+  #pgpModuleRecurring .pr-summary{grid-template-columns:1fr}
+  #pgpModuleRecurring .pr-upcoming-grid{grid-template-columns:1fr}
+}
+</style>
+<script id="pgpProfessionalRecurringJS">
+(function(){
+const slots=['৬–৭ সকাল','৭–৮ সকাল','৮–৯ সকাল','৯–১০ সকাল','১০–১১ সকাল','১১–১২ দুপুর','১২–১ দুপুর','১–২ দুপুর','২–৩ দুপুর','৩–৪ বিকেল','৪–৫ বিকেল','৫–৬ বিকেল','৬–৭ সন্ধ্যা','৭–৮ রাত','৮–৯ রাত','৯–১০ রাত','১০–১১ রাত','১১–১২ রাত','১২–১ রাত','১–২ রাত','২–৩ রাত'];
+const names=['রবিবার','সোমবার','মঙ্গলবার','বুধবার','বৃহস্পতিবার','শুক্রবার','শনিবার'];
+const short=['রবি','সোম','মঙ্গল','বুধ','বৃহস্পতি','শুক্র','শনি'];
+const money=n=>new Intl.NumberFormat('bn-BD').format(Math.max(0,Number(n)||0))+' টাকা';
+const $=id=>document.getElementById(id);
+const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const fmt=d=>String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+d.getFullYear();
+function getDays(){return [...document.querySelectorAll('#prWeekdayPicker .pr-day-btn.active')].map(x=>Number(x.dataset.day));}
+function read(){return JSON.parse(localStorage.getItem('pgpProfessionalRecurring')||'[]');}
+function save(a){localStorage.setItem('pgpProfessionalRecurring',JSON.stringify(a));}
+function durationMonths(){return Number($('prDuration').value||3);}
+function buildSchedule(){
+ const start=$('prStart').value;if(!start)return [];
+ const selected=getDays();if(!selected.length)return [];
+ const pattern=$('prPattern').value,cycle=$('prCycle').value,months=durationMonths();
+ const base=new Date(start+'T12:00:00'),until=new Date(base);
+ if(months>0)until.setMonth(until.getMonth()+months);
+ const out=[];const add=d=>{if(d>=base&&(!months||d<until))out.push({value:iso(d),label:fmt(d)+' — '+names[d.getDay()]});};
+ if(pattern==='monthly'){
+  for(let m=0;m<(months||12);m++){
+   const month=new Date(base.getFullYear(),base.getMonth()+m,1,12);
+   selected.forEach(day=>{for(let n=1;n<=31;n++){const d=new Date(month.getFullYear(),month.getMonth(),n,12);if(d.getMonth()!==month.getMonth())break;if(d.getDay()===day){add(d);break;}}});
+  }
+ }else if(pattern==='15days'){
+  for(let d=new Date(base),guard=0;guard<370&&d<until;guard++,d.setDate(d.getDate()+15))add(new Date(d));
+ }else if(pattern==='custom'){
+  const n=Math.max(1,Number($('prCustomValue').value)||1),unit=$('prCustomUnit').value;
+  for(let d=new Date(base),guard=0;guard<370&&d<until;guard++){
+   add(new Date(d));if(unit==='weeks')d.setDate(d.getDate()+n*7);else if(unit==='months')d.setMonth(d.getMonth()+n);else d.setDate(d.getDate()+n);
+  }
+ }else{
+  if(cycle==='custom'){
+   const n=Math.max(1,Number($('prCustomValue').value)||1),unit=$('prCustomUnit').value;
+   for(let d=new Date(base),guard=0;guard<370&&d<until;guard++){
+    add(new Date(d));if(unit==='weeks')d.setDate(d.getDate()+n*7);else if(unit==='months')d.setMonth(d.getMonth()+n);else d.setDate(d.getDate()+n);
+   }
+  }else{
+   const step=Number(cycle||1);
+   for(let w=0;w<60;w+=step){selected.forEach(day=>{const d=new Date(base);d.setDate(base.getDate()+w*7+((day-base.getDay()+7)%7));add(d);});}
+  }
+ }
+ const seen=new Set();return out.filter(x=>!seen.has(x.value)&&seen.add(x.value)).sort((a,b)=>a.value.localeCompare(b.value));
+}
+function selectedCount(){return getDays().length;}
+function refreshDays(){
+ const max=Number($('prFrequency').value||1),buttons=[...document.querySelectorAll('#prWeekdayPicker .pr-day-btn')];
+ buttons.forEach(b=>b.disabled=!b.classList.contains('active')&&selectedCount()>=max);
+ $('prSelectedDays').textContent='নির্বাচিত দিন: '+(selectedCount()?getDays().map(i=>names[i]).join(', '):'এখনো নির্বাচন করা হয়নি');
+}
+function slotOptions(){return slots.map((s,i)=>'<option value="'+s+'">'+s+'</option>').join('');}
+function renderSlotPickers(){
+ const count=Math.max(1,Math.min(10,Number($('prSlotCount').value||1)));
+ const box=$('prSlotPickers');if(!box)return;
+ const previous=[...box.querySelectorAll('select')].map(x=>x.value);
+ box.innerHTML=Array.from({length:count},(_,i)=>'<div><label>স্লট '+(i+1)+(i===0?' (অটো)':'')+'</label><select class="pr-rec-slot" '+(i===0?'disabled':'')+' required>'+slotOptions()+'</select></div>').join('');
+ const selects=[...box.querySelectorAll('select')];
+ selects.forEach((x,i)=>{
+   x.value=i===0?($('prSlot').value||previous[i]||slots[0]):(previous[i]||'');
+   if(i===0)x.title='শুরুর সময় থেকে স্বয়ংক্রিয়ভাবে নির্ধারিত';
+ });
+ calculate();
+}
+function chosenSlots(){return [...document.querySelectorAll('#prSlotPickers .pr-rec-slot')].map(x=>x.value).filter(Boolean);}
+function calculate(){
+ const schedule=buildSchedule(),duration=1,slotsPerDay=Math.max(1,Number($('prSlotCount').value||1));
+ const selectedSlots=chosenSlots(),advance=300*duration*slotsPerDay*schedule.length;
+ $('prSummary').innerHTML='<div class="pr-stat"><small>মোট সিডিউল</small><b>'+new Intl.NumberFormat('bn-BD').format(schedule.length)+'</b></div><div class="pr-stat"><small>প্রতি সিডিউল অগ্রিম</small><b>'+money(300*duration*slotsPerDay)+'</b></div><div class="pr-stat"><small>মোট অগ্রিম</small><b>'+money(advance)+'</b></div><div class="pr-stat"><small>মোট খেলার সময়</small><b>'+duration*slotsPerDay+' ঘণ্টা</b></div>';
+ const preview=schedule.slice(0,40).map((x,i)=>'<div class="pr-upcoming-item"><b>'+(i+1)+'. '+x.label+'</b><small>'+ (selectedSlots.join(' + ')||'সময় নির্বাচন করুন') +' · '+duration+' ঘণ্টা · '+slotsPerDay+' স্লট</small><span class="pr-status">Admin Approval বাকি</span></div>').join('');
+ $('prPreview').innerHTML=schedule.length?'<div class="pr-upcoming-grid">'+preview+'</div><p class="pr-muted">সর্বোচ্চ ৪০টি সিডিউল দেখানো হচ্ছে। মোট '+schedule.length+'টি সিডিউল তৈরি হয়েছে।</p>':'<p class="pr-muted">শুরু তারিখ, সপ্তাহের দিন ও প্যাটার্ন নির্বাচন করলে এখানে সিডিউল দেখা যাবে।</p>';
+ return {schedule,duration,slotsPerDay,advance,selectedSlots};
+}
+function renderRequests(){
+ const arr=read();
+ $('prRequests').innerHTML=arr.length?'<table class="pr-table"><tr><th>ID</th><th>বুকিং</th><th>সময়</th><th>পেমেন্ট</th><th>স্ট্যাটাস</th><th>অ্যাকশন</th></tr>'+arr.map((x,i)=>{const status=x.status||'Pending';const label=x.paused?'Paused':status;const countdown=status==='Confirmed'&&x.confirmedAt?'<span class="pr-countdown">কনফার্ম হয়েছে</span>':status==='Pending'?'<span class="pr-countdown">Admin Approval বাকি</span>':'';return '<tr><td>'+x.id+'</td><td>'+x.sport+'<br><small>'+x.schedule.length+'টি সিডিউল</small></td><td>'+x.slot+'</td><td>'+x.paymentMethod+'<br><small>'+money(x.advance)+'</small></td><td><span class="pr-status '+(x.paused?'paused':status.toLowerCase())+'">'+label+'</span><br>'+countdown+'</td><td><button class="pr-mini-btn" type="button" onclick="prConfirmByIndex('+i+')">Approve Demo</button> <button class="pr-mini-btn" type="button" onclick="prPauseByIndex('+i+')">Pause</button> <button class="pr-mini-btn" type="button" onclick="prCancelByIndex('+i+')">Cancel</button></td></tr>';}).join('')+'</table>':'<p class="pr-muted">কোনো রিকারিং বুকিং নেই।</p>';
+}
+window.pgpBuildProfessionalRecurring=function(){
+ const root=$('pgpModuleRecurring');if(!root||root.dataset.pro==='2')return;root.dataset.pro='2';
+ root.innerHTML='<h3>Professional Recurring Booking</h3><p class="pr-muted">নিয়মিত বুকিং, একাধিক দিন, সিডিউল প্রিভিউ, মূল্য হিসাব, পেমেন্ট ও অ্যাডমিন অনুমোদনের সম্পূর্ণ ব্যবস্থা।</p><div class="pr-alert"><b>গুরুত্বপূর্ণ সতর্কতা:</b> রিকারিং বুকিং রিকোয়েস্ট পাঠানোর পর স্লটের প্রাপ্যতা যাচাই ও অ্যাডমিন অনুমোদন না হওয়া পর্যন্ত বুকিং নিশ্চিত হবে না।</div>'+
+ '<div class="pr-card"><h4>১. বুকিং সেটআপ</h4><form id="prForm" class="pgp-form"><div class="pr-grid">'+
+ '<div><label>স্পোর্টস</label><select id="prSport"><option>Football</option><option>Cricket</option></select></div>'+ 
+ '<div><label>রিকারিং প্যাটার্ন</label><select id="prPattern"><option value="weekly">প্রতি সপ্তাহে</option><option value="15days">১৫ দিন পরপর</option><option value="monthly">প্রতি মাসে</option><option value="custom">কাস্টম</option></select></div>'+ 
+ '<div><label>বুকিং সাইকেল</label><select id="prCycle"><option value="1">প্রতি ১ সপ্তাহ</option><option value="2">প্রতি ২ সপ্তাহ</option><option value="3">প্রতি ৩ সপ্তাহ</option><option value="4">প্রতি ৪ সপ্তাহ</option><option value="custom">Custom Cycle</option></select></div>'+ 
+ '<div><label>শুরু তারিখ</label><input id="prStart" type="date" required></div>'+ 
+ '<div><label>সময়</label><select id="prSlot" required><option value="">সময় নির্বাচন করুন</option>'+slots.map(s=>'<option>'+s+'</option>').join('')+'</select></div>'+ 
+ '<div><label>মেয়াদ</label><select id="prDuration"><option value="1">১ মাস</option><option value="3" selected>৩ মাস</option><option value="6">৬ মাস</option><option value="9">৯ মাস</option><option value="12">১২ মাস</option><option value="0">স্থায়ী</option></select></div>'+ 
+ '<div><label>সপ্তাহে কত দিন</label><select id="prFrequency"><option value="1">১ দিন</option><option value="2">২ দিন</option><option value="3">৩ দিন</option><option value="4">৪ দিন</option><option value="5">৫ দিন</option><option value="6">৬ দিন</option><option value="7">প্রতিদিন</option></select></div>'+ 
+ '<div><label>প্রতি ম্যাচের সময়কাল</label><input id="prMatchDuration" type="text" value="১ ঘণ্টা (ফিক্সড)" readonly></div>'+ 
+ '<div><label>প্রতি সিডিউলে স্লট সংখ্যা</label><input id="prSlotCount" type="number" min="1" max="10" value="1" required></div>'+  '<div id="prSlotPickers" class="pr-slot-pickers"><div><label>স্লট ১</label><select class="pr-rec-slot" required>'+slots.map(s=>'<option>'+s+'</option>').join('')+'</select></div></div>'+ 
+ '<div><label>পেমেন্ট পদ্ধতি</label><select id="prPaymentMethod"><option>bKash</option><option>Nagad</option><option>Rocket</option><option>Bank</option><option>Cash</option></select></div>'+ 
+ '<div><label>Transaction ID</label><input id="prTransaction" placeholder="পেমেন্ট হলে লিখুন"></div>'+ 
+ '<div><label>পরবর্তী সিডিউল নোট</label><input id="prScheduleNote" placeholder="অ্যাডমিন নোট"></div></div>'+ 
+ '<div id="prCustomHelp" class="pr-auto-note" style="display:none">কাস্টম প্যাটার্নে নিজের ব্যবধান ও একক নির্বাচন করুন।</div><div id="prCustomCycleBox" class="pr-grid" style="display:none"><div><label>কাস্টম ব্যবধান</label><input id="prCustomValue" type="number" min="1" max="365" value="7" placeholder="কত দিন/সপ্তাহ/মাস পরপর হবে?"></div><div><label>একক</label><select id="prCustomUnit"><option value="days">দিন (প্রতি কত দিন পর)</option><option value="weeks" selected>সপ্তাহ (প্রতি কত সপ্তাহ পর)</option><option value="months">মাস (প্রতি কত মাস পর)</option></select><small class="pr-inline-help">(দিন = নির্দিষ্ট দিন পরপর, সপ্তাহ = নির্দিষ্ট সপ্তাহ পরপর, মাস = প্রতি মাসের ব্যবধানে)</small></div></div>'+ 
+ '<div class="pr-card"><b>সাপ্তাহিক দিন নির্বাচন</b><p class="pr-muted">রঙিন বক্সে চাপ দিয়ে দিন নির্বাচন করুন। সপ্তাহে যত দিন নির্বাচন করবেন, ততগুলো দিনই সক্রিয় থাকবে।</p><div id="prWeekdayPicker" class="pr-day-picker">'+short.map((s,i)=>'<button type="button" class="pr-day-btn" data-day="'+i+'">'+s+'</button>').join('')+'</div><div id="prSelectedDays" class="pr-muted">নির্বাচিত দিন: এখনো নির্বাচন করা হয়নি</div></div>'+ 
+ '<div class="pr-grid"><div><label>সংঘর্ষ হলে</label><select id="prConflict"><option value="pending">Admin Review</option><option value="skip">সময় বাদ দিন</option><option value="alternative">বিকল্প সময় প্রস্তাব</option></select></div><div><label>বিশেষ নোট</label><input id="prNote" placeholder="বিশেষ নির্দেশনা"></div></div>'+ 
+ '<div class="pr-auto-note">প্রতি ম্যাচের অগ্রিম ৩০০ টাকা। হিসাব: ম্যাচের সময়কাল × স্লট সংখ্যা × ৩০০ × মোট সিডিউল।</div><div id="prSummary" class="pr-summary"></div><button type="submit">রিকোয়েস্ট পাঠান</button></form><div id="prMsg" class="pgp-note"></div></div>'+ 
+ '<div class="pr-card"><h4>২. শিডিউল প্রিভিউ</h4><div id="prPreview" class="pr-muted">প্রথমে বুকিং সেটআপ সম্পন্ন করুন।</div></div>'+ 
+ '<div class="pr-card"><h4>৩. আমার রিকারিং বুকিং</h4><div class="pr-actions"><button type="button" onclick="prRenderRequests()">রিফ্রেশ</button><button type="button" onclick="prPauseLatest()">শেষ বুকিং Pause/Resume</button><button type="button" onclick="prCancelLatest()">শেষ সিরিজ Cancel</button></div><div id="prRequests"></div></div>';
+ const form=$('prForm'),pattern=$('prPattern'),freq=$('prFrequency'),picker=$('prWeekdayPicker');
+ picker.addEventListener('click',e=>{const b=e.target.closest('.pr-day-btn');if(!b)return;b.classList.toggle('active');refreshDays();calculate();});
+ freq.addEventListener('change',()=>{picker.querySelectorAll('.pr-day-btn').forEach(b=>{b.classList.remove('active');b.disabled=false;});refreshDays();calculate();});
+ pattern.addEventListener('change',()=>{$('prCustomHelp').style.display=pattern.value==='custom'?'block':'none';$('prCustomCycleBox').style.display=pattern.value==='custom'?'grid':'none';calculate();});
+$('prCycle').addEventListener('change',()=>{const custom=$('prCycle').value==='custom';$('prCustomCycleBox').style.display=(custom||pattern.value==='custom')?'grid':'none';calculate();});
+['prCustomValue','prCustomUnit'].forEach(id=>$(id).addEventListener('input',calculate));
+ ['prStart','prSlot','prCycle','prDuration'].forEach(id=>$(id).addEventListener('change',()=>{if(id==='prSlot')renderSlotPickers();else calculate();}));
+$('prSlotCount').addEventListener('input',renderSlotPickers);
+$('prSlotPickers').addEventListener('change',()=>{const first=$('prSlotPickers').querySelector('select');if(first)$('prSlot').value=first.value;calculate();});
+ form.onsubmit=e=>{e.preventDefault();const c=calculate();if(!c.schedule.length){$('prMsg').textContent='শুরু তারিখ ও সপ্তাহের দিন নির্বাচন করুন।';return;}if(!$('prSlot').value){$('prMsg').textContent='সময় নির্বাচন করুন।';return;}const arr=read();arr.push({id:'RB-'+Date.now().toString().slice(-6),sport:$('prSport').value,pattern:pattern.value,cycle:$('prCycle').value,customValue:Number($('prCustomValue').value||1),customUnit:$('prCustomUnit').value,start:$('prStart').value,slot:$('prSlot').value,slots:chosenSlots(),duration:$('prDuration').value,frequency:$('prFrequency').value,weekdays:getDays(),schedule:c.schedule,matchDuration:c.duration,slotCount:c.slotsPerDay,advance:c.advance,paymentMethod:$('prPaymentMethod').value,transaction:$('prTransaction').value,conflict:$('prConflict').value,note:$('prNote').value,scheduleNote:$('prScheduleNote').value,status:'Pending',paused:false,confirmed:false,createdAt:new Date().toISOString()});save(arr);$('prMsg').innerHTML='রিকোয়েস্ট সংরক্ষিত হয়েছে। <b>Admin Approval বাকি আছে</b>।';form.reset();picker.querySelectorAll('.pr-day-btn').forEach(b=>{b.classList.remove('active');b.disabled=false;});refreshDays();renderSlotPickers();calculate();renderRequests();};
+ $('prCustomCycleBox').style.display='none';renderRequests();refreshDays();renderSlotPickers();calculate();
+};
+window.prRenderRequests=renderRequests;
+window.prConfirmByIndex=i=>{const a=read();if(a[i]){a[i].status='Confirmed';a[i].confirmed=true;a[i].confirmedAt=Date.now();save(a);renderRequests();}};
+window.prPauseByIndex=i=>{const a=read();if(a[i]){a[i].paused=!a[i].paused;save(a);renderRequests();}};
+window.prCancelByIndex=i=>{const a=read();if(a[i]){a[i].status='Cancelled';save(a);renderRequests();}};
+window.prPauseLatest=()=>{const a=read();if(a.length){a[a.length-1].paused=!a[a.length-1].paused;save(a);renderRequests();}};
+window.prCancelLatest=()=>{const a=read();if(a.length){a[a.length-1].status='Cancelled';save(a);renderRequests();}};
+const old=window.pgpOpenCustomer;window.pgpOpenCustomer=function(){if(old)old.apply(this,arguments);pgpBuildProfessionalRecurring();};
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',pgpBuildProfessionalRecurring);else pgpBuildProfessionalRecurring();
+})();
+
+    setTimeout(checkRecoverySession, 300);\n</script>
+
+<style id="pgp-phase1-dashboard-css">
+#pgpAdminScreen .pgp-admin-layout{display:grid;grid-template-columns:230px minmax(0,1fr);gap:16px;align-items:start}
+#pgpAdminScreen .pgp-sidebar{position:sticky;top:16px;padding:14px;border:1px solid rgba(255,255,255,.15);border-radius:18px;background:rgba(10,30,24,.52);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 14px 40px #0004}
+#pgpAdminScreen .pgp-sidebar h3{margin:0 0 12px;font-size:17px}
+#pgpAdminScreen .pgp-nav{display:grid;gap:7px}
+#pgpAdminScreen .pgp-nav button{width:100%;margin:0!important;text-align:left;background:rgba(255,255,255,.07)!important;border:1px solid rgba(255,255,255,.12)!important;color:#e5fff3!important;padding:10px 11px!important;border-radius:10px!important;font-size:12px!important}
+#pgpAdminScreen .pgp-nav button:hover{background:rgba(16,185,129,.22)!important}
+#pgpAdminScreen .pgp-admin-content{min-width:0}
+@media(max-width:760px){#pgpAdminScreen .pgp-admin-layout{grid-template-columns:1fr}#pgpAdminScreen .pgp-sidebar{position:static}#pgpAdminScreen .pgp-nav{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+#pgpAdminScreen .pgp-module-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+#pgpAdminScreen .pgp-module-grid>h3{margin:0 0 2px}
+#pgpAdminScreen .pgp-module-card{scroll-margin-top:20px;padding:14px;border:1px solid rgba(255,255,255,.14);border-radius:14px;background:rgba(255,255,255,.055);min-height:105px}
+#pgpAdminScreen .pgp-module-card b{display:block;font-size:14px;color:#eafff4;margin-bottom:7px}
+#pgpAdminScreen .pgp-module-card p{margin:0 0 7px;font-size:12px;color:#d1fae5}
+#pgpAdminScreen .pgp-module-card span{font-size:11px;color:#a7f3d0}
+#pgpAdminScreen #pgpAdminSportFilter,#pgpAdminScreen #pgpAdminStatusFilter{width:100%;min-height:46px;padding:11px 38px 11px 14px;border:1px solid rgba(167,243,208,.35);border-radius:12px;background-color:rgba(6,30,23,.92);color:#ecfdf5;color-scheme:dark;font-size:14px;font-weight:600;line-height:1.3;appearance:auto;-webkit-appearance:auto}
+#pgpAdminScreen #pgpAdminSportFilter option,#pgpAdminScreen #pgpAdminStatusFilter option{background:#10251f;color:#ecfdf5}
+#pgpAdminScreen .pr-grid>div:has(#pgpAdminSportFilter),#pgpAdminScreen .pr-grid>div:has(#pgpAdminStatusFilter){min-width:0}
+#pgpAdminScreen .pr-grid label{display:block;margin:0 0 5px;font-size:12px;line-height:1.2}
+#pgpAdminScreen .pr-grid{gap:10px}
+@media(max-width:760px){#pgpAdminScreen .pgp-module-grid{grid-template-columns:1fr}}
+</style>
+
+
+<style id="pgp-module-content-style">
+.pgp-module-workspace{margin-top:14px}
+.pgp-module-panel{background:rgba(10,18,35,.78);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:20px;box-shadow:0 10px 35px rgba(0,0,0,.18)}
+.pgp-module-panel h3{margin:0 0 8px;font-size:22px}.pgp-module-panel p{line-height:1.65}
+.pgp-module-actions{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0}.pgp-module-actions button,.pgp-module-panel button{border:1px solid rgba(255,255,255,.18);border-radius:10px;padding:10px 14px;background:rgba(255,255,255,.08);color:inherit;cursor:pointer}
+.pgp-module-table{width:100%;border-collapse:collapse;margin-top:14px;font-size:13px}.pgp-module-table th,.pgp-module-table td{padding:10px;border-bottom:1px solid rgba(255,255,255,.1);text-align:left}.pgp-module-table th{background:rgba(255,255,255,.08)}
+.pgp-module-form{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-top:14px}.pgp-module-form label{display:flex;flex-direction:column;gap:5px;font-size:13px}.pgp-module-form input,.pgp-module-form select,.pgp-module-form textarea{width:100%;padding:10px;border-radius:9px;border:1px solid rgba(255,255,255,.18);background:rgba(0,0,0,.22);color:inherit}.pgp-module-note{opacity:.75;font-size:13px;margin-top:12px}
+.pgp-nav button.pgp-nav-active{background:rgba(56,189,248,.22);border-color:rgba(56,189,248,.5)}
+@media(max-width:700px){.pgp-module-panel{padding:14px}.pgp-module-table{display:block;overflow-x:auto;white-space:nowrap}}
+</style>
+<script id="pgp-module-content-script">
+(function(){
+ const $=id=>document.getElementById(id);
+ const modules={
+  overview:{title:'🏠 Dashboard Overview',subtitle:'আজকের সারাংশ, বুকিং, আয় ও গুরুত্বপূর্ণ সতর্কতা।',body:()=>`
+   <div class="pgp-grid"><div class="pgp-box"><b>আজকের বুকিং</b><h2>${JSON.parse(localStorage.getItem('pgpBookings')||'[]').filter(b=>b.date===new Date().toISOString().slice(0,10)).length}</h2></div><div class="pgp-box"><b>Pending Approval</b><h2>${JSON.parse(localStorage.getItem('pgpBookings')||'[]').filter(b=>b.status==='Pending').length}</h2></div></div>
+   <div class="pgp-module-actions"><button data-open="bookings">বুকিং দেখুন</button><button data-open="payments">পেমেন্ট যাচাই</button><button data-open="reports">রিপোর্ট দেখুন</button></div>`},
+  bookings:{title:'📋 Booking Management',subtitle:'সব বুকিং দেখা, অনুসন্ধান, অনুমোদন ও স্ট্যাটাস পরিবর্তন।',body:()=>`<div class="pgp-module-actions"><button>নতুন বুকিং</button><button>Export CSV</button><button>Conflict Check</button></div><table class="pgp-module-table"><thead><tr><th>Booking ID</th><th>Customer</th><th>Sport</th><th>Date</th><th>Status</th><th>Action</th></tr></thead><tbody>${JSON.parse(localStorage.getItem('pgpBookings')||'[]').slice(-20).reverse().map(b=>`<tr><td>${b.id||'-'}</td><td>${b.name||'-'}</td><td>${b.sport||'-'}</td><td>${b.date||'-'}</td><td>${b.status||'-'}</td><td><button data-booking="${b.id}">View</button></td></tr>`).join('')||'<tr><td colspan="6">কোনো বুকিং নেই।</td></tr>'}</tbody></table>`},
+  calendar:{title:'🗓️ Booking Calendar',subtitle:'দিন, সপ্তাহ ও মাসভিত্তিক বুকিং ক্যালেন্ডার।',body:()=>`<div class="pgp-module-form"><label>তারিখ<input type="date"></label><label>Sport<select><option>All</option><option>Football</option><option>Cricket</option></select></label><label>Turf<select><option>All Turfs</option></select></label></div><p class="pgp-module-note">পরবর্তী ধাপে Supabase-এর বাস্তব ক্যালেন্ডার ও slot conflict যুক্ত হবে।</p>`},
+  football:{title:'⚽ Football Management',subtitle:'Football rate, peak time, schedule ও maintenance control।',body:()=>`<div class="pgp-module-form"><label>Normal Rate<input type="number" value="1500"></label><label>Peak Rate<input type="number" value="1800"></label><label>Peak Start<input type="time" value="19:00"></label><label>Peak End<input type="time" value="23:00"></label></div><button style="margin-top:14px">Save Football Settings</button>`},
+  cricket:{title:'🏏 Cricket Management',subtitle:'Cricket rate, peak time, schedule ও maintenance control।',body:()=>`<div class="pgp-module-form"><label>Normal Rate<input type="number" value="1200"></label><label>Peak Rate<input type="number" value="1500"></label><label>Peak Start<input type="time" value="14:00"></label><label>Peak End<input type="time" value="19:00"></label></div><button style="margin-top:14px">Save Cricket Settings</button>`},
+  payments:{title:'💳 Payment Management',subtitle:'Cash, bKash, Nagad, Rocket ও Bank Transfer যাচাই।',body:()=>`<div class="pgp-module-actions"><button>Pending Payments</button><button>Verified Payments</button><button>Manual Payment</button></div><div class="pgp-module-form"><label>Booking ID<input placeholder="PGP-..."></label><label>Method<select><option>Cash</option><option>bKash</option><option>Nagad</option><option>Rocket</option><option>Bank</option></select></label><label>Amount<input type="number"></label><label>Transaction ID<input></label></div><button style="margin-top:14px">Save Payment Record</button>`},
+  approval:{title:'✅ Admin Approval',subtitle:'বুকিং ও পেমেন্ট যাচাই করে অনুমোদন প্রদান।',body:()=>`<div class="pgp-module-actions"><button>Approve</button><button>Reject</button><button>Hold</button><button>Request Correction</button></div><p>প্রতিটি সিদ্ধান্তের সঙ্গে Admin ID, সময় ও মন্তব্য Audit Log-এ সংরক্ষণ করতে হবে।</p>`},
+  voucher:{title:'🎟️ Voucher & Receipt',subtitle:'Approved booking-এর voucher, receipt ও QR code তৈরি।',body:()=>`<div class="pgp-module-form"><label>Booking ID<input></label><label>Voucher Number<input></label><label>Payment Status<select><option>Paid</option><option>Partial</option><option>Due</option></select></label></div><div class="pgp-module-actions"><button>Generate Voucher</button><button>Print</button><button>Export PDF</button></div>`},
+  customers:{title:'👥 Customer Management',subtitle:'Customer profile, booking history, due ও account status।',body:()=>`<div class="pgp-module-form"><label>Search Customer<input placeholder="Name / Mobile / Email"></label><label>Status<select><option>All</option><option>Active</option><option>Blocked</option></select></label></div><div class="pgp-module-actions"><button>Search</button><button>Add Customer</button></div>`},
+  recurring:{title:'🔁 Recurring Booking',subtitle:'সাপ্তাহিক/মাসিক নিয়মিত বুকিং ও schedule control।',body:()=>`<div class="pgp-module-form"><label>Customer<input></label><label>Sport<select><option>Football</option><option>Cricket</option></select></label><label>Repeat<select><option>Weekly</option><option>Monthly</option></select></label><label>Start Date<input type="date"></label><label>End Date<input type="date"></label></div><div class="pgp-module-actions"><button>Approve</button><button>Pause</button><button>Cancel</button></div>`},
+  turf:{title:'🏟️ Turf & Facility Management',subtitle:'মাঠের availability, maintenance ও closure পরিচালনা।',body:()=>`<div class="pgp-module-form"><label>Turf Name<input></label><label>Sport<select><option>Football</option><option>Cricket</option></select></label><label>Status<select><option>Available</option><option>Maintenance</option><option>Closed</option></select></label><label>Opening Time<input type="time"></label><label>Closing Time<input type="time"></label></div><button style="margin-top:14px">Save Facility</button>`},
+  staff:{title:'👨‍💼 Staff Management',subtitle:'Staff profile, role, status ও permission control।',body:()=>`<div class="pgp-module-form"><label>Staff Name<input></label><label>Email<input type="email"></label><label>Role<select><option>admin</option><option>manager</option><option>accountant</option><option>staff</option><option>viewer</option></select></label><label>Status<select><option>active</option><option>inactive</option></select></label></div><button style="margin-top:14px">Save Staff</button>`},
+  reports:{title:'📊 Reports & Analytics',subtitle:'Revenue, booking, utilization ও export রিপোর্ট।',body:()=>`<div class="pgp-module-form"><label>From<input type="date"></label><label>To<input type="date"></label><label>Report Type<select><option>Revenue</option><option>Bookings</option><option>Utilization</option><option>Due</option></select></label></div><div class="pgp-module-actions"><button>Generate Report</button><button>Export Excel</button><button>Export PDF</button></div>`},
+  expenses:{title:'💰 Expense Management',subtitle:'Salary, maintenance, utilities ও অন্যান্য খরচ।',body:()=>`<div class="pgp-module-form"><label>Date<input type="date"></label><label>Category<select><option>Salary</option><option>Maintenance</option><option>Electricity</option><option>Marketing</option><option>Other</option></select></label><label>Amount<input type="number"></label><label>Description<textarea></textarea></label></div><button style="margin-top:14px">Save Expense</button>`},
+  notifications:{title:'🔔 Notifications',subtitle:'Customer ও Admin notification management।',body:()=>`<div class="pgp-module-form"><label>Audience<select><option>Customer</option><option>Admin</option><option>All</option></select></label><label>Channel<select><option>In-App</option><option>Email</option><option>SMS</option></select></label><label>Message<textarea></textarea></label></div><button style="margin-top:14px">Send Notification</button>`},
+  security:{title:'🔐 Security & Permissions',subtitle:'RLS, session, role ও access policy monitoring।',body:()=>`<ul><li>Role-based access</li><li>Supabase Row Level Security</li><li>Session and logout control</li><li>Admin action restrictions</li><li>Audit monitoring</li></ul><p class="pgp-module-note">Security rules অবশ্যই Supabase Database Policy-তেও প্রয়োগ করতে হবে।</p>`},
+  logs:{title:'📝 Audit Logs',subtitle:'সিস্টেমের গুরুত্বপূর্ণ কাজের ইতিহাস।',body:()=>`<table class="pgp-module-table"><thead><tr><th>Time</th><th>Action</th><th>User</th><th>Record</th></tr></thead><tbody><tr><td>-</td><td>কোনো activity নেই</td><td>-</td><td>-</td></tr></tbody></table>`},
+  settings:{title:'⚙️ Settings',subtitle:'Business, booking, payment ও notification configuration।',body:()=>`<div class="pgp-module-form"><label>Business Name<input value="Play_Ground Pro"></label><label>Mobile<input></label><label>Email<input type="email"></label><label>Advance Percentage<input type="number" value="30"></label><label>Buffer Time (minutes)<input type="number" value="0"></label></div><button style="margin-top:14px">Save General Settings</button>`}
+ };
+ const keyMap={overview:'overview',bookings:'bookings',calendar:'calendar',football:'football',cricket:'cricket',payments:'payments',approval:'approval',voucher:'voucher',customers:'customers',recurring:'recurring',turf:'turf',staff:'staff',reports:'reports',expenses:'expenses',notifications:'notifications',security:'security',logs:'logs',settings:'settings'};
+ const titleToKey={'Dashboard Overview':'overview','Booking Management':'bookings','Booking Calendar':'calendar','Football Management':'football','Cricket Management':'cricket','Payment Management':'payments','Admin Approval':'approval','Voucher & Receipt':'voucher','Customer Management':'customers','Recurring Booking':'recurring','Turf & Facility':'turf','Staff Management':'staff','Reports & Analytics':'reports','Expense Management':'expenses','Notifications':'notifications','Security & Permissions':'security','Audit Logs':'logs','Settings':'settings'};
+ function ensureWorkspace(){
+  let el=$('pgpDynamicModuleWorkspace'); if(el) return el;
+  el=document.createElement('div');el.id='pgpDynamicModuleWorkspace';el.className='pgp-module-workspace';
+  const content=document.querySelector('#pgpAdminScreen .pgp-admin-content');
+  const top=content?.querySelector('.pgp-top'); if(top) top.insertAdjacentElement('afterend',el); else content?.prepend(el);
+  return el;
+ }
+ function openModule(key){
+  key=keyMap[key]||key;if(!modules[key])key='overview';
+  const m=modules[key],el=ensureWorkspace();
+  el.innerHTML=`<div class="pgp-module-panel"><h3>${m.title}</h3><p class="pgp-muted">${m.subtitle}</p>${m.body()}</div>`;
+  document.querySelectorAll('#pgpAdminScreen .pgp-nav button').forEach(btn=>{
+    const text=btn.textContent.replace(/[^\p{L}\p{N}&\s]/gu,'').trim();
+    btn.classList.toggle('pgp-nav-active',titleToKey[text]===key);
+  });
+  el.querySelectorAll('[data-open]').forEach(b=>b.addEventListener('click',()=>openModule(b.dataset.open)));
+ }
+ const navButtons=document.querySelectorAll('#pgpAdminScreen .pgp-nav button');
+ navButtons.forEach(btn=>{
+  const original=btn.getAttribute('onclick')||'';
+  const match=original.match(/pgp(?:AdminScreen|AdminBookings|AdminRecurring|AdminLog|Module\w+)/);
+  btn.addEventListener('click',function(e){
+    const text=btn.textContent.replace(/[^\p{L}\p{N}&\s]/gu,'').trim();
+    const key=titleToKey[text];
+    if(key){e.preventDefault();e.stopImmediatePropagation();openModule(key);}
+  },true);
+ });
+ document.querySelectorAll('#pgpAdminScreen .pgp-module-card').forEach(card=>{
+  card.style.cursor='pointer';
+  card.addEventListener('click',()=>openModule(titleToKey[card.textContent.split('\n')[0].replace(/[^\p{L}\p{N}&\s]/gu,'').trim()]||'overview'));
+ });
+ window.pgpOpenModule=openModule;
+})();
+</script>
+
+</body>
+</html>
