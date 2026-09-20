@@ -304,7 +304,7 @@
 
         <form onsubmit="loginUser(event)">
           <label>Phone Number</label>
-          <input type="tel" placeholder="আপনার ফোন নম্বর" required>
+          <input id="customerLoginPhone" type="tel" placeholder="আপনার ফোন নম্বর" required>
 
           <label>Password</label>
           <div class="password-field">
@@ -328,10 +328,10 @@
 
         <form onsubmit="registerUser(event)">
           <label>Full Name</label>
-          <input type="text" placeholder="আপনার পূর্ণ নাম" required>
+          <input id="customerRegisterName" type="text" placeholder="আপনার পূর্ণ নাম" required>
 
           <label>Phone Number</label>
-          <input type="tel" placeholder="আপনার ফোন নম্বর" required>
+          <input id="customerRegisterPhone" type="tel" placeholder="আপনার ফোন নম্বর" required>
 
           <label>Password</label>
           <div class="password-field">
@@ -471,14 +471,34 @@
       document.getElementById("guestSection").classList.remove("hidden");
     }
 
+    function getCustomerAccounts() {
+      try { return JSON.parse(localStorage.getItem("pgpCustomerAccounts") || "[]"); }
+      catch (e) { return []; }
+    }
+
     function loginUser(event) {
       event.preventDefault();
-      alert("Customer login system পরবর্তী ধাপে সংযুক্ত করা হবে।");
+      const phone = document.getElementById("customerLoginPhone").value.trim();
+      const password = document.getElementById("customerLoginPassword").value;
+      const account = getCustomerAccounts().find(a => a.phone === phone && a.password === password);
+      if (!account) { alert("মোবাইল নম্বর অথবা পাসওয়ার্ড সঠিক নয়।"); return; }
+      localStorage.setItem("pgpCurrentCustomer", JSON.stringify(account));
+      pgpOpenCustomer(account.name || "Customer");
     }
 
     function registerUser(event) {
       event.preventDefault();
-      alert("Customer registration system পরবর্তী ধাপে সংযুক্ত করা হবে।");
+      const name = document.getElementById("customerRegisterName").value.trim();
+      const phone = document.getElementById("customerRegisterPhone").value.trim();
+      const password = document.getElementById("registerPassword").value;
+      const accounts = getCustomerAccounts();
+      if (accounts.some(a => a.phone === phone)) { alert("এই মোবাইল নম্বর দিয়ে ইতোমধ্যে অ্যাকাউন্ট আছে।"); return; }
+      const account = { name, phone, password, createdAt: new Date().toISOString() };
+      accounts.push(account);
+      localStorage.setItem("pgpCustomerAccounts", JSON.stringify(accounts));
+      localStorage.setItem("pgpCurrentCustomer", JSON.stringify(account));
+      alert("অ্যাকাউন্ট সফলভাবে তৈরি হয়েছে।");
+      pgpOpenCustomer(name || "Customer");
     }
 
     function guestBooking(event) {
@@ -496,15 +516,33 @@
       document.getElementById("adminLoginSection").classList.remove("hidden");
     }
 
-    function adminRegister(event) {
+    async function adminRegister(event) {
       event.preventDefault();
+      const name = document.getElementById("adminName").value.trim();
+      const phone = document.getElementById("adminPhone").value.trim();
+      const email = document.getElementById("adminRegisterEmail").value.trim();
       const password = document.getElementById("adminRegisterPassword").value;
       const confirmPassword = document.getElementById("adminConfirmPassword").value;
       if (password !== confirmPassword) {
         alert("Password মিলছে না।");
         return;
       }
-      alert("Admin registration form প্রস্তুত হয়েছে। পরবর্তী ধাপে database ও approval যুক্ত করা যাবে।");
+      if (SUPABASE_PUBLISHABLE_KEY === "PASTE_YOUR_PUBLISHABLE_KEY_HERE") {
+        alert("Supabase Publishable Key সঠিকভাবে বসানো হয়নি।");
+        return;
+      }
+      const { data, error } = await supabaseClient.auth.signUp({
+        email,
+        password,
+        options: { data: { role: "admin", name, phone } }
+      });
+      if (error) { alert(error.message); return; }
+      if (data && data.session) {
+        alert("Admin account তৈরি হয়েছে। এখন Login করুন।");
+      } else {
+        alert("Admin account তৈরি হয়েছে। আপনার ইমেইল Verify করে তারপর Login করুন।");
+      }
+      document.getElementById("adminEmail").value = email;
       showAdminLogin();
     }
 
@@ -524,34 +562,16 @@
       });
     });
 
-    /* ADMIN ACCESS: click dot + diagonal swipe from bottom-right */
+    /* ADMIN ACCESS: manual click only — no automatic swipe opening */
     const adminPanel = document.getElementById("adminPanel");
     const adminDot = document.getElementById("adminDot");
-    let startX = 0;
-    let startY = 0;
-    let trackingSwipe = false;
 
     function openAdminPanel() {
       adminPanel.classList.add("active");
     }
 
+    /* Admin panel will open only when the admin access dot is clicked. */
     adminDot.addEventListener("click", openAdminPanel);
-
-    document.addEventListener("pointerdown", function(event) {
-      if (event.target.closest("button, input, a")) return;
-      startX = event.clientX;
-      startY = event.clientY;
-      trackingSwipe = startX > window.innerWidth * 0.60 && startY > window.innerHeight * 0.60;
-    }, { passive: true });
-
-    document.addEventListener("pointerup", function(event) {
-      if (!trackingSwipe) return;
-      const deltaX = event.clientX - startX;
-      const deltaY = event.clientY - startY;
-      const validSwipe = deltaX < -80 && deltaY < -80;
-      if (validSwipe) openAdminPanel();
-      trackingSwipe = false;
-    }, { passive: true });
 
     /* ADMIN PANEL */
     function closeAdminPanel() {
@@ -565,10 +585,7 @@
       const email = document.getElementById("adminEmail").value.trim();
       const password = document.getElementById("adminPassword").value;
 
-      if (
-        SUPABASE_PUBLISHABLE_KEY ===
-        "sb_publishable_ory8XocB_s-ltfnLh9NWFw_QPMd0_D1"
-      ) {
+      if (SUPABASE_PUBLISHABLE_KEY === "PASTE_YOUR_PUBLISHABLE_KEY_HERE") {
         alert("প্রথমে Supabase Publishable Key বসান।");
         return;
       }
@@ -661,9 +678,14 @@
 </section>
 
 <section id="pgpAdminScreen" class="pgp-screen" aria-label="Admin dashboard">
-  <div class="pgp-wrap"><div class="pgp-top"><div><h2 class="pgp-title">Admin Dashboard</h2><div class="pgp-muted">Play_Ground Pro • Control Center</div></div><button class="pgp-close" type="button" onclick="pgpCloseScreens()">✕</button></div>
-    <div class="pgp-grid"><div class="pgp-box"><h3 id="pgpTotalCount">0</h3><p>Total Bookings</p></div><div class="pgp-box"><h3 id="pgpPendingCount">0</h3><p>Pending</p></div><div class="pgp-box"><h3 id="pgpApprovedCount">0</h3><p>Approved</p></div></div>
+  <div class="pgp-wrap">
+    <div class="pgp-top"><div><h2 class="pgp-title">Admin Dashboard</h2><div class="pgp-muted">Play_Ground Pro • Control Center</div></div><button class="pgp-close" type="button" onclick="pgpCloseScreens()">✕</button></div>
+    <div class="pgp-grid"><div class="pgp-box"><h3 id="pgpTotalCount">0</h3><p>Total Bookings</p></div><div class="pgp-box"><h3 id="pgpPendingCount">0</h3><p>Pending</p></div><div class="pgp-box"><h3 id="pgpApprovedCount">0</h3><p>Approved</p></div><div class="pgp-box"><h3 id="pgpRevenueCount">৳0</h3><p>Recorded Advance</p></div></div>
+    <div class="pgp-box" style="margin-top:14px"><h3>Dashboard Controls</h3><div class="pr-grid"><div><label>Sport Filter</label><select id="pgpAdminSportFilter"><option value="all">All Sports</option><option>Football</option><option>Cricket</option></select></div><div><label>Status Filter</label><select id="pgpAdminStatusFilter"><option value="all">All Status</option><option>Pending</option><option>Approved</option><option>Rejected</option><option>Completed</option></select></div><div><label>Search</label><input id="pgpAdminSearch" placeholder="নাম, ফোন, Booking ID বা TrxID"></div></div><div class="pr-actions"><button type="button" onclick="pgpRenderAdmin()">Refresh</button><button type="button" onclick="pgpAdminExportCSV()">Export CSV</button></div></div>
     <div class="pgp-box" style="margin-top:14px"><h3>Booking Management</h3><div id="pgpAdminBookings" class="pgp-muted">কোনো বুকিং নেই।</div></div>
+    <div class="pgp-box" style="margin-top:14px"><h3>Recurring Booking Requests</h3><div id="pgpAdminRecurring" class="pgp-muted">কোনো recurring request নেই।</div></div>
+    <div class="pgp-box" style="margin-top:14px"><h3>Turf & Pricing Settings</h3><div class="pr-grid"><div><label>Football Normal Rate</label><input id="pgpFootballNormal" type="number" value="1500"></div><div><label>Football Peak Rate</label><input id="pgpFootballPeak" type="number" value="1800"></div><div><label>Cricket Normal Rate</label><input id="pgpCricketNormal" type="number" value="1200"></div><div><label>Cricket Peak Rate</label><input id="pgpCricketPeak" type="number" value="1500"></div></div><button type="button" onclick="pgpSaveAdminSettings()">Save Settings</button><div id="pgpAdminSettingsMsg" class="pgp-note"></div></div>
+    <div class="pgp-box" style="margin-top:14px"><h3>Activity Log</h3><div id="pgpAdminLog" class="pgp-muted">কোনো activity নেই।</div></div>
   </div>
 </section>
 
@@ -680,19 +702,263 @@
   window.pgpPaymentChanged=function(){const method=$('pgpPaymentMethod').value;$('pgpOnlineOptions').hidden=method!=='Online Payment';$('pgpSendMoneyOptions').hidden=method!=='Send Money';$('pgpOnlineProvider').required=method==='Online Payment';if($('pgpTransactionId'))$('pgpTransactionId').required=method==='Online Payment'||method==='Send Money';if(method!=='Online Payment')$('pgpOnlineProvider').value='';};
   window.pgpCreateBooking=function(e){e.preventDefault();const date=$('pgpDate').value,name=$('pgpName').value.trim(),phone=$('pgpPhone').value.trim(),paymentMethod=$('pgpPaymentMethod').value,onlineProvider=$('pgpOnlineProvider').value,transactionId=($('pgpTransactionId')?.value||'').trim();if(!selectedSlot){$('pgpBookingMessage').textContent='একটি সময় নির্বাচন করুন।';return;}if(!paymentMethod){$('pgpBookingMessage').textContent='পেমেন্ট পদ্ধতি নির্বাচন করুন।';return;}if(paymentMethod==='Online Payment'&&!onlineProvider){$('pgpBookingMessage').textContent='অনলাইন পেমেন্ট মাধ্যম নির্বাচন করুন।';return;}if((paymentMethod==='Online Payment'||paymentMethod==='Send Money')&&!transactionId){$('pgpBookingMessage').textContent='পেমেন্টের Transaction ID / TrxID দিন।';return;}const bookings=getBookings();if(bookings.some(b=>b.date===date&&b.sport===sport&&b.slot===selectedSlot&&b.status!=='Rejected')){ $('pgpBookingMessage').textContent='দুঃখিত, সময়টি ইতোমধ্যে বুকড।';pgpRenderSlots();return;}const autoApproved=false;bookings.push({id:'PGP-'+Date.now(),name,phone,date,sport,slot:selectedSlot,paymentMethod,onlineProvider:paymentMethod==='Online Payment'?onlineProvider:'',transactionId,status:'Pending',approvalType:'Admin Approval',createdAt:new Date().toISOString()});saveBookings(bookings);$('pgpBookingMessage').textContent=autoApproved?'অনলাইন পেমেন্ট বুকিং গ্রহণ করা হয়েছে। পেমেন্ট যাচাই হলে স্বয়ংক্রিয়ভাবে Confirm হবে।':'বুকিং রিকোয়েস্ট গ্রহণ করা হয়েছে। Admin approval প্রয়োজন।';selectedSlot='';$('pgpSelectedSlot').value='';$('pgpPaymentMethod').value='';$('pgpOnlineProvider').value='';if($('pgpTransactionId'))$('pgpTransactionId').value='';pgpPaymentChanged();pgpRenderSlots();pgpRenderMyBookings();pgpRenderAdmin();};
   window.pgpRenderMyBookings=function(){const mine=getBookings().filter(b=>b.phone===($('pgpPhone')?.value||'')||b.name===($('pgpName')?.value||''));$('pgpMyBookings').innerHTML=mine.length?mine.map(b=>`${b.date} • ${b.sport} • ${b.slot} • <span class="pgp-badge">${b.status}</span>`).join('<br>'):'এখনো কোনো বুকিং নেই।';};
-  window.pgpRenderAdmin=function(){const b=getBookings();$('pgpTotalCount').textContent=b.length;$('pgpPendingCount').textContent=b.filter(x=>x.status==='Pending').length;$('pgpApprovedCount').textContent=b.filter(x=>x.status==='Approved').length;if(!b.length){$('pgpAdminBookings').textContent='কোনো বুকিং নেই।';return;}const table=document.createElement('table');table.className='pgp-table';table.innerHTML='<tr><th>Date</th><th>Sport</th><th>Slot</th><th>Name</th><th>Payment</th><th>TrxID</th><th>Status</th><th>Action</th></tr>';b.forEach(x=>{const tr=document.createElement('tr');tr.innerHTML=`<td>${x.date}</td><td>${x.sport}</td><td>${x.slot}</td><td>${x.name}</td><td>${x.paymentMethod||'—'}</td><td>${x.transactionId||'—'}</td><td>${x.status}</td><td></td>`;const td=tr.lastElementChild;if(x.status==='Pending'){['Approve','Reject'].forEach(action=>{const btn=document.createElement('button');btn.textContent=action;btn.style.width='auto';btn.style.margin='2px';btn.style.padding='5px 8px';btn.onclick=()=>{x.status=action==='Approve'?'Approved':'Rejected';saveBookings(b);pgpRenderAdmin();pgpRenderSlots();pgpRenderMyBookings();};td.appendChild(btn);});}table.appendChild(tr);});$('pgpAdminBookings').innerHTML='';$('pgpAdminBookings').appendChild(table);};
-  window.pgpOpenCustomer=function(user){currentUser=user||'Guest';$('pgpCustomerScreen').classList.add('active');$('pgpAdminScreen').classList.remove('active');const d=new Date();$('pgpDate').value=d.toISOString().slice(0,10);pgpRenderSlots();pgpRenderMyBookings();};
+  window.pgpRenderAdmin=function(){
+ const all=getBookings();
+ const sport=($('pgpAdminSportFilter')?.value||'all'),status=($('pgpAdminStatusFilter')?.value||'all'),q=($('pgpAdminSearch')?.value||'').toLowerCase();
+ const b=all.filter(x=>(sport==='all'||x.sport===sport)&&(status==='all'||x.status===status)&&(!q||JSON.stringify(x).toLowerCase().includes(q)));
+ $('pgpTotalCount').textContent=all.length; $('pgpPendingCount').textContent=all.filter(x=>x.status==='Pending').length; $('pgpApprovedCount').textContent=all.filter(x=>x.status==='Approved').length; $('pgpRevenueCount').textContent='৳'+all.reduce((n,x)=>n+Number(x.advance||x.amount||0),0);
+ if(!b.length){$('pgpAdminBookings').textContent='কোনো বুকিং নেই।';}else{const table=document.createElement('table');table.className='pgp-table';table.innerHTML='<tr><th>ID</th><th>Date</th><th>Sport</th><th>Slot</th><th>Name</th><th>Payment</th><th>TrxID</th><th>Status</th><th>Action</th></tr>';b.forEach(x=>{const tr=document.createElement('tr');tr.innerHTML=`<td>${x.id||'—'}</td><td>${x.date||'—'}</td><td>${x.sport||'—'}</td><td>${x.slot||'—'}</td><td>${x.name||'—'}<br><small>${x.phone||''}</small></td><td>${x.paymentMethod||'—'}</td><td>${x.transactionId||'—'}</td><td>${x.status||'Pending'}</td><td></td>`;const td=tr.lastElementChild;['Approve','Reject','Complete'].forEach(action=>{if((action==='Approve'&&x.status!=='Pending')||(action==='Reject'&&x.status!=='Pending')||(action==='Complete'&&x.status!=='Approved'))return;const btn=document.createElement('button');btn.textContent=action;btn.style.width='auto';btn.style.margin='2px';btn.style.padding='5px 8px';btn.onclick=()=>{x.status=action==='Approve'?'Approved':action==='Reject'?'Rejected':'Completed';saveBookings(all);pgpAdminLog(action+' '+(x.id||''));pgpRenderAdmin();pgpRenderSlots();pgpRenderMyBookings();};td.appendChild(btn);});table.appendChild(tr);});$('pgpAdminBookings').innerHTML='';$('pgpAdminBookings').appendChild(table);}
+ const rr=JSON.parse(localStorage.getItem('pgpRecurringRequests')||'[]');$('pgpAdminRecurring').innerHTML=rr.length?rr.map((x,i)=>`<div class="pr-upcoming-item"><b>RB-${i+1} • ${x.type||x.pattern||'Recurring'}</b><small>${x.startDate||x.start||''} • ${(x.slots||[x.slot]).join(' + ')} • Advance ৳${Number(x.advancePerMatch||x.advance||0)}</small><span class="pr-status">${x.status||'Pending'}</span><div class="pr-actions"><button type="button" onclick="pgpRecurringAction(${i},'Approved')">Approve</button><button type="button" onclick="pgpRecurringAction(${i},'Rejected')">Reject</button><button type="button" onclick="pgpRecurringAction(${i},'Paused')">Pause</button><button type="button" onclick="pgpRecurringAction(${i},'Cancelled')">Cancel</button></div></div>`).join(''):'কোনো recurring request নেই।';
+};
+window.pgpAdminLog=function(msg){const a=JSON.parse(localStorage.getItem('pgpAdminLog')||'[]');a.unshift(new Date().toLocaleString('bn-BD')+' — '+msg);localStorage.setItem('pgpAdminLog',JSON.stringify(a.slice(0,30)));if($('pgpAdminLog'))$('pgpAdminLog').innerHTML=a.slice(0,10).map(x=>'<div>'+x+'</div>').join('');};
+window.pgpRecurringAction=function(i,status){const a=JSON.parse(localStorage.getItem('pgpRecurringRequests')||'[]');if(a[i]){a[i].status=status;localStorage.setItem('pgpRecurringRequests',JSON.stringify(a));pgpAdminLog(status+' recurring request '+i);pgpRenderAdmin();}};
+window.pgpSaveAdminSettings=function(){const settings={footballNormal:$('pgpFootballNormal').value,footballPeak:$('pgpFootballPeak').value,cricketNormal:$('pgpCricketNormal').value,cricketPeak:$('pgpCricketPeak').value};localStorage.setItem('pgpAdminSettings',JSON.stringify(settings));$('pgpAdminSettingsMsg').textContent='সেটিংস সংরক্ষণ হয়েছে।';pgpAdminLog('Pricing settings updated');};
+window.pgpAdminExportCSV=function(){const rows=getBookings();const csv=['ID,Date,Sport,Slot,Name,Phone,Payment,Transaction,Status',...rows.map(x=>[x.id,x.date,x.sport,x.slot,x.name,x.phone,x.paymentMethod,x.transactionId,x.status].map(v=>'"'+String(v||'').replace(/"/g,'""')+'"').join(','))].join('\n');const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='play_ground_bookings.csv';a.click();URL.revokeObjectURL(url);};
+window.pgpOpenCustomer=function(user){currentUser=user||'Guest';$('pgpCustomerScreen').classList.add('active');$('pgpAdminScreen').classList.remove('active');const d=new Date();$('pgpDate').value=d.toISOString().slice(0,10);pgpRenderSlots();pgpRenderMyBookings();};
   window.pgpOpenAdmin=function(){$('pgpAdminScreen').classList.add('active');$('pgpCustomerScreen').classList.remove('active');pgpRenderAdmin();};
   window.pgpCloseScreens=function(){$('pgpCustomerScreen').classList.remove('active');$('pgpAdminScreen').classList.remove('active');};
-  $('pgpDate').addEventListener('change',pgpRenderSlots);$('pgpName').addEventListener('input',pgpRenderMyBookings);$('pgpPhone').addEventListener('input',pgpRenderMyBookings);
+  $('pgpDate').addEventListener('change',pgpRenderSlots);$('pgpAdminSportFilter')?.addEventListener('change',pgpRenderAdmin);$('pgpAdminStatusFilter')?.addEventListener('change',pgpRenderAdmin);$('pgpAdminSearch')?.addEventListener('input',pgpRenderAdmin);$('pgpName').addEventListener('input',pgpRenderMyBookings);$('pgpPhone').addEventListener('input',pgpRenderMyBookings);
   const oldLogin=window.loginUser,oldRegister=window.registerUser,oldGuest=window.guestBooking,oldAdminLogin=window.adminLogin;
-  window.loginUser=function(e){e.preventDefault();pgpOpenCustomer('Customer');};
-  window.registerUser=function(e){e.preventDefault();pgpOpenCustomer('Customer');};
+  window.loginUser=loginUser;
+  window.registerUser=registerUser;
   window.guestBooking=function(e){e.preventDefault();pgpOpenCustomer('Guest');};
-  window.adminLogin=async function(e){e.preventDefault();if(SUPABASE_PUBLISHABLE_KEY==='PASTE_YOUR_PUBLISHABLE_KEY_HERE'){alert('প্রথমে Supabase Publishable Key বসান।');return;}const email=$('adminEmail').value.trim(),password=$('adminPassword').value;const result=await supabaseClient.auth.signInWithPassword({email,password});if(result.error){alert(result.error.message);return;}pgpOpenAdmin();};
+  window.adminLogin=async function(e){e.preventDefault();if(SUPABASE_PUBLISHABLE_KEY==='PASTE_YOUR_PUBLISHABLE_KEY_HERE'){alert('প্রথমে Supabase Publishable Key বসান।');return;}const email=$('adminEmail').value.trim(),password=$('adminPassword').value;const result=await supabaseClient.auth.signInWithPassword({email,password});if(result.error){alert('Login ব্যর্থ: '+result.error.message);return;}pgpOpenAdmin();};
 })();
 </script>
 
 
+<style id="pgp-batch-v1-style">
+.pgp-nav{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}.pgp-nav button{width:auto!important;margin:0!important;padding:9px 12px!important;font-size:12px!important}.pgp-module{display:none}.pgp-module.active{display:block}.pgp-stat{font-size:25px!important;color:#6ee7b7}.pgp-list{padding-left:18px;color:#d1fae5;font-size:13px;line-height:1.9}.pgp-note{border-left:3px solid #34d399;padding:8px 10px;background:#ffffff08;border-radius:6px;font-size:12px;color:#c8d8d0}
+</style>
+<script id="pgp-batch-v1-script">
+(function(){
+ const customer=document.getElementById('pgpCustomerScreen');
+ if(!customer||document.getElementById('pgpBatchNav')) return;
+ const nav=document.createElement('div');nav.id='pgpBatchNav';nav.className='pgp-nav';
+ nav.innerHTML="<button type='button' onclick=\"pgpModule('booking')\">নতুন বুকিং</button><button type='button' onclick=\"pgpModule('recurring')\">Recurring Booking</button><button type='button' onclick=\"pgpModule('profile')\">Profile</button><button type='button' onclick=\"pgpModule('notice')\">Notifications</button>";
+ const wrap=customer.querySelector('.pgp-wrap'); const first=wrap.querySelector('.pgp-grid'); wrap.insertBefore(nav,first);
+ const box=document.createElement('div');box.id='pgpBatchModules';
+ box.innerHTML=`<div id="pgpModuleRecurring" class="pgp-box pgp-module"><h3>Recurring Booking</h3><p>নিয়মিত বুকিং, কাস্টম সাইকেল, একাধিক দিন, সিডিউল প্রিভিউ, মূল্য হিসাব, পেমেন্ট ও অ্যাডমিন অনুমোদনের সম্পূর্ণ ব্যবস্থা।</p><form class="pgp-form" onsubmit="pgpSaveRecurring(event)">
+<label>বুকিং সাইকেল</label><select id="pgpRecurringType" required onchange="pgpRecurringTypeChanged()"><option value="once">One Time (একবার)</option><option value="weekly">১ সপ্তাহ</option><option value="2weeks">২ সপ্তাহ</option><option value="3weeks">৩ সপ্তাহ</option><option value="4weeks">৪ সপ্তাহ</option><option value="monthly">১ মাস</option><option value="3months">৩ মাস</option><option value="6months">৬ মাস</option><option value="9months">৯ মাস</option><option value="12months">১২ মাস</option><option value="custom">Custom (নিজের ব্যবধান)</option></select>
+<div id="pgpCustomCycleWrap" style="display:none"><label>Custom Cycle</label><div class="pr-grid"><div><label>একক</label><select id="pgpCustomUnit"><option value="days">দিন (প্রতি কত দিন পর)</option><option value="weeks">সপ্তাহ (প্রতি কত সপ্তাহ পর)</option><option value="months">মাস (প্রতি কত মাস পর)</option></select><small class="pgp-inline-help">(দিন = নির্দিষ্ট দিন পরপর, সপ্তাহ = নির্দিষ্ট সপ্তাহ পরপর, মাস = প্রতি মাসের ব্যবধানে)</small></div><div><label>সংখ্যা</label><input id="pgpCustomCycle" type="number" min="1" max="365" value="7" placeholder="কত দিন/সপ্তাহ/মাস পরপর হবে?"></div></div></div>
+<label>শুরুর তারিখ</label><div class="pgp-date-row"><input id="pgpRecurringStartDate" type="date" required><span id="pgpRecurringWeekday" class="pgp-weekday">বার</span></div>
+<label>শুরুর সময়</label><select id="pgpRecurringStartTime" required onchange="pgpRenderSlotPickers()"></select>
+<div id="pgpWeeklyDaysWrap" style="display:none"><label>সাপ্তাহিক দিন নির্বাচন</label><div id="pgpWeeklyDays" class="pr-day-grid"></div><div class="pr-muted">একাধিক দিন নির্বাচন করা যাবে।</div></div>
+<label>প্রতিম্যাচের সময়কাল</label><input id="pgpMatchDuration" type="text" value="১ ঘণ্টা (স্থির)" readonly>
+<label>প্রতি সিডিউলে স্লট সংখ্যা</label><input id="pgpSlotCount" type="number" min="1" max="10" value="1" required oninput="pgpRenderSlotPickers()">
+<div id="pgpSlotPickers" class="pgp-note" style="margin-top:8px"></div>
+<label>নির্বাচিত দিনগুলো</label><div id="pgpSelectedDays" class="pgp-note" style="margin-top:8px">শুরুর তারিখ নির্বাচন করুন।</div>
+<button type="button" class="pgp-mini-btn" onclick="pgpAddRecurringDate()">+ দিন যোগ করুন</button><div id="pgpSchedulePreview" class="pgp-note" style="margin-top:10px"></div>
+<label>বুকিং মেয়াদ</label><select id="pgpRecurringDuration" required><option value="permanent">স্থায়ী — ক্যান্সেল না করা পর্যন্ত</option><option value="3months">৩ মাস</option><option value="6months">৬ মাস</option><option value="9months">৯ মাস</option><option value="12months">১২ মাস</option></select>
+<label>প্রতি ম্যাচের অগ্রিম (টাকা)</label><input id="pgpAdvancePerMatch" type="number" min="0" value="300" required oninput="pgpCalculateRecurringTotal()">
+<div id="pgpRecurringPrice" class="pgp-note">মোট অগ্রিম: ৩০০ টাকা</div>
+<label>পেমেন্ট মাধ্যম</label><select id="pgpRecurringPayment" required><option value="bkash">bKash</option><option value="nagad">Nagad</option><option value="rocket">Rocket</option><option value="bank">Bank</option><option value="cash">Cash</option></select>
+<label>Transaction ID (প্রযোজ্য হলে)</label><input id="pgpRecurringTxn" type="text" placeholder="Transaction ID লিখুন">
+<button type="submit">রিকোয়েস্ট সংরক্ষণ</button></form><div id="pgpRecurringMessage" class="pgp-note"></div></div><div id="pgpModuleProfile" class="pgp-box pgp-module"><h3>Customer Profile</h3><p>নাম ও মোবাইল নম্বর বুকিং ফর্ম থেকে নেওয়া হবে।</p><div class="pgp-note">প্রোফাইলের স্থায়ী সংরক্ষণ ও অ্যাকাউন্ট-ভিত্তিক ডেটা পরবর্তী Supabase ধাপে যুক্ত হবে।</div></div><div id="pgpModuleNotice" class="pgp-box pgp-module"><h3>Notifications</h3><ul class="pgp-list"><li>নতুন বুকিং Pending অবস্থায় থাকবে।</li><li>Admin Approve করলে বুকিং Approved হবে।</li><li>Reject হলে সময়টি পুনরায় Available হবে।</li></ul></div>`;wrap.insertBefore(box,first);
+ window.pgpModule=function(name){document.querySelectorAll('.pgp-module').forEach(x=>x.classList.remove('active'));if(name==='booking'){first.style.display='';}else{first.style.display='none';}const target=document.getElementById('pgpModule'+name.charAt(0).toUpperCase()+name.slice(1));if(target)target.classList.add('active');};
+ let recurringDays=[];let selectedWeekdays=[];
+ const dayNames=['রবিবার','সোমবার','মঙ্গলবার','বুধবার','বৃহস্পতিবার','শুক্রবার','শনিবার'];
+ const slotLabels=['৬–৭ সকাল','৭–৮ সকাল','৮–৯ সকাল','৯–১০ সকাল','১০–১১ সকাল','১১–১২ দুপুর','১২–১ দুপুর','১–২ দুপুর','২–৩ দুপুর','৩–৪ বিকেল','৪–৫ বিকেল','৫–৬ বিকেল','৬–৭ সন্ধ্যা','৭–৮ রাত','৮–৯ রাত','৯–১০ রাত','১০–১১ রাত','১১–১২ রাত','১২–১ রাত','১–২ রাত','২–৩ রাত'];
+ window.pgpRecurringTypeChanged=function(){recurringDays=[];selectedWeekdays=[];const type=document.getElementById('pgpRecurringType').value;document.getElementById('pgpCustomCycleWrap').style.display=type==='custom'?'block':'none';document.getElementById('pgpWeeklyDaysWrap').style.display=type==='weekly'?'block':'none';pgpRenderWeeklyDays();pgpAddRecurringDate(true);pgpRenderSlotPickers();pgpCalculateRecurringTotal();};
+ window.pgpRenderWeeklyDays=function(){const box=document.getElementById('pgpWeeklyDays');if(!box)return;box.innerHTML=dayNames.map((d,i)=>'<button type="button" class="pr-day-btn '+(selectedWeekdays.includes(i)?'selected':'')+'" onclick="pgpToggleWeekday('+i+')">'+d+'</button>').join('');};
+ window.pgpToggleWeekday=function(i){if(selectedWeekdays.includes(i))selectedWeekdays=selectedWeekdays.filter(x=>x!==i);else selectedWeekdays.push(i);if(!selectedWeekdays.length){const date=document.getElementById('pgpRecurringStartDate').value;if(date)selectedWeekdays=[new Date(date+'T12:00:00').getDay()];}pgpRenderWeeklyDays();pgpRenderRecurringDays();pgpCalculateRecurringTotal();};
+ window.pgpRenderSlotPickers=function(){const n=Math.max(1,Math.min(10,Number(document.getElementById('pgpSlotCount').value)||1));const start=document.getElementById('pgpRecurringStartTime').value||slotLabels[0];const box=document.getElementById('pgpSlotPickers');box.innerHTML='<b>স্লট বাছাই করুন</b><div class="pr-muted">প্রথম স্লট শুরুর সময় অনুযায়ী স্বয়ংক্রিয়। অতিরিক্ত স্লটগুলো নিজে নির্বাচন করুন।</div>'+Array.from({length:n},(_,i)=>'<label>স্লট '+(i+1)+'</label><select class="pgp-rec-slot" '+(i===0?'disabled':'')+' required>'+slotLabels.map(x=>'<option value="'+x+'"'+((i===0?x===start:x===slotLabels[Math.min(slotLabels.length-1,Number(document.getElementById('pgpRecurringStartTime').selectedIndex||0)+i)])?' selected':'')+'>'+x+'</option>').join('')+'</select>').join('');pgpCalculateRecurringTotal();};
+ window.pgpRemoveRecurringDay=function(value){recurringDays=recurringDays.filter(x=>x.value!==value);pgpRenderRecurringDays();pgpCalculateRecurringTotal();};
+ window.pgpRenderRecurringDays=function(){const box=document.getElementById('pgpSelectedDays');if(!box)return;if(document.getElementById('pgpRecurringType').value==='weekly'){box.innerHTML=selectedWeekdays.length?selectedWeekdays.map(i=>'<span class="pr-day-chip">'+dayNames[i]+'</span>').join(''):'কোনো দিন নির্বাচন করা হয়নি।';return;}if(!recurringDays.length){box.textContent='এখনো কোনো দিন যোগ করা হয়নি।';return;}box.innerHTML=recurringDays.map(x=>'<span style="display:inline-flex;align-items:center;gap:5px;background:#065f46;color:#d1fae5;border-radius:999px;padding:4px 8px;margin:3px">'+x.label+'<button type="button" onclick="pgpRemoveRecurringDay(\''+x.value+'\')" style="width:auto!important;margin:0!important;padding:0 4px!important;background:transparent!important;color:#fecaca!important">×</button></span>').join('');};
+ window.pgpAddRecurringDate=function(silent){const date=document.getElementById('pgpRecurringStartDate').value;if(!date){if(!silent)document.getElementById('pgpRecurringMessage').textContent='প্রথমে একটি তারিখ নির্বাচন করুন।';return;}if(document.getElementById('pgpRecurringType').value==='weekly'){if(!selectedWeekdays.length)selectedWeekdays=[new Date(date+'T12:00:00').getDay()];pgpRenderWeeklyDays();pgpRenderRecurringDays();return;}const weekday=dayNames[new Date(date+'T12:00:00').getDay()];if(!recurringDays.some(x=>x.value===date))recurringDays.push({value:date,label:date+' — '+weekday});if(!silent)document.getElementById('pgpRecurringMessage').textContent='তারিখ যোগ হয়েছে।';pgpRenderRecurringDays();pgpCalculateRecurringTotal();};
+ window.pgpGetScheduleDates=function(){const type=document.getElementById('pgpRecurringType').value;const start=document.getElementById('pgpRecurringStartDate').value;if(!start)return[];const duration=document.getElementById('pgpRecurringDuration').value;const end=new Date(start+'T12:00:00');if(duration==='permanent')end.setMonth(end.getMonth()+12);else end.setMonth(end.getMonth()+(duration==='3months'?3:duration==='6months'?6:duration==='9months'?9:12));const out=[];const add=d=>{if(d<=end)out.push(d.toISOString().slice(0,10));};if(type==='weekly'){const days=selectedWeekdays.length?selectedWeekdays:[new Date(start+'T12:00:00').getDay()];let d=new Date(start+'T12:00:00');for(let guard=0;guard<370&&d<=end;guard++,d.setDate(d.getDate()+1)){if(days.includes(d.getDay()))add(new Date(d));}return[...new Set(out)].sort();}let d=new Date(start+'T12:00:00');let guard=0;while(d<=end&&guard++<370){add(new Date(d));if(type==='once')break;if(type==='2weeks')d.setDate(d.getDate()+14);else if(type==='3weeks')d.setDate(d.getDate()+21);else if(type==='4weeks')d.setDate(d.getDate()+28);else if(type==='monthly'||type==='3months'||type==='6months'||type==='9months'||type==='12months'){d.setMonth(d.getMonth()+(type==='monthly'?1:Number(type.replace('months',''))));}else if(type==='custom'){const n=Math.max(1,Number(document.getElementById('pgpCustomCycle').value)||1);const unit=document.getElementById('pgpCustomUnit').value;if(unit==='weeks')d.setDate(d.getDate()+n*7);else if(unit==='months')d.setMonth(d.getMonth()+n);else d.setDate(d.getDate()+n);}else d.setDate(d.getDate()+7);}return[...new Set(out)].sort();};
+ window.pgpRenderSchedulePreview=function(){const box=document.getElementById('pgpSchedulePreview');if(!box)return;const dates=pgpGetScheduleDates();if(!dates.length){box.innerHTML='<b>সিডিউল প্রিভিউ</b><div class="pr-muted">শুরুর তারিখ নির্বাচন করলে ভবিষ্যৎ সিডিউল এখানে দেখা যাবে।</div>';return;}const slots=[...document.querySelectorAll('.pgp-rec-slot')].map(x=>x.value);box.innerHTML='<b>সিডিউল প্রিভিউ ('+dates.length+'টি)</b>'+dates.slice(0,60).map((d,i)=>'<div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;padding:7px 0;border-bottom:1px solid #ffffff1f"><span>'+(i+1)+'. '+d+' — '+dayNames[new Date(d+'T12:00:00').getDay()]+'</span><span>'+slots.join(', ')+'</span></div>').join('')+(dates.length>60?'<div class="pr-muted">আরও '+(dates.length-60)+'টি সিডিউল রয়েছে।</div>':'');};
+ window.pgpUpdateRecurringWeekday=function(){const date=document.getElementById('pgpRecurringStartDate').value;document.getElementById('pgpRecurringWeekday').textContent=date?dayNames[new Date(date+'T12:00:00').getDay()]:'বার';};
+ window.pgpCalculateRecurringTotal=function(){const n=Math.max(1,Number(document.getElementById('pgpSlotCount').value)||1);const advance=Math.max(0,Number(document.getElementById('pgpAdvancePerMatch').value)||0);const schedules=pgpGetScheduleDates().length;document.getElementById('pgpRecurringPrice').textContent='প্রতি সিডিউলে মোট খেলার সময়: '+n+' ঘণ্টা | মোট সিডিউল: '+schedules+' | আনুমানিক মোট অগ্রিম: '+(schedules*n*advance)+' টাকা';pgpRenderSchedulePreview();};
+ window.pgpSaveRecurring=function(e){e.preventDefault();const dates=pgpGetScheduleDates();if(!dates.length){document.getElementById('pgpRecurringMessage').textContent='সঠিক তারিখ/প্যাটার্ন নির্বাচন করুন।';return;}const slots=[...document.querySelectorAll('.pgp-rec-slot')].map(x=>x.value);const data=JSON.parse(localStorage.getItem('pgpRecurringRequests')||'[]');data.push({type:document.getElementById('pgpRecurringType').value,customCycle:Number(document.getElementById('pgpCustomCycle').value||0),customUnit:document.getElementById('pgpCustomUnit').value,startDate:document.getElementById('pgpRecurringStartDate').value,startTime:document.getElementById('pgpRecurringStartTime').value,weekdays:selectedWeekdays,days:recurringDays,matchDuration:1,slotCount:Number(document.getElementById('pgpSlotCount').value),slots,bookingDuration:document.getElementById('pgpRecurringDuration').value,advancePerMatch:Number(document.getElementById('pgpAdvancePerMatch').value),payment:document.getElementById('pgpRecurringPayment').value,transactionId:document.getElementById('pgpRecurringTxn').value,createdAt:new Date().toISOString(),status:'Pending'});localStorage.setItem('pgpRecurringRequests',JSON.stringify(data));document.getElementById('pgpRecurringMessage').textContent='Recurring booking request সংরক্ষণ হয়েছে। Admin review-এর জন্য পাঠানো হয়েছে।';e.target.reset();recurringDays=[];selectedWeekdays=[];pgpInitRecurringControls();};
+ window.pgpInitRecurringControls=function(){const time=document.getElementById('pgpRecurringStartTime');time.innerHTML=slotLabels.map(x=>'<option value="'+x+'">'+x+'</option>').join('');pgpUpdateRecurringWeekday();pgpRecurringTypeChanged();pgpRenderSlotPickers();pgpCalculateRecurringTotal();};
+ document.getElementById('pgpRecurringStartDate').addEventListener('change',function(){pgpUpdateRecurringWeekday();if(document.getElementById('pgpRecurringType').value==='weekly'){selectedWeekdays=[new Date(this.value+'T12:00:00').getDay()];pgpRenderWeeklyDays();}else{recurringDays=[];pgpAddRecurringDate(true);}pgpRenderSlotPickers();pgpCalculateRecurringTotal();});document.getElementById('pgpRecurringDuration').addEventListener('change',pgpCalculateRecurringTotal);document.getElementById('pgpCustomCycle').addEventListener('input',pgpCalculateRecurringTotal);document.getElementById('pgpCustomUnit').addEventListener('change',pgpCalculateRecurringTotal);pgpInitRecurringControls();
+})();
+</script>
+
+
+<style id="pgp-recurring-v3-fixes">
+.pgp-form select{color-scheme:dark!important;background:#12352b!important;color:#d1fae5!important;}
+.pgp-form select option{background:#12352b!important;color:#d1fae5!important;}
+.pgp-date-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.pgp-date-row input{flex:1;min-width:145px;}
+.pgp-weekday{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:0 12px;border:1px solid #2f6b55;border-radius:10px;background:#0b241c;color:#86efac;font-weight:600;}
+</style>
+<style id="pgpProfessionalRecurringCSS">
+/* Recurring Booking: match the normal booking screen style */
+#pgpModuleRecurring{font-family:'Hind Siliguri',sans-serif;color:#fff}
+#pgpModuleRecurring>h3{text-align:center;font-size:22px;margin:0 0 8px;color:#fff}
+#pgpModuleRecurring>p.pr-muted{text-align:center;font-size:13px}
+#pgpModuleRecurring .pr-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
+#pgpModuleRecurring .pr-card{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-radius:18px;padding:16px;margin-top:14px;box-shadow:0 14px 40px #0004}
+#pgpModuleRecurring .pr-card h4{margin:0 0 10px;font-size:18px;color:#fff}
+#pgpModuleRecurring .pr-day-grid{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+#pgpModuleRecurring .pr-day-btn{border:1px solid rgba(255,255,255,.25);border-radius:12px;padding:8px 10px;background:rgba(255,255,255,.08);color:#fff;cursor:pointer}
+#pgpModuleRecurring .pr-day-btn.selected{background:#059669;border-color:#34d399}
+#pgpModuleRecurring .pr-day-chip{display:inline-block;background:#065f46;color:#d1fae5;border-radius:999px;padding:5px 10px;margin:3px}
+#pgpModuleRecurring .pr-muted{color:#c8d8d0;font-size:12px;line-height:1.8}
+#pgpModuleRecurring label{display:block;margin:5px 0 3px;color:#d1fae5;font-size:13px;font-weight:600}
+#pgpModuleRecurring input,#pgpModuleRecurring select{width:100%;box-sizing:border-box;margin:0 0 9px;background:rgba(0,0,0,.20)!important;color:#d1fae5!important;border:1px solid #ffffff26!important;border-radius:9px;padding:11px;font-family:inherit}
+#pgpModuleRecurring select{color-scheme:dark}
+#pgpModuleRecurring select option{background:#183b32;color:#d1fae5}
+#pgpModuleRecurring input:focus,#pgpModuleRecurring select:focus{outline:none;border-color:#34d399!important;box-shadow:0 0 0 2px rgba(52,211,153,.12)}
+#pgpModuleRecurring .pr-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}
+#pgpModuleRecurring .pr-actions button,#pgpModuleRecurring .pr-mini-btn{width:100%!important;min-height:44px!important;margin:0!important;padding:9px 10px!important;font-family:inherit;font-size:12px!important;font-weight:600;border-radius:10px!important;white-space:normal;line-height:1.45}
+#pgpModuleRecurring .pr-actions button{background:linear-gradient(135deg,#059669,#34d399)!important;color:#022c22!important;border:0!important}
+#pgpModuleRecurring .pr-mini-btn{background:rgba(16,185,129,.18)!important;color:#d1fae5!important;border:1px solid #34d39955!important}
+#pgpModuleRecurring .pr-table{width:100%;border-collapse:collapse;font-size:12px;display:block;overflow-x:auto}
+#pgpModuleRecurring .pr-table th,#pgpModuleRecurring .pr-table td{padding:9px;border-bottom:1px solid #ffffff1f;text-align:left;white-space:normal;vertical-align:top}
+#pgpModuleRecurring .pr-status{display:inline-block;padding:4px 8px;border-radius:999px;background:#854d0e;color:#fef08a;font-size:11px;white-space:nowrap}
+#pgpModuleRecurring .pr-status.confirmed,#pgpModuleRecurring .pr-status.approved{background:#065f46;color:#d1fae5}
+#pgpModuleRecurring .pr-status.cancelled{background:#7f1d1d;color:#fecaca}
+#pgpModuleRecurring .pr-status.paused{background:#374151;color:#e5e7eb}
+#pgpModuleRecurring .pr-alert{margin:10px 0;padding:12px;border:1px solid #b45309;border-radius:12px;background:rgba(120,53,15,.22);color:#fde68a;font-size:12px;line-height:1.7}
+#pgpModuleRecurring .pr-day-picker{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:7px;margin-top:9px}
+#pgpModuleRecurring .pr-day-btn{width:100%;min-height:44px;border:1px solid #ffffff26;background:rgba(0,0,0,.25);color:#d1fae5;border-radius:10px;padding:8px 4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:600}
+#pgpModuleRecurring .pr-day-btn.active{background:linear-gradient(135deg,#059669,#34d399);border-color:#6ee7b7;color:#022c22;box-shadow:0 0 0 2px rgba(52,211,153,.18)}
+#pgpModuleRecurring .pr-day-btn:disabled{opacity:.4;cursor:not-allowed}
+#pgpModuleRecurring .pr-chip{display:inline-flex;align-items:center;gap:6px;background:#065f46;color:#d1fae5;border:1px solid #047857;border-radius:999px;padding:6px 10px;margin:4px;font-size:11px}
+#pgpModuleRecurring .pr-chip button{background:transparent!important;border:0!important;color:#fff!important;padding:0!important;margin:0!important;width:auto!important}
+#pgpModuleRecurring .pr-auto-note{margin:10px 0;padding:10px 12px;border:1px dashed #ffffff35;border-radius:12px;color:#c8d8d0;font-size:12px;line-height:1.7;background:#ffffff08}
+#pgpModuleRecurring .pr-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}
+#pgpModuleRecurring .pr-stat{min-width:0;min-height:76px;border:1px solid #ffffff26;border-radius:12px;padding:10px;background:rgba(0,0,0,.22);color:#d1fae5;box-sizing:border-box}
+#pgpModuleRecurring .pr-stat b{display:block;font-size:16px;margin-top:3px;overflow-wrap:anywhere}
+#pgpModuleRecurring .pr-upcoming-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:8px;align-items:stretch}
+#pgpModuleRecurring .pr-upcoming-item{min-width:0;height:100%;box-sizing:border-box;padding:12px;border:1px solid #ffffff26;border-radius:12px;background:rgba(0,0,0,.22);color:#d1fae5;line-height:1.55;overflow-wrap:anywhere;display:flex;flex-direction:column;justify-content:flex-start}
+#pgpModuleRecurring .pr-upcoming-item small{display:block;color:#c8d8d0;margin-top:5px}
+#pgpModuleRecurring .pr-upcoming-item .pr-status{margin-top:8px;align-self:flex-start}
+#pgpModuleRecurring .pr-countdown{display:inline-block;margin-top:5px;padding:4px 8px;border-radius:999px;background:#123c32;color:#a7f3d0;font-size:11px}
+#pgpModuleRecurring .pr-slot-pickers{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:10px}
+#pgpModuleRecurring .pr-slot-pickers label{margin-top:0}
+#pgpModuleRecurring .pr-slot-pickers select{width:100%;box-sizing:border-box}
+@media(max-width:520px){#pgpModuleRecurring .pr-slot-pickers{grid-template-columns:1fr}}
+@media(max-width:520px){
+  #pgpModuleRecurring .pr-actions{grid-template-columns:1fr}
+  #pgpModuleRecurring .pr-day-picker{grid-template-columns:repeat(4,minmax(0,1fr))}
+  #pgpModuleRecurring .pr-summary{grid-template-columns:1fr}
+  #pgpModuleRecurring .pr-upcoming-grid{grid-template-columns:1fr}
+}
+</style>
+<script id="pgpProfessionalRecurringJS">
+(function(){
+const slots=['৬–৭ সকাল','৭–৮ সকাল','৮–৯ সকাল','৯–১০ সকাল','১০–১১ সকাল','১১–১২ দুপুর','১২–১ দুপুর','১–২ দুপুর','২–৩ দুপুর','৩–৪ বিকেল','৪–৫ বিকেল','৫–৬ বিকেল','৬–৭ সন্ধ্যা','৭–৮ রাত','৮–৯ রাত','৯–১০ রাত','১০–১১ রাত','১১–১২ রাত','১২–১ রাত','১–২ রাত','২–৩ রাত'];
+const names=['রবিবার','সোমবার','মঙ্গলবার','বুধবার','বৃহস্পতিবার','শুক্রবার','শনিবার'];
+const short=['রবি','সোম','মঙ্গল','বুধ','বৃহস্পতি','শুক্র','শনি'];
+const money=n=>new Intl.NumberFormat('bn-BD').format(Math.max(0,Number(n)||0))+' টাকা';
+const $=id=>document.getElementById(id);
+const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const fmt=d=>String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+d.getFullYear();
+function getDays(){return [...document.querySelectorAll('#prWeekdayPicker .pr-day-btn.active')].map(x=>Number(x.dataset.day));}
+function read(){return JSON.parse(localStorage.getItem('pgpProfessionalRecurring')||'[]');}
+function save(a){localStorage.setItem('pgpProfessionalRecurring',JSON.stringify(a));}
+function durationMonths(){return Number($('prDuration').value||3);}
+function buildSchedule(){
+ const start=$('prStart').value;if(!start)return [];
+ const selected=getDays();if(!selected.length)return [];
+ const pattern=$('prPattern').value,cycle=$('prCycle').value,months=durationMonths();
+ const base=new Date(start+'T12:00:00'),until=new Date(base);
+ if(months>0)until.setMonth(until.getMonth()+months);
+ const out=[];const add=d=>{if(d>=base&&(!months||d<until))out.push({value:iso(d),label:fmt(d)+' — '+names[d.getDay()]});};
+ if(pattern==='monthly'){
+  for(let m=0;m<(months||12);m++){
+   const month=new Date(base.getFullYear(),base.getMonth()+m,1,12);
+   selected.forEach(day=>{for(let n=1;n<=31;n++){const d=new Date(month.getFullYear(),month.getMonth(),n,12);if(d.getMonth()!==month.getMonth())break;if(d.getDay()===day){add(d);break;}}});
+  }
+ }else if(pattern==='15days'){
+  for(let d=new Date(base),guard=0;guard<370&&d<until;guard++,d.setDate(d.getDate()+15))add(new Date(d));
+ }else if(pattern==='custom'){
+  const n=Math.max(1,Number($('prCustomValue').value)||1),unit=$('prCustomUnit').value;
+  for(let d=new Date(base),guard=0;guard<370&&d<until;guard++){
+   add(new Date(d));if(unit==='weeks')d.setDate(d.getDate()+n*7);else if(unit==='months')d.setMonth(d.getMonth()+n);else d.setDate(d.getDate()+n);
+  }
+ }else{
+  if(cycle==='custom'){
+   const n=Math.max(1,Number($('prCustomValue').value)||1),unit=$('prCustomUnit').value;
+   for(let d=new Date(base),guard=0;guard<370&&d<until;guard++){
+    add(new Date(d));if(unit==='weeks')d.setDate(d.getDate()+n*7);else if(unit==='months')d.setMonth(d.getMonth()+n);else d.setDate(d.getDate()+n);
+   }
+  }else{
+   const step=Number(cycle||1);
+   for(let w=0;w<60;w+=step){selected.forEach(day=>{const d=new Date(base);d.setDate(base.getDate()+w*7+((day-base.getDay()+7)%7));add(d);});}
+  }
+ }
+ const seen=new Set();return out.filter(x=>!seen.has(x.value)&&seen.add(x.value)).sort((a,b)=>a.value.localeCompare(b.value));
+}
+function selectedCount(){return getDays().length;}
+function refreshDays(){
+ const max=Number($('prFrequency').value||1),buttons=[...document.querySelectorAll('#prWeekdayPicker .pr-day-btn')];
+ buttons.forEach(b=>b.disabled=!b.classList.contains('active')&&selectedCount()>=max);
+ $('prSelectedDays').textContent='নির্বাচিত দিন: '+(selectedCount()?getDays().map(i=>names[i]).join(', '):'এখনো নির্বাচন করা হয়নি');
+}
+function slotOptions(){return slots.map((s,i)=>'<option value="'+s+'">'+s+'</option>').join('');}
+function renderSlotPickers(){
+ const count=Math.max(1,Math.min(10,Number($('prSlotCount').value||1)));
+ const box=$('prSlotPickers');if(!box)return;
+ const previous=[...box.querySelectorAll('select')].map(x=>x.value);
+ box.innerHTML=Array.from({length:count},(_,i)=>'<div><label>স্লট '+(i+1)+(i===0?' (অটো)':'')+'</label><select class="pr-rec-slot" '+(i===0?'disabled':'')+' required>'+slotOptions()+'</select></div>').join('');
+ const selects=[...box.querySelectorAll('select')];
+ selects.forEach((x,i)=>{
+   x.value=i===0?($('prSlot').value||previous[i]||slots[0]):(previous[i]||'');
+   if(i===0)x.title='শুরুর সময় থেকে স্বয়ংক্রিয়ভাবে নির্ধারিত';
+ });
+ calculate();
+}
+function chosenSlots(){return [...document.querySelectorAll('#prSlotPickers .pr-rec-slot')].map(x=>x.value).filter(Boolean);}
+function calculate(){
+ const schedule=buildSchedule(),duration=1,slotsPerDay=Math.max(1,Number($('prSlotCount').value||1));
+ const selectedSlots=chosenSlots(),advance=300*duration*slotsPerDay*schedule.length;
+ $('prSummary').innerHTML='<div class="pr-stat"><small>মোট সিডিউল</small><b>'+new Intl.NumberFormat('bn-BD').format(schedule.length)+'</b></div><div class="pr-stat"><small>প্রতি সিডিউল অগ্রিম</small><b>'+money(300*duration*slotsPerDay)+'</b></div><div class="pr-stat"><small>মোট অগ্রিম</small><b>'+money(advance)+'</b></div><div class="pr-stat"><small>মোট খেলার সময়</small><b>'+duration*slotsPerDay+' ঘণ্টা</b></div>';
+ const preview=schedule.slice(0,40).map((x,i)=>'<div class="pr-upcoming-item"><b>'+(i+1)+'. '+x.label+'</b><small>'+ (selectedSlots.join(' + ')||'সময় নির্বাচন করুন') +' · '+duration+' ঘণ্টা · '+slotsPerDay+' স্লট</small><span class="pr-status">Admin Approval বাকি</span></div>').join('');
+ $('prPreview').innerHTML=schedule.length?'<div class="pr-upcoming-grid">'+preview+'</div><p class="pr-muted">সর্বোচ্চ ৪০টি সিডিউল দেখানো হচ্ছে। মোট '+schedule.length+'টি সিডিউল তৈরি হয়েছে।</p>':'<p class="pr-muted">শুরু তারিখ, সপ্তাহের দিন ও প্যাটার্ন নির্বাচন করলে এখানে সিডিউল দেখা যাবে।</p>';
+ return {schedule,duration,slotsPerDay,advance,selectedSlots};
+}
+function renderRequests(){
+ const arr=read();
+ $('prRequests').innerHTML=arr.length?'<table class="pr-table"><tr><th>ID</th><th>বুকিং</th><th>সময়</th><th>পেমেন্ট</th><th>স্ট্যাটাস</th><th>অ্যাকশন</th></tr>'+arr.map((x,i)=>{const status=x.status||'Pending';const label=x.paused?'Paused':status;const countdown=status==='Confirmed'&&x.confirmedAt?'<span class="pr-countdown">কনফার্ম হয়েছে</span>':status==='Pending'?'<span class="pr-countdown">Admin Approval বাকি</span>':'';return '<tr><td>'+x.id+'</td><td>'+x.sport+'<br><small>'+x.schedule.length+'টি সিডিউল</small></td><td>'+x.slot+'</td><td>'+x.paymentMethod+'<br><small>'+money(x.advance)+'</small></td><td><span class="pr-status '+(x.paused?'paused':status.toLowerCase())+'">'+label+'</span><br>'+countdown+'</td><td><button class="pr-mini-btn" type="button" onclick="prConfirmByIndex('+i+')">Approve Demo</button> <button class="pr-mini-btn" type="button" onclick="prPauseByIndex('+i+')">Pause</button> <button class="pr-mini-btn" type="button" onclick="prCancelByIndex('+i+')">Cancel</button></td></tr>';}).join('')+'</table>':'<p class="pr-muted">কোনো রিকারিং বুকিং নেই।</p>';
+}
+window.pgpBuildProfessionalRecurring=function(){
+ const root=$('pgpModuleRecurring');if(!root||root.dataset.pro==='2')return;root.dataset.pro='2';
+ root.innerHTML='<h3>Professional Recurring Booking</h3><p class="pr-muted">নিয়মিত বুকিং, একাধিক দিন, সিডিউল প্রিভিউ, মূল্য হিসাব, পেমেন্ট ও অ্যাডমিন অনুমোদনের সম্পূর্ণ ব্যবস্থা।</p><div class="pr-alert"><b>গুরুত্বপূর্ণ সতর্কতা:</b> রিকারিং বুকিং রিকোয়েস্ট পাঠানোর পর স্লটের প্রাপ্যতা যাচাই ও অ্যাডমিন অনুমোদন না হওয়া পর্যন্ত বুকিং নিশ্চিত হবে না।</div>'+
+ '<div class="pr-card"><h4>১. বুকিং সেটআপ</h4><form id="prForm" class="pgp-form"><div class="pr-grid">'+
+ '<div><label>স্পোর্টস</label><select id="prSport"><option>Football</option><option>Cricket</option></select></div>'+ 
+ '<div><label>রিকারিং প্যাটার্ন</label><select id="prPattern"><option value="weekly">প্রতি সপ্তাহে</option><option value="15days">১৫ দিন পরপর</option><option value="monthly">প্রতি মাসে</option><option value="custom">কাস্টম</option></select></div>'+ 
+ '<div><label>বুকিং সাইকেল</label><select id="prCycle"><option value="1">প্রতি ১ সপ্তাহ</option><option value="2">প্রতি ২ সপ্তাহ</option><option value="3">প্রতি ৩ সপ্তাহ</option><option value="4">প্রতি ৪ সপ্তাহ</option><option value="custom">Custom Cycle</option></select></div>'+ 
+ '<div><label>শুরু তারিখ</label><input id="prStart" type="date" required></div>'+ 
+ '<div><label>সময়</label><select id="prSlot" required><option value="">সময় নির্বাচন করুন</option>'+slots.map(s=>'<option>'+s+'</option>').join('')+'</select></div>'+ 
+ '<div><label>মেয়াদ</label><select id="prDuration"><option value="1">১ মাস</option><option value="3" selected>৩ মাস</option><option value="6">৬ মাস</option><option value="9">৯ মাস</option><option value="12">১২ মাস</option><option value="0">স্থায়ী</option></select></div>'+ 
+ '<div><label>সপ্তাহে কত দিন</label><select id="prFrequency"><option value="1">১ দিন</option><option value="2">২ দিন</option><option value="3">৩ দিন</option><option value="4">৪ দিন</option><option value="5">৫ দিন</option><option value="6">৬ দিন</option><option value="7">প্রতিদিন</option></select></div>'+ 
+ '<div><label>প্রতি ম্যাচের সময়কাল</label><input id="prMatchDuration" type="text" value="১ ঘণ্টা (ফিক্সড)" readonly></div>'+ 
+ '<div><label>প্রতি সিডিউলে স্লট সংখ্যা</label><input id="prSlotCount" type="number" min="1" max="10" value="1" required></div>'+  '<div id="prSlotPickers" class="pr-slot-pickers"><div><label>স্লট ১</label><select class="pr-rec-slot" required>'+slots.map(s=>'<option>'+s+'</option>').join('')+'</select></div></div>'+ 
+ '<div><label>পেমেন্ট পদ্ধতি</label><select id="prPaymentMethod"><option>bKash</option><option>Nagad</option><option>Rocket</option><option>Bank</option><option>Cash</option></select></div>'+ 
+ '<div><label>Transaction ID</label><input id="prTransaction" placeholder="পেমেন্ট হলে লিখুন"></div>'+ 
+ '<div><label>পরবর্তী সিডিউল নোট</label><input id="prScheduleNote" placeholder="অ্যাডমিন নোট"></div></div>'+ 
+ '<div id="prCustomHelp" class="pr-auto-note" style="display:none">কাস্টম প্যাটার্নে নিজের ব্যবধান ও একক নির্বাচন করুন।</div><div id="prCustomCycleBox" class="pr-grid" style="display:none"><div><label>কাস্টম ব্যবধান</label><input id="prCustomValue" type="number" min="1" max="365" value="7" placeholder="কত দিন/সপ্তাহ/মাস পরপর হবে?"></div><div><label>একক</label><select id="prCustomUnit"><option value="days">দিন (প্রতি কত দিন পর)</option><option value="weeks" selected>সপ্তাহ (প্রতি কত সপ্তাহ পর)</option><option value="months">মাস (প্রতি কত মাস পর)</option></select><small class="pr-inline-help">(দিন = নির্দিষ্ট দিন পরপর, সপ্তাহ = নির্দিষ্ট সপ্তাহ পরপর, মাস = প্রতি মাসের ব্যবধানে)</small></div></div>'+ 
+ '<div class="pr-card"><b>সাপ্তাহিক দিন নির্বাচন</b><p class="pr-muted">রঙিন বক্সে চাপ দিয়ে দিন নির্বাচন করুন। সপ্তাহে যত দিন নির্বাচন করবেন, ততগুলো দিনই সক্রিয় থাকবে।</p><div id="prWeekdayPicker" class="pr-day-picker">'+short.map((s,i)=>'<button type="button" class="pr-day-btn" data-day="'+i+'">'+s+'</button>').join('')+'</div><div id="prSelectedDays" class="pr-muted">নির্বাচিত দিন: এখনো নির্বাচন করা হয়নি</div></div>'+ 
+ '<div class="pr-grid"><div><label>সংঘর্ষ হলে</label><select id="prConflict"><option value="pending">Admin Review</option><option value="skip">সময় বাদ দিন</option><option value="alternative">বিকল্প সময় প্রস্তাব</option></select></div><div><label>বিশেষ নোট</label><input id="prNote" placeholder="বিশেষ নির্দেশনা"></div></div>'+ 
+ '<div class="pr-auto-note">প্রতি ম্যাচের অগ্রিম ৩০০ টাকা। হিসাব: ম্যাচের সময়কাল × স্লট সংখ্যা × ৩০০ × মোট সিডিউল।</div><div id="prSummary" class="pr-summary"></div><button type="submit">রিকোয়েস্ট পাঠান</button></form><div id="prMsg" class="pgp-note"></div></div>'+ 
+ '<div class="pr-card"><h4>২. শিডিউল প্রিভিউ</h4><div id="prPreview" class="pr-muted">প্রথমে বুকিং সেটআপ সম্পন্ন করুন।</div></div>'+ 
+ '<div class="pr-card"><h4>৩. আমার রিকারিং বুকিং</h4><div class="pr-actions"><button type="button" onclick="prRenderRequests()">রিফ্রেশ</button><button type="button" onclick="prPauseLatest()">শেষ বুকিং Pause/Resume</button><button type="button" onclick="prCancelLatest()">শেষ সিরিজ Cancel</button></div><div id="prRequests"></div></div>';
+ const form=$('prForm'),pattern=$('prPattern'),freq=$('prFrequency'),picker=$('prWeekdayPicker');
+ picker.addEventListener('click',e=>{const b=e.target.closest('.pr-day-btn');if(!b)return;b.classList.toggle('active');refreshDays();calculate();});
+ freq.addEventListener('change',()=>{picker.querySelectorAll('.pr-day-btn').forEach(b=>{b.classList.remove('active');b.disabled=false;});refreshDays();calculate();});
+ pattern.addEventListener('change',()=>{$('prCustomHelp').style.display=pattern.value==='custom'?'block':'none';$('prCustomCycleBox').style.display=pattern.value==='custom'?'grid':'none';calculate();});
+$('prCycle').addEventListener('change',()=>{const custom=$('prCycle').value==='custom';$('prCustomCycleBox').style.display=(custom||pattern.value==='custom')?'grid':'none';calculate();});
+['prCustomValue','prCustomUnit'].forEach(id=>$(id).addEventListener('input',calculate));
+ ['prStart','prSlot','prCycle','prDuration'].forEach(id=>$(id).addEventListener('change',()=>{if(id==='prSlot')renderSlotPickers();else calculate();}));
+$('prSlotCount').addEventListener('input',renderSlotPickers);
+$('prSlotPickers').addEventListener('change',()=>{const first=$('prSlotPickers').querySelector('select');if(first)$('prSlot').value=first.value;calculate();});
+ form.onsubmit=e=>{e.preventDefault();const c=calculate();if(!c.schedule.length){$('prMsg').textContent='শুরু তারিখ ও সপ্তাহের দিন নির্বাচন করুন।';return;}if(!$('prSlot').value){$('prMsg').textContent='সময় নির্বাচন করুন।';return;}const arr=read();arr.push({id:'RB-'+Date.now().toString().slice(-6),sport:$('prSport').value,pattern:pattern.value,cycle:$('prCycle').value,customValue:Number($('prCustomValue').value||1),customUnit:$('prCustomUnit').value,start:$('prStart').value,slot:$('prSlot').value,slots:chosenSlots(),duration:$('prDuration').value,frequency:$('prFrequency').value,weekdays:getDays(),schedule:c.schedule,matchDuration:c.duration,slotCount:c.slotsPerDay,advance:c.advance,paymentMethod:$('prPaymentMethod').value,transaction:$('prTransaction').value,conflict:$('prConflict').value,note:$('prNote').value,scheduleNote:$('prScheduleNote').value,status:'Pending',paused:false,confirmed:false,createdAt:new Date().toISOString()});save(arr);$('prMsg').innerHTML='রিকোয়েস্ট সংরক্ষিত হয়েছে। <b>Admin Approval বাকি আছে</b>।';form.reset();picker.querySelectorAll('.pr-day-btn').forEach(b=>{b.classList.remove('active');b.disabled=false;});refreshDays();renderSlotPickers();calculate();renderRequests();};
+ $('prCustomCycleBox').style.display='none';renderRequests();refreshDays();renderSlotPickers();calculate();
+};
+window.prRenderRequests=renderRequests;
+window.prConfirmByIndex=i=>{const a=read();if(a[i]){a[i].status='Confirmed';a[i].confirmed=true;a[i].confirmedAt=Date.now();save(a);renderRequests();}};
+window.prPauseByIndex=i=>{const a=read();if(a[i]){a[i].paused=!a[i].paused;save(a);renderRequests();}};
+window.prCancelByIndex=i=>{const a=read();if(a[i]){a[i].status='Cancelled';save(a);renderRequests();}};
+window.prPauseLatest=()=>{const a=read();if(a.length){a[a.length-1].paused=!a[a.length-1].paused;save(a);renderRequests();}};
+window.prCancelLatest=()=>{const a=read();if(a.length){a[a.length-1].status='Cancelled';save(a);renderRequests();}};
+const old=window.pgpOpenCustomer;window.pgpOpenCustomer=function(){if(old)old.apply(this,arguments);pgpBuildProfessionalRecurring();};
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',pgpBuildProfessionalRecurring);else pgpBuildProfessionalRecurring();
+})();
+</script>
 </body>
 </html>
