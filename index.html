@@ -849,6 +849,19 @@
 
 <section id="pgpAdminScreen" class="pgp-screen" aria-label="Admin dashboard">
   <div class="pgp-wrap">
+    <div class="pgp-admin-layout">
+      <aside class="pgp-sidebar" aria-label="Admin navigation">
+        <h3>Admin Menu</h3>
+        <div class="pgp-nav">
+          <button type="button" onclick="document.getElementById('pgpAdminScreen').scrollIntoView({behavior:'smooth'})">🏠 Overview</button>
+          <button type="button" onclick="document.getElementById('pgpAdminBookings').scrollIntoView({behavior:'smooth'})">📋 Bookings</button>
+          <button type="button" onclick="document.getElementById('pgpAdminRecurring').scrollIntoView({behavior:'smooth'})">🔁 Recurring</button>
+          <button type="button" onclick="document.getElementById('pgpFootballNormal').scrollIntoView({behavior:'smooth'})">⚽ Pricing</button>
+          <button type="button" onclick="document.getElementById('pgpAdminLog').scrollIntoView({behavior:'smooth'})">📝 Activity Log</button>
+          <button type="button" onclick="pgpCloseScreens()">🚪 Close Dashboard</button>
+        </div>
+      </aside>
+      <div class="pgp-admin-content">
     <div class="pgp-top"><div><h2 class="pgp-title">Admin Dashboard</h2><div class="pgp-muted">Play_Ground Pro • Control Center</div></div><button class="pgp-close" type="button" onclick="pgpCloseScreens()">✕</button></div>
     <div class="pgp-grid"><div class="pgp-box"><h3 id="pgpTotalCount">0</h3><p>Total Bookings</p></div><div class="pgp-box"><h3 id="pgpPendingCount">0</h3><p>Pending</p></div><div class="pgp-box"><h3 id="pgpApprovedCount">0</h3><p>Approved</p></div><div class="pgp-box"><h3 id="pgpRevenueCount">৳0</h3><p>Recorded Advance</p></div></div>
     <div class="pgp-box" style="margin-top:14px"><h3>Dashboard Controls</h3><div class="pr-grid"><div><label>Sport Filter</label><select id="pgpAdminSportFilter"><option value="all">All Sports</option><option>Football</option><option>Cricket</option></select></div><div><label>Status Filter</label><select id="pgpAdminStatusFilter"><option value="all">All Status</option><option>Pending</option><option>Approved</option><option>Rejected</option><option>Completed</option></select></div><div><label>Search</label><input id="pgpAdminSearch" placeholder="নাম, ফোন, Booking ID বা TrxID"></div></div><div class="pr-actions"><button type="button" onclick="pgpRenderAdmin()">Refresh</button><button type="button" onclick="pgpAdminExportCSV()">Export CSV</button></div></div>
@@ -856,6 +869,8 @@
     <div class="pgp-box" style="margin-top:14px"><h3>Recurring Booking Requests</h3><div id="pgpAdminRecurring" class="pgp-muted">কোনো recurring request নেই।</div></div>
     <div class="pgp-box" style="margin-top:14px"><h3>Turf & Pricing Settings</h3><div class="pr-grid"><div><label>Football Normal Rate</label><input id="pgpFootballNormal" type="number" value="1500"></div><div><label>Football Peak Rate</label><input id="pgpFootballPeak" type="number" value="1800"></div><div><label>Cricket Normal Rate</label><input id="pgpCricketNormal" type="number" value="1200"></div><div><label>Cricket Peak Rate</label><input id="pgpCricketPeak" type="number" value="1500"></div></div><button type="button" onclick="pgpSaveAdminSettings()">Save Settings</button><div id="pgpAdminSettingsMsg" class="pgp-note"></div></div>
     <div class="pgp-box" style="margin-top:14px"><h3>Activity Log</h3><div id="pgpAdminLog" class="pgp-muted">কোনো activity নেই।</div></div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -1153,5 +1168,17 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 })();
 
     setTimeout(checkRecoverySession, 300);\n</script>
+
+<style id="pgp-phase1-dashboard-css">
+#pgpAdminScreen .pgp-admin-layout{display:grid;grid-template-columns:230px minmax(0,1fr);gap:16px;align-items:start}
+#pgpAdminScreen .pgp-sidebar{position:sticky;top:16px;padding:14px;border:1px solid rgba(255,255,255,.15);border-radius:18px;background:rgba(10,30,24,.52);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 14px 40px #0004}
+#pgpAdminScreen .pgp-sidebar h3{margin:0 0 12px;font-size:17px}
+#pgpAdminScreen .pgp-nav{display:grid;gap:7px}
+#pgpAdminScreen .pgp-nav button{width:100%;margin:0!important;text-align:left;background:rgba(255,255,255,.07)!important;border:1px solid rgba(255,255,255,.12)!important;color:#e5fff3!important;padding:10px 11px!important;border-radius:10px!important;font-size:12px!important}
+#pgpAdminScreen .pgp-nav button:hover{background:rgba(16,185,129,.22)!important}
+#pgpAdminScreen .pgp-admin-content{min-width:0}
+@media(max-width:760px){#pgpAdminScreen .pgp-admin-layout{grid-template-columns:1fr}#pgpAdminScreen .pgp-sidebar{position:static}#pgpAdminScreen .pgp-nav{grid-template-columns:repeat(2,minmax(0,1fr))}}
+</style>
+
 </body>
 </html>
