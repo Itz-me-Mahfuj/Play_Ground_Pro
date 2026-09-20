@@ -200,6 +200,28 @@
       text-align: center;
     }
 
+
+    /* Admin Login/Registration/Reset cards: same glass-blur style as Customer Login */
+    #adminLoginSection,
+    #adminRegisterSection,
+    #adminResetSection,
+    #adminRecoverySection {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      -webkit-backdrop-filter: blur(18px);
+      backdrop-filter: blur(18px);
+      border-radius: 24px;
+      padding: 28px 24px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    }
+
+    #adminLoginSection .link,
+    #adminRegisterSection .link,
+    #adminResetSection .link,
+    #adminRecoverySection .link {
+      text-shadow: 0 1px 5px rgba(0, 0, 0, 0.35);
+    }
+
     /* Password fields with correctly aligned eye icon */
     .password-field {
       position: relative;
@@ -314,11 +336,32 @@
             </button>
           </div>
 
+          <p class="link" onclick="showCustomerReset()">পাসওয়ার্ড ভুলে গেছেন?</p>
           <button type="submit">LOGIN →</button>
         </form>
 
         <span class="link" onclick="showRegister()">নতুন অ্যাকাউন্ট তৈরি করুন</span>
         <button class="secondary" onclick="showGuest()">CONTINUE AS GUEST</button>
+      </div>
+
+      <!-- CUSTOMER PASSWORD RESET -->
+      <div id="customerResetSection" class="hidden">
+        <h2>Reset Password</h2>
+        <p class="subtitle">আপনার ফোন নম্বর দিয়ে পাসওয়ার্ড পরিবর্তন করুন</p>
+        <form onsubmit="resetCustomerPassword(event)">
+          <label>Phone Number</label>
+          <input id="customerResetPhone" type="tel" placeholder="আপনার ফোন নম্বর" required>
+          <label>New Password</label>
+          <div class="password-field">
+            <input id="customerResetPassword" type="password" placeholder="নতুন পাসওয়ার্ড" required>
+          </div>
+          <label>Confirm Password</label>
+          <div class="password-field">
+            <input id="customerResetConfirmPassword" type="password" placeholder="পাসওয়ার্ড আবার লিখুন" required>
+          </div>
+          <button type="submit">RESET PASSWORD</button>
+        </form>
+        <span class="link" onclick="showLogin()">Login পেজে ফিরে যান</span>
       </div>
 
       <!-- REGISTER -->
@@ -396,9 +439,31 @@
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
             </button>
           </div>
+          <p class="link" onclick="showAdminReset()">Admin পাসওয়ার্ড ভুলে গেছেন?</p>
         <button type="submit">ADMIN LOGIN →</button>
       </form>
       <p class="link" onclick="showAdminRegister()">নতুন Admin Account তৈরি করুন</p>
+    </div>
+
+    <div id="adminResetSection" class="hidden">
+      <h3>Reset Admin Password</h3>
+      <form onsubmit="resetAdminPassword(event)">
+        <label for="adminResetEmail">Admin Email</label>
+        <input type="email" id="adminResetEmail" placeholder="Admin Email" required>
+        <button type="submit">SEND RESET EMAIL</button>
+      </form>
+      <p class="link" onclick="showAdminLogin()">Admin Login-এ ফিরে যান</p>
+    </div>
+
+    <div id="adminRecoverySection" class="hidden">
+      <h3>Set New Admin Password</h3>
+      <form onsubmit="saveAdminNewPassword(event)">
+        <label for="adminNewPassword">New Password</label>
+        <input type="password" id="adminNewPassword" placeholder="নতুন পাসওয়ার্ড" minlength="6" required>
+        <label for="adminNewPasswordConfirm">Confirm Password</label>
+        <input type="password" id="adminNewPasswordConfirm" placeholder="পাসওয়ার্ড আবার লিখুন" minlength="6" required>
+        <button type="submit">SAVE NEW PASSWORD</button>
+      </form>
     </div>
 
     <div id="adminRegisterSection" class="hidden">
@@ -454,6 +519,7 @@
       document.getElementById("loginSection").classList.add("hidden");
       document.getElementById("registerSection").classList.add("hidden");
       document.getElementById("guestSection").classList.add("hidden");
+      document.getElementById("customerResetSection").classList.add("hidden");
     }
 
     function showLogin() {
@@ -486,6 +552,58 @@
       pgpOpenCustomer(account.name || "Customer");
     }
 
+    function showCustomerReset() {
+      hideAll();
+      document.getElementById("customerResetSection").classList.remove("hidden");
+    }
+
+    function resetCustomerPassword(event) {
+      event.preventDefault();
+      const phone = document.getElementById("customerResetPhone").value.trim();
+      const password = document.getElementById("customerResetPassword").value;
+      const confirmPassword = document.getElementById("customerResetConfirmPassword").value;
+      if (password !== confirmPassword) {
+        alert("নতুন পাসওয়ার্ড মিলছে না।");
+        return;
+      }
+      const accounts = getCustomerAccounts();
+      const index = accounts.findIndex(a => a.phone === phone);
+      if (index === -1) {
+        alert("এই ফোন নম্বরের কোনো অ্যাকাউন্ট পাওয়া যায়নি।");
+        return;
+      }
+      accounts[index].password = password;
+      accounts[index].updatedAt = new Date().toISOString();
+      localStorage.setItem("pgpCustomerAccounts", JSON.stringify(accounts));
+      alert("Customer পাসওয়ার্ড সফলভাবে পরিবর্তন হয়েছে।");
+      showLogin();
+    }
+
+    function showAdminReset() {
+      document.getElementById("adminLoginSection").classList.add("hidden");
+      document.getElementById("adminRegisterSection").classList.add("hidden");
+      document.getElementById("adminResetSection").classList.remove("hidden");
+    }
+
+    async function resetAdminPassword(event) {
+      event.preventDefault();
+      const email = document.getElementById("adminResetEmail").value.trim();
+      if (!supabaseClient) {
+        alert("Supabase সংযোগ পাওয়া যাচ্ছে না।");
+        return;
+      }
+      const redirectUrl = "https://itz-me-mahfuj.github.io/Play_Ground_Pro/";
+      const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+        redirectTo: redirectUrl
+      });
+      if (error) {
+        alert(error.message);
+        return;
+      }
+      alert("Password reset email পাঠানো হয়েছে। আপনার ইমেইল চেক করুন।");
+      showAdminLogin();
+    }
+
     function registerUser(event) {
       event.preventDefault();
       const name = document.getElementById("customerRegisterName").value.trim();
@@ -511,8 +629,41 @@
       document.getElementById("adminRegisterSection").classList.remove("hidden");
     }
 
+    async function saveAdminNewPassword(event) {
+      event.preventDefault();
+      const password = document.getElementById("adminNewPassword").value;
+      const confirmPassword = document.getElementById("adminNewPasswordConfirm").value;
+      if (password !== confirmPassword) {
+        alert("নতুন পাসওয়ার্ড মিলছে না।");
+        return;
+      }
+      const { error } = await supabaseClient.auth.updateUser({ password });
+      if (error) {
+        alert(error.message);
+        return;
+      }
+      alert("Admin পাসওয়ার্ড সফলভাবে পরিবর্তন হয়েছে।");
+      showAdminLogin();
+    }
+
+    function showAdminRecovery() {
+      document.getElementById("adminLoginSection").classList.add("hidden");
+      document.getElementById("adminResetSection").classList.add("hidden");
+      document.getElementById("adminRegisterSection").classList.add("hidden");
+      document.getElementById("adminRecoverySection").classList.remove("hidden");
+    }
+
+    function checkRecoverySession() {
+      if (window.location.hash.includes("type=recovery")) {
+        openAdminPanel();
+        showAdminRecovery();
+      }
+    }
+
     function showAdminLogin() {
       document.getElementById("adminRegisterSection").classList.add("hidden");
+      document.getElementById("adminResetSection").classList.add("hidden");
+      document.getElementById("adminRecoverySection").classList.add("hidden");
       document.getElementById("adminLoginSection").classList.remove("hidden");
     }
 
@@ -585,7 +736,10 @@
       const email = document.getElementById("adminEmail").value.trim();
       const password = document.getElementById("adminPassword").value;
 
-      if (SUPABASE_PUBLISHABLE_KEY === "PASTE_YOUR_PUBLISHABLE_KEY_HERE") {
+      if (
+        SUPABASE_PUBLISHABLE_KEY ===
+        "sb_publishable_ory8XocB_s-ltfnLh9NWFw_QPMd0_D1"
+      ) {
         alert("প্রথমে Supabase Publishable Key বসান।");
         return;
       }
@@ -722,7 +876,29 @@ window.pgpOpenCustomer=function(user){currentUser=user||'Guest';$('pgpCustomerSc
   window.loginUser=loginUser;
   window.registerUser=registerUser;
   window.guestBooking=function(e){e.preventDefault();pgpOpenCustomer('Guest');};
-  window.adminLogin=async function(e){e.preventDefault();if(SUPABASE_PUBLISHABLE_KEY==='PASTE_YOUR_PUBLISHABLE_KEY_HERE'){alert('প্রথমে Supabase Publishable Key বসান।');return;}const email=$('adminEmail').value.trim(),password=$('adminPassword').value;const result=await supabaseClient.auth.signInWithPassword({email,password});if(result.error){alert('Login ব্যর্থ: '+result.error.message);return;}pgpOpenAdmin();};
+  window.adminLogin=async function(e){
+  e.preventDefault();
+  if(SUPABASE_PUBLISHABLE_KEY==='PASTE_YOUR_PUBLISHABLE_KEY_HERE'){
+    alert('প্রথমে Supabase Publishable Key বসান।'); return;
+  }
+  const email=$('adminEmail').value.trim().toLowerCase();
+  const password=$('adminPassword').value;
+  const result=await supabaseClient.auth.signInWithPassword({email,password});
+  if(result.error){alert(result.error.message);return;}
+  const user=result.data?.user;
+  if(!user){alert('User session পাওয়া যায়নি।');return;}
+  const check=await supabaseClient.from('staff').select('id,staff_id,staff_name,email,role,status,auth_user_id').or('auth_user_id.eq.'+user.id+',email.eq.'+email).limit(1);
+  if(check.error){
+    alert('Admin permission যাচাই করা যাচ্ছে না। staff টেবিলের কলাম ও RLS policy পরীক্ষা করুন।');
+    await supabaseClient.auth.signOut(); return;
+  }
+  const staff=check.data?.[0];
+  if(!staff || String(staff.role||'').toLowerCase()!=='admin' || (staff.status && String(staff.status).toLowerCase()!=='active')){
+    alert('এই অ্যাকাউন্টের Admin অনুমতি নেই। আগে staff টেবিলে role=admin এবং status=active যুক্ত করুন।');
+    await supabaseClient.auth.signOut(); return;
+  }
+  pgpOpenAdmin();
+};
 })();
 </script>
 
@@ -959,6 +1135,6 @@ window.prCancelLatest=()=>{const a=read();if(a.length){a[a.length-1].status='Can
 const old=window.pgpOpenCustomer;window.pgpOpenCustomer=function(){if(old)old.apply(this,arguments);pgpBuildProfessionalRecurring();};
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',pgpBuildProfessionalRecurring);else pgpBuildProfessionalRecurring();
 })();
-</script>
+\n    checkRecoverySession();\n</script>
 </body>
 </html>
