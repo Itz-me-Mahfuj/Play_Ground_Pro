@@ -654,10 +654,26 @@
     }
 
     function checkRecoverySession() {
-      if (window.location.hash.includes("type=recovery")) {
+      const hash = window.location.hash || "";
+      const search = window.location.search || "";
+      const isRecovery =
+        hash.includes("type=recovery") ||
+        search.includes("type=recovery") ||
+        hash.includes("access_token=") && hash.includes("type=recovery");
+
+      if (isRecovery) {
         openAdminPanel();
         showAdminRecovery();
       }
+    }
+
+    if (supabaseClient && supabaseClient.auth) {
+      supabaseClient.auth.onAuthStateChange(function(event) {
+        if (event === "PASSWORD_RECOVERY") {
+          openAdminPanel();
+          showAdminRecovery();
+        }
+      });
     }
 
     function showAdminLogin() {
@@ -1135,6 +1151,7 @@ window.prCancelLatest=()=>{const a=read();if(a.length){a[a.length-1].status='Can
 const old=window.pgpOpenCustomer;window.pgpOpenCustomer=function(){if(old)old.apply(this,arguments);pgpBuildProfessionalRecurring();};
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',pgpBuildProfessionalRecurring);else pgpBuildProfessionalRecurring();
 })();
-\n    checkRecoverySession();\n</script>
+
+    setTimeout(checkRecoverySession, 300);\n</script>
 </body>
 </html>
